@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XREZZKY — Riwayat Transaksi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1115; --nav: #171c24; --surface: #1d2430; --border: #2a3442;
+      --accent: #4a7dff; --ah: #5d8fff; --txt: #f5f7fa; --txt2: #9ba6b2;
+      --success: #22c55e; --warn: #f59e0b; --danger: #ef4444;
+      --purple: #a855f7; --radius: 13px; --rsm: 8px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; }
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(23,28,36,.94); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      height: 56px; display: flex; align-items: center; padding: 0 20px; gap: 14px;
+    }
+    .nb { display: flex; align-items: center; gap: 8px; font-family: 'Syne',sans-serif; font-size: 15px; font-weight: 700; text-decoration: none; color: var(--txt); }
+    .nb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+    .ns { flex: 1; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .18s; text-decoration: none; }
+    .bp { background: var(--accent); color: #fff; } .bp:hover { background: var(--ah); }
+    .bg { background: transparent; color: var(--txt2); border: 1px solid var(--border); } .bg:hover { color: var(--txt); border-color: var(--txt2); }
+    .bsm { padding: 5px 11px; font-size: 12px; }
+
+    /* ── PAGE WRAPPER ── */
+    .page { max-width: 900px; margin: 0 auto; padding: 24px 20px; }
+
+    /* ── PAGE HEADER ── */
+    .ph { margin-bottom: 24px; }
+    .ph h1 { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 800; }
+    .ph p { font-size: 13px; color: var(--txt2); margin-top: 4px; }
+
+    /* ── SUMMARY CARDS ── */
+    .sum-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+    .sum-card {
+      background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 18px; display: flex; align-items: center; gap: 13px;
+      transition: border .2s, transform .2s; cursor: default;
+    }
+    .sum-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .sc-ico { width: 40px; height: 40px; border-radius: var(--rsm); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .sci-g { background: rgba(34,197,94,.15); color: var(--success); }
+    .sci-b { background: rgba(74,125,255,.15); color: var(--accent); }
+    .sci-y { background: rgba(245,158,11,.15); color: var(--warn); }
+    .sci-r { background: rgba(239,68,68,.15); color: var(--danger); }
+    .sc-v { font-size: 18px; font-weight: 700; line-height: 1.1; }
+    .sc-l { font-size: 11px; color: var(--txt2); margin-top: 3px; }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+      background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 16px; margin-bottom: 16px;
+    }
+    .sw { position: relative; flex: 1; min-width: 180px; }
+    .sw i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--txt2); font-size: 12px; pointer-events: none; }
+    .si { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 8px 12px 8px 30px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; outline: none; transition: border .18s; width: 100%; }
+    .si:focus { border-color: var(--accent); }
+    .si::placeholder { color: var(--txt2); }
+    select.fsel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 8px 11px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 12px; outline: none; cursor: pointer; }
+    input[type="date"].fsel { font-size: 12px; }
+
+    /* ── STATUS TABS ── */
+    .status-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .st-tab {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
+      background: var(--surface); border: 1px solid var(--border); color: var(--txt2);
+      cursor: pointer; transition: all .18s;
+    }
+    .st-tab:hover { border-color: var(--accent); color: var(--accent); }
+    .st-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .st-tab .tc { margin-left: 5px; font-size: 10px; opacity: .8; }
+
+    /* ── TRANSACTION LIST ── */
+    .tx-list { display: flex; flex-direction: column; gap: 10px; }
+    .tx-item {
+      background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; transition: border .2s, box-shadow .2s; cursor: pointer;
+    }
+    .tx-item:hover { border-color: rgba(74,125,255,.4); box-shadow: 0 4px 20px rgba(0,0,0,.2); }
+    .tx-main { padding: 16px 18px; display: flex; align-items: center; gap: 14px; }
+    .tx-img { width: 52px; height: 52px; border-radius: var(--rsm); background: var(--surface); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--txt2); font-size: 18px; flex-shrink: 0; border: 1px solid var(--border); }
+    .tx-img img { width: 100%; height: 100%; object-fit: cover; }
+    .tx-info { flex: 1; min-width: 0; }
+    .tx-id   { font-size: 10px; color: var(--txt2); margin-bottom: 3px; display: flex; align-items: center; gap: 6px; }
+    .tx-id .copy-id { cursor: pointer; color: var(--accent); font-size: 10px; }
+    .tx-id .copy-id:hover { text-decoration: underline; }
+    .tx-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tx-seller { font-size: 12px; color: var(--txt2); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+    .tx-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+    .tx-price { font-size: 16px; font-weight: 700; color: var(--accent); }
+    .tx-date  { font-size: 11px; color: var(--txt2); }
+
+    /* Status chips */
+    .chip { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .cg  { background: rgba(34,197,94,.15);  color: var(--success); }
+    .cb  { background: rgba(74,125,255,.15); color: var(--accent); }
+    .cy  { background: rgba(245,158,11,.15); color: var(--warn); }
+    .cr  { background: rgba(239,68,68,.15);  color: var(--danger); }
+    .cgr { background: rgba(155,166,178,.1); color: var(--txt2); }
+
+    /* Expandable detail */
+    .tx-detail {
+      border-top: 1px solid var(--border); background: var(--surface);
+      padding: 0; max-height: 0; overflow: hidden; transition: max-height .35s ease, padding .3s ease;
+    }
+    .tx-detail.open { max-height: 600px; padding: 16px 18px; }
+    .td-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+    .td-field { background: var(--nav); border: 1px solid var(--border); border-radius: var(--rsm); padding: 10px 12px; }
+    .td-field .k { font-size: 10px; color: var(--txt2); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+    .td-field .v { font-size: 13px; font-weight: 500; word-break: break-all; }
+    .td-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Timeline */
+    .timeline { display: flex; flex-direction: column; gap: 0; margin-bottom: 14px; }
+    .tl-item { display: flex; gap: 12px; padding: 10px 0; position: relative; }
+    .tl-item:not(:last-child)::before { content:''; position:absolute; left:11px; top:32px; bottom:-2px; width:2px; background:var(--border); }
+    .tl-dot { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; margin-top: 2px; z-index: 1; }
+    .tl-dot.done { background: var(--success); color: #fff; }
+    .tl-dot.active { background: var(--accent); color: #fff; animation: tl-pulse .9s ease infinite; }
+    .tl-dot.pending { background: var(--border); color: var(--txt2); }
+    @keyframes tl-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(74,125,255,.5)} 50%{box-shadow:0 0 0 6px rgba(74,125,255,0)} }
+    .tl-content .tl-title { font-size: 13px; font-weight: 500; }
+    .tl-content .tl-time  { font-size: 11px; color: var(--txt2); margin-top: 2px; }
+
+    /* Review form */
+    .review-form { background: rgba(74,125,255,.06); border: 1px solid rgba(74,125,255,.2); border-radius: var(--rsm); padding: 14px; }
+    .rf-title { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+    .star-input { display: flex; gap: 4px; margin-bottom: 10px; flex-direction: row-reverse; justify-content: flex-end; }
+    .star-input input { display: none; }
+    .star-input label { font-size: 22px; color: var(--border); cursor: pointer; transition: color .1s; }
+    .star-input label:hover, .star-input label:hover ~ label, .star-input input:checked ~ label { color: var(--warn); }
+    .rf-txt { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 9px 12px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; resize: none; outline: none; min-height: 70px; }
+    .rf-txt:focus { border-color: var(--accent); }
+
+    /* Empty state */
+    .empty-state { text-align: center; padding: 72px 20px; color: var(--txt2); }
+    .empty-state i { font-size: 44px; display: block; margin-bottom: 16px; opacity: .25; }
+    .empty-state p { font-size: 14px; }
+
+    /* Pagination */
+    .pagination { display: flex; gap: 6px; justify-content: center; margin-top: 20px; }
+    .pg-btn { width: 34px; height: 34px; border-radius: var(--rsm); background: var(--nav); border: 1px solid var(--border); color: var(--txt2); font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .18s; }
+    .pg-btn:hover, .pg-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* Modal */
+    .mo { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.72); display: none; align-items: center; justify-content: center; padding: 20px; }
+    .mo.open { display: flex; }
+    .mb { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; animation: fup .3s ease; overflow: hidden; }
+    @keyframes fup { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+    .mh { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .mh h3 { font-family: 'Syne',sans-serif; font-size: 16px; font-weight: 700; }
+    .mbody { padding: 20px; overflow-y: auto; max-height: 72vh; }
+    .mfoot { padding: 13px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+    .mc { background: none; border: none; color: var(--txt2); font-size: 16px; cursor: pointer; }
+
+    /* Toast */
+    #tc { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--nav); border: 1px solid var(--border); border-left: 3px solid var(--accent); color: var(--txt); font-size: 13px; padding: 10px 16px; border-radius: var(--rsm); min-width: 260px; animation: sli .3s ease; }
+    .toast.s { border-left-color: var(--success); } .toast.e { border-left-color: var(--danger); } .toast.w { border-left-color: var(--warn); }
+    @keyframes sli { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+    .sp { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spn .7s linear infinite; margin: 0 auto; }
+    @keyframes spn { to{transform:rotate(360deg)} }
+
+    /* Animations */
+    @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+    .tx-item { animation: fadeIn .3s ease both; }
+    .tx-item:nth-child(1){animation-delay:.04s} .tx-item:nth-child(2){animation-delay:.08s}
+    .tx-item:nth-child(3){animation-delay:.12s} .tx-item:nth-child(4){animation-delay:.16s}
+    .tx-item:nth-child(5){animation-delay:.20s}
+
+    @media (max-width:640px) {
+      .sum-grid { grid-template-columns: 1fr 1fr; }
+      .td-grid  { grid-template-columns: 1fr; }
+      .filter-bar { gap: 8px; }
+      .tx-main { gap: 10px; }
+    }
+  </style>
+
+</head>
+<body>
+
+<!-- ── Mobile Page Header ── -->
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+
+<nav>
+  <a class="nb" href="index.html"><div class="nb-dot"></div>XREZZKY</a>
+  <div class="ns"></div>
+  <a href="index.html" class="btn bg bsm"><i class="fas fa-store"></i> Toko</a>
+  <a href="deposit.html" class="btn bp bsm"><i class="fas fa-wallet"></i> Deposit</a>
+</nav>
+
+<div class="page">
+  <div class="ph">
+    <h1>Riwayat Transaksi</h1>
+    <p id="pageSubtitle">Semua transaksi kamu di XREZZKY</p>
+  </div>
+
+  <!-- Summary -->
+  <div class="sum-grid" id="sumGrid">
+    <div class="sum-card"><div class="sc-ico sci-b"><i class="fas fa-receipt"></i></div><div><div class="sc-v" id="sm-total">—</div><div class="sc-l">Total Transaksi</div></div></div>
+    <div class="sum-card"><div class="sc-ico sci-g"><i class="fas fa-check-circle"></i></div><div><div class="sc-v" id="sm-done">—</div><div class="sc-l">Selesai</div></div></div>
+    <div class="sum-card"><div class="sc-ico sci-y"><i class="fas fa-clock"></i></div><div><div class="sc-v" id="sm-pending">—</div><div class="sc-l">Proses</div></div></div>
+    <div class="sum-card"><div class="sc-ico sci-g"><i class="fas fa-money-bill-wave"></i></div><div><div class="sc-v" id="sm-spent">—</div><div class="sc-l">Total Dibelanjakan</div></div></div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <div class="sw"><i class="fas fa-search"></i><input class="si" id="txSearch" placeholder="Cari produk, order ID..." oninput="filterTx()" /></div>
+    <select class="fsel" id="txSort" onchange="filterTx()">
+      <option value="newest">Terbaru</option>
+      <option value="oldest">Terlama</option>
+      <option value="highest">Harga Tertinggi</option>
+      <option value="lowest">Harga Terendah</option>
+    </select>
+    <input type="date" class="fsel" id="txDateFrom" onchange="filterTx()" title="Dari tanggal" />
+    <input type="date" class="fsel" id="txDateTo" onchange="filterTx()" title="Sampai tanggal" />
+    <button class="btn bg bsm" onclick="exportCSV()"><i class="fas fa-download"></i> Export</button>
+  </div>
+
+  <!-- Status tabs -->
+  <div class="status-tabs" id="statusTabs">
+    <div class="st-tab active" onclick="setStatus('',this)">Semua <span class="tc" id="stc-all">0</span></div>
+    <div class="st-tab" onclick="setStatus('pending',this)">Pending <span class="tc" id="stc-pending">0</span></div>
+    <div class="st-tab" onclick="setStatus('processing',this)">Diproses <span class="tc" id="stc-processing">0</span></div>
+    <div class="st-tab" onclick="setStatus('completed',this)">Selesai <span class="tc" id="stc-completed">0</span></div>
+    <div class="st-tab" onclick="setStatus('cancelled',this)">Dibatalkan <span class="tc" id="stc-cancelled">0</span></div>
+  </div>
+
+  <!-- Transaction list -->
+  <div class="tx-list" id="txList"></div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- Order Detail / Review Modal -->
+<div class="mo" id="reviewModal">
+  <div class="mb" style="max-width:480px">
+    <div class="mh"><h3>Beri Ulasan</h3><button class="mc" onclick="closeMo('reviewModal')"><i class="fas fa-times"></i></button></div>
+    <div class="mbody" id="reviewModalBody"></div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeMo('reviewModal')">Batal</button>
+      <button class="btn bp" onclick="submitReview()"><i class="fas fa-star"></i> Kirim Ulasan</button>
+    </div>
+  </div>
+</div>
+
+<div id="tc"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL = 'https://jydfjfjttpmropoczgop.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const CLD_BASE = 'https://res.cloudinary.com/drjmclzbi/image/upload/';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+let user = null, allOrders = [], filtered = [], activeStatus = '', expandedId = null, reviewOrderId = null;
+const PER_PAGE = 10; let page = 1;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { toast('Login dulu', 'e'); setTimeout(() => location.href='index.html', 1500); return; }
+  user = session.user;
+  document.getElementById('pageSubtitle').textContent = `Riwayat transaksi ${user.email}`;
+  await loadOrders();
+});
+
+async function loadOrders() {
+  const { data } = await sb.from('orders')
+    .select('*, products(name, image_url, category, seller_id), profiles!orders_seller_id_fkey(username)')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+  allOrders = data || [];
+  updateSummary();
+  updateStatusCounts();
+  filterTx();
+}
+
+function updateSummary() {
+  const done    = allOrders.filter(o => o.status === 'completed');
+  const pending = allOrders.filter(o => ['pending','processing'].includes(o.status));
+  const spent   = done.reduce((a, o) => a + (o.total_price||0), 0);
+  document.getElementById('sm-total').textContent   = allOrders.length;
+  document.getElementById('sm-done').textContent    = done.length;
+  document.getElementById('sm-pending').textContent = pending.length;
+  document.getElementById('sm-spent').textContent   = fmtRp(spent);
+}
+
+function updateStatusCounts() {
+  ['pending','processing','completed','cancelled'].forEach(s => {
+    const el = document.getElementById(`stc-${s}`);
+    if (el) el.textContent = allOrders.filter(o => o.status === s).length;
+  });
+  document.getElementById('stc-all').textContent = allOrders.length;
+}
+
+function setStatus(s, el) {
+  activeStatus = s; page = 1;
+  document.querySelectorAll('.st-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  filterTx();
+}
+
+function filterTx() {
+  const q    = document.getElementById('txSearch').value.toLowerCase();
+  const sort = document.getElementById('txSort').value;
+  const from = document.getElementById('txDateFrom').value;
+  const to   = document.getElementById('txDateTo').value;
+
+  filtered = allOrders.filter(o => {
+    const matchStatus = !activeStatus || o.status === activeStatus;
+    const matchQ = !q || (o.products?.name||'').toLowerCase().includes(q) || o.id.toLowerCase().includes(q);
+    const oDate  = o.created_at?.split('T')[0];
+    const matchFrom = !from || oDate >= from;
+    const matchTo   = !to   || oDate <= to;
+    return matchStatus && matchQ && matchFrom && matchTo;
+  });
+
+  if (sort === 'newest')  filtered.sort((a,b) => new Date(b.created_at) - new Date(a.created_at));
+  if (sort === 'oldest')  filtered.sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+  if (sort === 'highest') filtered.sort((a,b) => (b.total_price||0) - (a.total_price||0));
+  if (sort === 'lowest')  filtered.sort((a,b) => (a.total_price||0) - (b.total_price||0));
+
+  page = 1;
+  renderList();
+}
+
+function renderList() {
+  const list = document.getElementById('txList');
+  const start = (page - 1) * PER_PAGE;
+  const slice = filtered.slice(start, start + PER_PAGE);
+
+  if (!slice.length) {
+    list.innerHTML = `<div class="empty-state"><i class="fas fa-receipt"></i><p>Tidak ada transaksi${activeStatus ? ' dengan status ini' : ''}.</p></div>`;
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  list.innerHTML = slice.map(o => {
+    const p = o.products || {};
+    const img = p.image_url ? `<img src="${CLD_BASE}${p.image_url}" loading="lazy" />` : `<i class="fas fa-box-open"></i>`;
+    const stChip = statusChip(o.status);
+    const isOpen = expandedId === o.id;
+
+    return `<div class="tx-item" id="txitem-${o.id}">
+      <div class="tx-main" onclick="toggleDetail('${o.id}')">
+        <div class="tx-img">${img}</div>
+        <div class="tx-info">
+          <div class="tx-id">
+            <span>#${o.id.slice(0,8).toUpperCase()}</span>
+            <span class="copy-id" onclick="event.stopPropagation(); copyId('${o.id}')"><i class="fas fa-copy"></i> Salin</span>
+          </div>
+          <div class="tx-name">${esc(p.name||'—')}</div>
+          <div class="tx-seller"><i class="fas fa-store" style="font-size:10px"></i> ${esc(o.profiles?.username||'—')}</div>
+        </div>
+        <div class="tx-right">
+          <div class="tx-price">${fmtRp(o.total_price)}</div>
+          ${stChip}
+          <div class="tx-date">${fmtDate(o.created_at)}</div>
+        </div>
+      </div>
+      <div class="tx-detail ${isOpen?'open':''}" id="txd-${o.id}">
+        ${renderDetail(o)}
+      </div>
+    </div>`;
+  }).join('');
+
+  renderPagination();
+}
+
+function renderDetail(o) {
+  const p = o.products || {};
+  const stages = [
+    { label: 'Order Dibuat',    done: true,                                              time: o.created_at },
+    { label: 'Dikonfirmasi',    done: ['processing','completed'].includes(o.status),    time: o.accepted_at },
+    { label: 'Diproses',        done: ['processing','completed'].includes(o.status),    time: null },
+    { label: 'Selesai',         done: o.status === 'completed',                         time: o.completed_at },
+  ];
+
+  return `
+    <div class="td-grid">
+      <div class="td-field"><div class="k">Order ID</div><div class="v" style="font-size:11px; color:var(--txt2)">${o.id}</div></div>
+      <div class="td-field"><div class="k">Kategori</div><div class="v">${esc(p.category||'—')}</div></div>
+      <div class="td-field"><div class="k">Total Bayar</div><div class="v" style="color:var(--accent); font-size:15px; font-weight:700">${fmtRp(o.total_price)}</div></div>
+      <div class="td-field"><div class="k">Metode Bayar</div><div class="v">${esc(o.payment_method||'Saldo XREZZKY')}</div></div>
+    </div>
+
+    <div style="margin-bottom:14px">
+      <div style="font-size:12px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px">Status Pesanan</div>
+      <div class="timeline">
+        ${stages.map((s, i) => `
+          <div class="tl-item">
+            <div class="tl-dot ${s.done ? (i===stages.filter(x=>x.done).length-1 && o.status!=='completed' ? 'active' : 'done') : 'pending'}">
+              ${s.done ? '<i class="fas fa-check" style="font-size:9px"></i>' : i+1}
+            </div>
+            <div class="tl-content">
+              <div class="tl-title">${s.label}</div>
+              <div class="tl-time">${s.time ? fmtDateFull(s.time) : s.done ? 'Selesai' : 'Menunggu'}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    ${o.notes ? `<div style="background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.2); border-radius:var(--rsm); padding:10px 12px; font-size:12px; color:var(--warn); margin-bottom:12px"><i class="fas fa-note-sticky" style="margin-right:6px"></i>${esc(o.notes)}</div>` : ''}
+
+    <div class="td-actions">
+      ${o.status === 'completed' && !o.reviewed ? `<button class="btn bp bsm" onclick="openReviewModal('${o.id}')"><i class="fas fa-star"></i> Beri Ulasan</button>` : ''}
+      ${o.status === 'completed' && o.reviewed ? `<span class="chip cg"><i class="fas fa-check" style="margin-right:4px"></i>Sudah Diulas</span>` : ''}
+      ${o.status === 'pending' ? `<button class="btn" style="background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2)" onclick="cancelOrder('${o.id}')"><i class="fas fa-times"></i> Batalkan</button>` : ''}
+      <button class="btn bg bsm" onclick="contactSeller('${o.id}')"><i class="fas fa-comment"></i> Hubungi Seller</button>
+      <button class="btn bg bsm" onclick="reportOrder('${o.id}')"><i class="fas fa-flag"></i> Laporkan</button>
+    </div>`;
+}
+
+function toggleDetail(id) {
+  if (expandedId === id) { expandedId = null; } else { expandedId = id; }
+  const detail = document.getElementById(`txd-${id}`);
+  if (detail) detail.classList.toggle('open', expandedId === id);
+}
+
+function renderPagination() {
+  const total = Math.ceil(filtered.length / PER_PAGE);
+  if (total <= 1) { document.getElementById('pagination').innerHTML = ''; return; }
+  let html = '';
+  if (page > 1) html += `<button class="pg-btn" onclick="goPage(${page-1})"><i class="fas fa-chevron-left"></i></button>`;
+  for (let i = 1; i <= total; i++) {
+    if (total > 7 && i > 2 && i < total - 1 && Math.abs(i - page) > 1) { if (i === 3 || i === total-2) html += `<div class="pg-btn" style="cursor:default">…</div>`; continue; }
+    html += `<button class="pg-btn ${i===page?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  }
+  if (page < total) html += `<button class="pg-btn" onclick="goPage(${page+1})"><i class="fas fa-chevron-right"></i></button>`;
+  document.getElementById('pagination').innerHTML = html;
+}
+
+function goPage(n) { page = n; window.scrollTo({top:0,behavior:'smooth'}); renderList(); }
+
+// ── ACTIONS ──
+function copyId(id) { navigator.clipboard.writeText(id); toast('Order ID disalin ✅', 's'); }
+
+async function cancelOrder(id) {
+  const { error } = await sb.from('orders').update({ status:'cancelled' }).eq('id', id).eq('user_id', user.id);
+  if (error) return toast('Gagal: '+error.message, 'e');
+  toast('Pesanan dibatalkan', 'w');
+  await loadOrders();
+}
+
+function contactSeller(id) { toast('Buka halaman chat untuk menghubungi seller', 'w'); }
+function reportOrder(id) { toast('Laporan akan ditangani CS kami segera', 'w'); }
+
+// ── REVIEW ──
+function openReviewModal(orderId) {
+  reviewOrderId = orderId;
+  const o = allOrders.find(x => x.id === orderId);
+  if (!o) return;
+  document.getElementById('reviewModalBody').innerHTML = `
+    <div style="display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:12px 14px; margin-bottom:16px">
+      <div style="width:44px; height:44px; border-radius:var(--rsm); background:var(--nav); overflow:hidden; display:flex; align-items:center; justify-content:center; color:var(--txt2)">
+        ${o.products?.image_url ? `<img src="${CLD_BASE}${o.products.image_url}" style="width:100%;height:100%;object-fit:cover"/>` : '<i class="fas fa-box-open"></i>'}
+      </div>
+      <div>
+        <div style="font-size:13px; font-weight:600">${esc(o.products?.name||'—')}</div>
+        <div style="font-size:11px; color:var(--txt2)">dari ${esc(o.profiles?.username||'—')}</div>
+      </div>
+    </div>
+    <div class="review-form">
+      <div class="rf-title">Rating Produk</div>
+      <div class="star-input" id="starInput">
+        ${[5,4,3,2,1].map(n => `<label for="star${n}" title="${n} bintang"><i class="fas fa-star"></i></label><input type="radio" id="star${n}" name="rating" value="${n}" ${n===5?'checked':''} />`).join('')}
+      </div>
+      <textarea class="rf-txt" id="reviewText" placeholder="Ceritakan pengalamanmu dengan produk ini..." rows="3"></textarea>
+    </div>`;
+  openMo('reviewModal');
+}
+
+async function submitReview() {
+  const ratingEl = document.querySelector('input[name="rating"]:checked');
+  const rating   = ratingEl ? parseInt(ratingEl.value) : 5;
+  const comment  = document.getElementById('reviewText').value.trim();
+  if (!comment) return toast('Tulis ulasan dulu', 'w');
+
+  const o = allOrders.find(x => x.id === reviewOrderId);
+  if (!o) return;
+
+  const { error } = await sb.from('testimonials').insert([{
+    product_id: o.product_id, user_id: user.id, seller_id: o.products?.seller_id,
+    rating, comment, created_at: new Date().toISOString()
+  }]);
+  if (error) return toast('Gagal: '+error.message, 'e');
+
+  await sb.from('orders').update({ reviewed: true }).eq('id', reviewOrderId);
+  toast('Ulasan dikirim ✅ Terima kasih!', 's');
+  closeMo('reviewModal');
+  await loadOrders();
+}
+
+// ── EXPORT ──
+function exportCSV() {
+  const rows = [['Order ID','Produk','Seller','Total','Status','Tanggal']];
+  filtered.forEach(o => rows.push([o.id, o.products?.name||'', o.profiles?.username||'', o.total_price||0, o.status, o.created_at?.split('T')[0]]));
+  const csv  = rows.map(r => r.join(',')).join('\n');
+  const a    = document.createElement('a');
+  a.href     = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = `riwayat_xrezzky_${Date.now()}.csv`;
+  a.click();
+  toast('File CSV diunduh ✅', 's');
+}
+
+// ── MODAL ──
+function openMo(id) { document.getElementById(id).classList.add('open'); }
+function closeMo(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.mo').forEach(el => el.addEventListener('click', e => { if(e.target===el) closeMo(el.id); }));
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.mo.open').forEach(m=>closeMo(m.id)); });
+
+// ── UTILS ──
+function fmtRp(v) { if(!v&&v!==0) return '—'; if(v===0) return 'Gratis'; return 'Rp '+Number(v).toLocaleString('id-ID'); }
+function fmtDate(d) { if(!d) return '—'; return new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtDateFull(d) { if(!d) return '—'; return new Date(d).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function statusChip(s) {
+  const m={pending:'cy',processing:'cb',completed:'cg',cancelled:'cr'}; const l={pending:'Pending',processing:'Diproses',completed:'Selesai',cancelled:'Dibatalkan'};
+  return `<span class="chip ${m[s]||'cgr'}">${l[s]||s}</span>`;
+}
+function toast(msg, type='') { const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=msg; document.getElementById('tc').appendChild(el); setTimeout(()=>el.remove(),3500); }
+</script>
+<!-- ══ XREZZKY BOTTOM NAV — persistent fixed ══ -->
+<style>
+/* ── XBN BASE ── */
+#xbn {
+  display: none;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  background: rgba(23,28,36,.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(74,125,255,.18);
+  height: 64px;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 24px rgba(0,0,0,.5);
+}
+#xbn .xbn-inner {
+  display: flex; align-items: center;
+  width: 100%; height: 100%;
+}
+.xbn-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px;
+  background: none; border: none; cursor: pointer;
+  color: #6b7a8d; font-family: 'Poppins', sans-serif;
+  padding: 4px 0; position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .2s; border-radius: 12px; min-height: 52px;
+  text-decoration: none;
+}
+.xbn-btn i {
+  font-size: 21px; line-height: 1;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .2s;
+  display: block;
+}
+.xbn-btn span { font-size: 10px; font-weight: 600; letter-spacing: .02em; line-height: 1; }
+.xbn-btn.active { color: #4a7dff; }
+.xbn-btn.active i { transform: translateY(-2px) scale(1.15); color: #4a7dff; }
+.xbn-btn::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, #4a7dff, #7c3aed);
+  transition: width .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 0 8px rgba(74,125,255,.8);
+}
+.xbn-btn.active::after { width: 24px; }
+.xbn-btn:active { transform: scale(.88); }
+.xbn-ripple {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: rgba(74,125,255,.25);
+  transform: scale(0); animation: xbnRipple .5s ease-out forwards;
+}
+@keyframes xbnRipple { to { transform: scale(4); opacity: 0; } }
+.xbn-fab-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding-bottom: 6px; gap: 2px;
+}
+.xbn-fab {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #4a7dff 0%, #7c3aed 100%);
+  color: #fff; font-size: 22px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(74,125,255,.55);
+  margin-bottom: 2px;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.xbn-fab:active { transform: scale(.85); box-shadow: 0 2px 10px rgba(74,125,255,.4); }
+.xbn-fab.pulse { animation: xbnFabPulse .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes xbnFabPulse {
+  0%{transform:scale(1)} 40%{transform:scale(.82)} 70%{transform:scale(1.15)} 100%{transform:scale(1)}
+}
+.xbn-fab-label { font-size: 10px; font-weight: 600; color: #9ba6b2; line-height: 1; }
+.xbn-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #1d2430; border: 2px solid transparent;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #6b7a8d;
+  transition: border-color .2s;
+}
+.xbn-av img { width:100%; height:100%; object-fit:cover; }
+.xbn-btn.active .xbn-av { border-color: #4a7dff; color: #4a7dff; }
+/* Page header on mobile */
+#mobilePageHeader {
+  display: none;
+  position: sticky; top: 0; z-index: 200;
+  background: #171c24; border-bottom: 1px solid #2a3442;
+  height: 52px; align-items: center; padding: 0 14px; gap: 12px;
+}
+#mobilePageHeader .mph-back {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #1d2430; border: 1px solid #2a3442; color: #f5f7fa;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+}
+#mobilePageHeader .mph-back:active { transform: scale(.9); }
+#mobilePageHeader .mph-title { font-size: 15px; font-weight: 700; color: #f5f7fa; flex: 1; }
+#mobilePageHeader .mph-logo { font-size: 11px; font-weight: 700; color: #4a7dff; opacity: .7; }
+/* Hide top nav, show bottom nav on mobile */
+@media (max-width: 900px) {
+  #xbn { display: flex !important; }
+  #mobilePageHeader { display: flex !important; }
+  nav:not(#xbn) { display: none !important; }
+  #topbar { display: none !important; }
+  #sidebar { display: none !important; }
+  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
+  body > .main, main, .page, #main { padding-bottom: 80px !important; padding-top: 0 !important; }
+  .page { min-height: calc(100vh - 52px); }
+}
+@media (min-width: 901px) {
+  #xbn { display: none !important; }
+  #mobilePageHeader { display: none !important; }
+}
+</style>
+
+<!-- Mobile Page Header -->
+<div id="mobilePageHeader">
+  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <div class="mph-title" id="mphTitle">XREZZKY</div>
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+<!-- Bottom Nav -->
+<div id="xbn">
+  <div class="xbn-inner">
+    <a class="xbn-btn" href="index.html" id="xbn-home" aria-label="Beranda" onclick="xbnSetActive('home')">
+      <i class="fas fa-home"></i><span>Beranda</span>
+    </a>
+    <button class="xbn-btn" id="xbn-info" onclick="xbnNavInfo(this)" aria-label="Info">
+      <i class="fas fa-bell"></i><span>Info</span>
+    </button>
+    <div class="xbn-fab-wrap">
+      <a class="xbn-fab" href="deposit.html" onclick="xbnFabAnim(this)" aria-label="Deposit">
+        <i class="fas fa-wallet"></i>
+      </a>
+      <span class="xbn-fab-label">Deposit</span>
+    </div>
+    <a class="xbn-btn" href="riwayat.html" id="xbn-riwayat" aria-label="Riwayat" onclick="xbnSetActive('riwayat')">
+      <i class="fas fa-receipt"></i><span>Riwayat</span>
+    </a>
+    <a class="xbn-btn" href="profil.html" id="xbn-profil" aria-label="Profil" onclick="xbnSetActive('profil')">
+      <div class="xbn-av" id="xbnAv"><i class="fas fa-user-circle"></i></div>
+      <span>Profil</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// ── Auto-highlight active nav item based on current page ──
+(function() {
+  var page = location.pathname.split('/').pop() || 'index.html';
+  var map = {
+    'index.html':'home', '':'home',
+    'riwayat.html':'riwayat',
+    'deposit.html':'deposit',
+    'profil.html':'profil',
+    'checkout.html':'home',
+    'seller-dashboard.html':'home',
+    'cs-dashboard.html':'home',
+    'admin-panel.html':'home',
+    'deposit-admin.html':'home',
+    'info-admin.html':'home',
+  };
+  var active = map[page];
+  if (active) {
+    var el = document.getElementById('xbn-' + active);
+    if (el) el.classList.add('active');
+  }
+  // Set page title in mobile header
+  var titles = {
+    'riwayat.html':'Riwayat Transaksi',
+    'deposit.html':'Deposit Saldo',
+    'profil.html':'Profil',
+    'checkout.html':'Checkout',
+    'seller-dashboard.html':'Seller Dashboard',
+    'cs-dashboard.html':'CS Dashboard',
+    'admin-panel.html':'Admin Panel',
+    'deposit-admin.html':'Kelola Deposit',
+    'info-admin.html':'Kelola Info',
+  };
+  var titleEl = document.getElementById('mphTitle');
+  if (titleEl && titles[page]) titleEl.textContent = titles[page];
+  // Add bottom padding to content
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth <= 900) {
+      var els = document.querySelectorAll('main, .main, .page, #main');
+      els.forEach(function(el) {
+        var pb = parseInt(getComputedStyle(el).paddingBottom) || 0;
+        if (pb < 70) el.style.paddingBottom = '80px';
+      });
+    }
+    // Load avatar from Supabase if logged in
+    if (typeof supabase !== 'undefined') {
+      try {
+        var sb2 = supabase.createClient(
+          'https://jydfjfjttpmropoczgop.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+        );
+        sb2.auth.getSession().then(function(r) {
+          var session = r.data && r.data.session;
+          if (!session) return;
+          sb2.from('profiles').select('avatar_url,username').eq('id', session.user.id).maybeSingle().then(function(pr) {
+            var p = pr.data;
+            if (!p) return;
+            var avEl = document.getElementById('xbnAv');
+            if (!avEl) return;
+            if (p.avatar_url) {
+              avEl.innerHTML = '<img src="https://res.cloudinary.com/drjmclzbi/image/upload/' + p.avatar_url + '" alt="av"/>';
+            } else {
+              var nm = p.username || session.user.email[0];
+              avEl.style.background = '#4a7dff';
+              avEl.style.color = '#fff';
+              avEl.innerHTML = '<span style="font-size:12px;font-weight:800">' + nm[0].toUpperCase() + '</span>';
+            }
+          });
+        });
+      } catch(e) {}
+    }
+  });
+})();
+
+function xbnSetActive(tab) {
+  document.querySelectorAll('.xbn-btn').forEach(function(b){ b.classList.remove('active'); });
+  var el = document.getElementById('xbn-' + tab);
+  if (el) el.classList.add('active');
+}
+function xbnFabAnim(el) {
+  el.classList.remove('pulse');
+  void el.offsetWidth;
+  el.classList.add('pulse');
+  setTimeout(function(){ el.classList.remove('pulse'); }, 500);
+}
+function xbnNavInfo(el) {
+  // On inner pages, just go to index with info hash
+  location.href = 'index.html#info';
+}
+function xbnRipple(btn) {
+  var r = document.createElement('span');
+  r.className = 'xbn-ripple';
+  r.style.cssText = 'width:40px;height:40px;margin:-20px 0 0 -20px;top:50%;left:50%;position:absolute';
+  btn.appendChild(r);
+  setTimeout(function(){ r.remove(); }, 600);
+}
+// Add ripple to all xbn-btn clicks
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.xbn-btn');
+  if (btn) xbnRipple(btn);
+});
+</script>
+
+</body>
+</html>

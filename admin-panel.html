@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XREZZKY — Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #0f1115;
+      --nav:       #171c24;
+      --surface:   #1d2430;
+      --border:    #2a3442;
+      --accent:    #4a7dff;
+      --accent-h:  #5d8fff;
+      --txt:       #f5f7fa;
+      --txt2:      #9ba6b2;
+      --success:   #22c55e;
+      --warn:      #f59e0b;
+      --danger:    #ef4444;
+      --radius:    12px;
+      --radius-sm: 8px;
+      --sidebar-w: 230px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; overflow-x: hidden; display: flex; flex-direction: column; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ── TOPBAR ── */
+    #topbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 56px; z-index: 200;
+      background: var(--nav); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 20px; gap: 14px;
+    }
+    .tb-brand { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--txt); width: var(--sidebar-w); flex-shrink: 0; }
+    .tb-brand .badge-admin { font-size: 9px; font-weight: 700; background: var(--danger); color: #fff; padding: 2px 7px; border-radius: 4px; letter-spacing: .04em; }
+    .tb-brand .dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; }
+    .tb-spacer { flex: 1; }
+    .tb-actions { display: flex; align-items: center; gap: 10px; }
+    .tb-icon-btn { background: none; border: 1px solid var(--border); color: var(--txt2); width: 34px; height: 34px; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all .18s; }
+    .tb-icon-btn:hover { color: var(--txt); border-color: var(--txt2); }
+    .tb-admin-chip { display: flex; align-items: center; gap: 8px; padding: 5px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; }
+    .tb-admin-chip .av { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #fff; overflow: hidden; }
+    .tb-admin-chip .av img { width: 100%; height: 100%; object-fit: cover; }
+    .tb-admin-chip span { font-size: 12px; font-weight: 500; }
+
+    /* ── SIDEBAR ── */
+    #sidebar {
+      position: fixed; top: 56px; left: 0; bottom: 0; width: var(--sidebar-w); z-index: 100;
+      background: var(--nav); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; overflow-y: auto; padding: 16px 10px;
+    }
+    .s-label { font-size: 10px; font-weight: 600; letter-spacing: .08em; color: var(--txt2); text-transform: uppercase; padding: 8px 10px 4px; }
+    .s-item {
+      display: flex; align-items: center; gap: 10px; padding: 9px 12px;
+      border-radius: var(--radius-sm); color: var(--txt2); font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all .18s; border: none; background: none; width: 100%; text-align: left;
+    }
+    .s-item i { width: 16px; text-align: center; font-size: 13px; }
+    .s-item:hover { background: var(--surface); color: var(--txt); }
+    .s-item.active { background: rgba(74,125,255,.12); color: var(--accent); }
+    .s-sep { height: 1px; background: var(--border); margin: 8px 0; }
+    .s-badge { margin-left: auto; background: var(--accent); color: #fff; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center; }
+    .s-badge.warn { background: var(--warn); }
+    .s-badge.danger { background: var(--danger); }
+
+    /* ── MAIN ── */
+    #main { margin-left: var(--sidebar-w); margin-top: 56px; padding: 24px; min-height: calc(100vh - 56px); }
+
+    /* ── PAGE VIEWS ── */
+    .pv { display: none; animation: fadeIn .25s ease; }
+    .pv.active { display: block; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+    /* ── PAGE HEADER ── */
+    .ph { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+    .ph-left h1 { font-size: 20px; font-weight: 700; }
+    .ph-left p  { font-size: 12px; color: var(--txt2); margin-top: 3px; }
+    .ph-right { display: flex; gap: 8px; align-items: center; }
+
+    /* ── STAT CARDS ── */
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .stat-card {
+      background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px 20px; display: flex; align-items: center; gap: 16px;
+      transition: border .2s;
+    }
+    .stat-card:hover { border-color: var(--accent); }
+    .stat-icon { width: 42px; height: 42px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .stat-info .val { font-size: 22px; font-weight: 700; line-height: 1; }
+    .stat-info .lab { font-size: 12px; color: var(--txt2); margin-top: 4px; }
+    .stat-info .sub { font-size: 11px; margin-top: 4px; }
+    .si-blue   { background: rgba(74,125,255,.15); color: var(--accent); }
+    .si-green  { background: rgba(34,197,94,.15);  color: var(--success); }
+    .si-yellow { background: rgba(245,158,11,.15); color: var(--warn); }
+    .si-red    { background: rgba(239,68,68,.15);  color: var(--danger); }
+    .si-purple { background: rgba(168,85,247,.15); color: #a855f7; }
+    .si-cyan   { background: rgba(6,182,212,.15);  color: #06b6d4; }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrap { margin-bottom: 24px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+    .progress-label .name { color: var(--txt2); }
+    .progress-label .pct  { font-weight: 600; }
+    .progress-bar { height: 8px; background: var(--surface); border-radius: 4px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+
+    /* ── STORAGE CARDS ── */
+    .storage-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .storage-card { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; }
+    .storage-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+    .storage-logo { width: 36px; height: 36px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .storage-title { font-size: 15px; font-weight: 600; }
+    .storage-sub   { font-size: 11px; color: var(--txt2); margin-top: 2px; }
+    .storage-stat  { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; }
+    .storage-stat .sk { color: var(--txt2); }
+    .storage-stat .sv { font-weight: 600; }
+    .storage-status { display: flex; align-items: center; gap: 6px; font-size: 11px; margin-top: 14px; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+    /* ── TABLE ── */
+    .card-box { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 20px; }
+    .card-box-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .card-box-header h3 { font-size: 14px; font-weight: 600; }
+    .card-box-header .hactions { display: flex; gap: 8px; }
+    .tbl-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th { padding: 11px 16px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .05em; color: var(--txt2); text-transform: uppercase; background: var(--surface); border-bottom: 1px solid var(--border); white-space: nowrap; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--surface); }
+    tbody td { padding: 12px 16px; color: var(--txt); vertical-align: middle; }
+    .td-muted { color: var(--txt2); font-size: 12px; }
+
+    /* ── USER ROW ── */
+    .user-cell { display: flex; align-items: center; gap: 10px; }
+    .user-av { width: 32px; height: 32px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--accent); overflow: hidden; flex-shrink: 0; }
+    .user-av img { width: 100%; height: 100%; object-fit: cover; }
+    .user-info-name { font-size: 13px; font-weight: 500; }
+    .user-info-email { font-size: 11px; color: var(--txt2); }
+
+    /* ── BADGES/CHIPS ── */
+    .chip { display: inline-block; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .chip-green  { background: rgba(34,197,94,.15);  color: var(--success); }
+    .chip-blue   { background: rgba(74,125,255,.15); color: var(--accent); }
+    .chip-yellow { background: rgba(245,158,11,.15); color: var(--warn); }
+    .chip-red    { background: rgba(239,68,68,.15);  color: var(--danger); }
+    .chip-gray   { background: rgba(155,166,178,.12); color: var(--txt2); }
+
+    /* ── BTN ── */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: var(--radius-sm); font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .2s; }
+    .btn-primary  { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-h); }
+    .btn-ghost    { background: transparent; color: var(--txt2); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--txt); border-color: var(--txt2); }
+    .btn-danger   { background: rgba(239,68,68,.12); color: var(--danger); border: 1px solid rgba(239,68,68,.25); }
+    .btn-danger:hover { background: rgba(239,68,68,.2); }
+    .btn-success  { background: rgba(34,197,94,.12); color: var(--success); border: 1px solid rgba(34,197,94,.25); }
+    .btn-success:hover { background: rgba(34,197,94,.2); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+    .btn-xs { padding: 3px 8px; font-size: 11px; }
+
+    /* ── SEARCH INPUT ── */
+    .search-input-wrap { position: relative; }
+    .search-input-wrap i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--txt2); font-size: 12px; }
+    .search-input { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px 8px 30px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; outline: none; transition: border .18s; width: 220px; }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--txt2); }
+
+    /* ── SELECT ── */
+    select.filter-sel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 10px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 12px; outline: none; cursor: pointer; }
+
+    /* ── MODAL ── */
+    .modal-overlay { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.7); display: none; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.open { display: flex; }
+    .modal-box { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; animation: fadeUp .3s ease; overflow: hidden; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
+    .modal-head { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .modal-head h3 { font-size: 15px; font-weight: 600; }
+    .modal-body { padding: 20px; overflow-y: auto; max-height: 70vh; }
+    .modal-body::-webkit-scrollbar { width: 4px; }
+    .modal-foot { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+    .modal-close-btn { background: none; border: none; color: var(--txt2); font-size: 16px; cursor: pointer; transition: color .18s; }
+    .modal-close-btn:hover { color: var(--txt); }
+
+    /* ── FORM ── */
+    .fg { margin-bottom: 14px; }
+    .fg label { display: block; font-size: 12px; color: var(--txt2); margin-bottom: 5px; font-weight: 500; }
+    .fg input, .fg textarea, .fg select {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 9px 12px;
+      color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px;
+      outline: none; transition: border .18s;
+    }
+    .fg input:focus, .fg textarea:focus, .fg select:focus { border-color: var(--accent); }
+    .fg input::placeholder, .fg textarea::placeholder { color: var(--txt2); opacity: .6; }
+    .fg textarea { resize: vertical; min-height: 80px; }
+    .fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .fg-note { font-size: 11px; color: var(--txt2); margin-top: 4px; }
+
+    /* ── USER DETAIL MODAL ── */
+    .ud-top { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+    .ud-av { width: 60px; height: 60px; border-radius: 50%; background: var(--surface); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; color: var(--accent); overflow: hidden; flex-shrink: 0; }
+    .ud-av img { width: 100%; height: 100%; object-fit: cover; }
+    .ud-name { font-size: 17px; font-weight: 700; }
+    .ud-email { font-size: 12px; color: var(--txt2); margin-top: 3px; }
+    .ud-chips { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+    .ud-section { font-size: 12px; font-weight: 600; color: var(--txt2); letter-spacing: .06em; text-transform: uppercase; margin: 16px 0 10px; }
+    .ud-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .ud-field { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; }
+    .ud-field .uf-lab { font-size: 10px; color: var(--txt2); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 4px; }
+    .ud-field .uf-val { font-size: 13px; font-weight: 500; word-break: break-all; }
+    .ud-orders { display: flex; flex-direction: column; gap: 8px; }
+    .ud-order-row { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
+
+    /* ── ACTIVITY LOG ── */
+    .log-list { display: flex; flex-direction: column; gap: 0; }
+    .log-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+    .log-item:last-child { border-bottom: none; }
+    .log-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 2px; }
+    .log-content .lc-text { font-size: 13px; }
+    .log-content .lc-time { font-size: 11px; color: var(--txt2); margin-top: 2px; }
+
+    /* ── CHART MINI ── */
+    .mini-chart { height: 180px; display: flex; align-items: flex-end; gap: 4px; padding: 0 4px; }
+    .mini-bar { flex: 1; border-radius: 4px 4px 0 0; transition: opacity .2s; cursor: pointer; position: relative; }
+    .mini-bar:hover { opacity: .8; }
+    .mini-bar-label { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 9px; color: var(--txt2); white-space: nowrap; }
+    .mini-chart-wrap { overflow: hidden; }
+    .chart-xaxis { display: flex; gap: 4px; padding: 4px 4px 0; margin-top: 6px; }
+    .chart-xaxis span { flex: 1; font-size: 9px; color: var(--txt2); text-align: center; }
+
+    /* ── EMPTY ── */
+    .empty-row td { text-align: center; color: var(--txt2); padding: 40px; font-size: 13px; }
+
+    /* ── TOAST ── */
+    #toast-c { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--nav); border: 1px solid var(--border); border-left: 3px solid var(--accent); color: var(--txt); font-size: 13px; padding: 10px 16px; border-radius: var(--radius-sm); min-width: 260px; animation: slideIn .3s ease; }
+    .toast.success { border-left-color: var(--success); }
+    .toast.error   { border-left-color: var(--danger); }
+    .toast.warn    { border-left-color: var(--warn); }
+    @keyframes slideIn { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+
+    /* ── SPINNER ── */
+    .spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; margin: 0 auto; }
+    @keyframes spin { to{transform:rotate(360deg)} }
+    .loading-center { display: flex; align-items: center; justify-content: center; padding: 40px; }
+
+    /* ── CONFIRM MODAL ── */
+    #confirmModal .modal-box { max-width: 380px; }
+    .confirm-icon { font-size: 36px; text-align: center; margin-bottom: 12px; }
+    .confirm-text { font-size: 14px; text-align: center; color: var(--txt2); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      #sidebar { display: none; }
+      #main { margin-left: 0; padding: 16px; }
+      .tb-brand { width: auto; }
+      .fg-row { grid-template-columns: 1fr; }
+      .ud-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── REFRESH INDICATOR ── */
+    .refresh-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--success); animation: blink 2s ease infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── SKELETON ── */
+    .sk { background: var(--surface); border-radius: 4px; animation: pulse 1.4s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+    /* ── TABS ── */
+    .tab-bar { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .tab-btn { padding: 9px 18px; font-size: 13px; font-weight: 500; color: var(--txt2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .18s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Poppins',sans-serif; }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+  </style>
+
+<style>
+@media (max-width: 900px) {
+  /* Hide fixed topbar on mobile — mobilePageHeader takes over */
+  #topbar { display: none !important; }
+  #sidebar { display: none !important; }
+  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
+  #main { padding: 14px 14px 80px !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Mobile Page Header ── -->
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+
+<!-- ══ TOPBAR ══ -->
+<div id="topbar">
+  <div class="tb-brand">
+    <div class="dot"></div>
+    XREZZKY <span class="badge-admin">ADMIN</span>
+  </div>
+  <div class="tb-spacer"></div>
+  <div class="tb-actions">
+    <div class="refresh-dot" title="Live data"></div>
+    <button class="tb-icon-btn" onclick="refreshAll()" title="Refresh"><i class="fas fa-rotate-right"></i></button>
+    <button class="tb-icon-btn" onclick="showPage('notif')" title="Notifikasi"><i class="fas fa-bell"></i></button>
+    <div class="tb-admin-chip" id="adminChip">
+      <div class="av" id="adminAv">A</div>
+      <span id="adminName">Admin</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
+  </div>
+</div>
+
+<!-- ══ SIDEBAR ══ -->
+<div id="sidebar">
+  <div class="s-label">Overview</div>
+  <button class="s-item active" onclick="showPage('dashboard', this)"><i class="fas fa-chart-pie"></i> Dashboard</button>
+  <button class="s-item" onclick="showPage('infra', this)"><i class="fas fa-server"></i> Infrastruktur</button>
+
+  <div class="s-sep"></div>
+  <div class="s-label">Data</div>
+  <button class="s-item" onclick="showPage('users', this)"><i class="fas fa-users"></i> Pengguna <span class="s-badge" id="badgeUsers">—</span></button>
+  <button class="s-item" onclick="showPage('products', this)"><i class="fas fa-box"></i> Produk <span class="s-badge" id="badgeProducts">—</span></button>
+  <button class="s-item" onclick="showPage('orders', this)"><i class="fas fa-receipt"></i> Pesanan <span class="s-badge warn" id="badgeOrders">—</span></button>
+  <button class="s-item" onclick="showPage('testimonials', this)"><i class="fas fa-star"></i> Testimoni</button>
+
+  <div class="s-sep"></div>
+  <div class="s-label">Sistem</div>
+  <button class="s-item" onclick="showPage('activity', this)"><i class="fas fa-list-check"></i> Log Aktivitas</button>
+  <button class="s-item" onclick="showPage('settings', this)"><i class="fas fa-gear"></i> Pengaturan</button>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div id="main">
+
+  <!-- ─────────────── DASHBOARD ─────────────── -->
+  <div class="pv active" id="pv-dashboard">
+    <div class="ph">
+      <div class="ph-left"><h1>Dashboard</h1><p>Overview keseluruhan XREZZKY Store</p></div>
+      <div class="ph-right">
+        <span style="font-size:12px; color:var(--txt2)" id="lastUpdated">Memuat...</span>
+        <button class="btn btn-primary btn-sm" onclick="refreshAll()"><i class="fas fa-rotate-right"></i> Refresh</button>
+      </div>
+    </div>
+
+    <!-- Stat Grid -->
+    <div class="stat-grid" id="dashStatGrid">
+      <div class="stat-card"><div class="stat-icon si-blue"><i class="fas fa-users"></i></div><div class="stat-info"><div class="val" id="ds-users">—</div><div class="lab">Total Member</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-green"><i class="fas fa-box"></i></div><div class="stat-info"><div class="val" id="ds-products">—</div><div class="lab">Produk Aktif</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-yellow"><i class="fas fa-receipt"></i></div><div class="stat-info"><div class="val" id="ds-orders">—</div><div class="lab">Total Pesanan</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-purple"><i class="fas fa-star"></i></div><div class="stat-info"><div class="val" id="ds-testis">—</div><div class="lab">Testimoni</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-cyan"><i class="fas fa-money-bill-wave"></i></div><div class="stat-info"><div class="val" id="ds-revenue">—</div><div class="lab">Total Revenue</div></div></div>
+      <div class="stat-card"><div class="stat-icon si-red"><i class="fas fa-clock"></i></div><div class="stat-info"><div class="val" id="ds-pending">—</div><div class="lab">Pending Order</div></div></div>
+    </div>
+
+    <!-- Charts + Recent -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px">
+      <!-- Registrasi Chart -->
+      <div class="card-box">
+        <div class="card-box-header"><h3><i class="fas fa-chart-bar" style="color:var(--accent); margin-right:6px"></i>Registrasi 7 Hari</h3></div>
+        <div style="padding:16px 20px">
+          <div class="mini-chart-wrap">
+            <div class="mini-chart" id="regChart"></div>
+            <div class="chart-xaxis" id="regChartX"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Order Chart -->
+      <div class="card-box">
+        <div class="card-box-header"><h3><i class="fas fa-chart-line" style="color:var(--success); margin-right:6px"></i>Order 7 Hari</h3></div>
+        <div style="padding:16px 20px">
+          <div class="mini-chart-wrap">
+            <div class="mini-chart" id="orderChart"></div>
+            <div class="chart-xaxis" id="orderChartX"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Users + Recent Orders -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+      <div class="card-box">
+        <div class="card-box-header"><h3>Member Terbaru</h3><div class="hactions"><button class="btn btn-ghost btn-sm" onclick="showPage('users', document.querySelector('[onclick*=users]'))">Lihat Semua</button></div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>User</th><th>Tgl Daftar</th><th>Status</th></tr></thead><tbody id="recentUsersTable"></tbody></table></div>
+      </div>
+      <div class="card-box">
+        <div class="card-box-header"><h3>Pesanan Terbaru</h3><div class="hactions"><button class="btn btn-ghost btn-sm" onclick="showPage('orders', document.querySelector('[onclick*=orders]'))">Lihat Semua</button></div></div>
+        <div class="tbl-wrap"><table><thead><tr><th>Produk</th><th>Harga</th><th>Status</th></tr></thead><tbody id="recentOrdersTable"></tbody></table></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── INFRASTRUKTUR ─────────────── -->
+  <div class="pv" id="pv-infra">
+    <div class="ph">
+      <div class="ph-left"><h1>Infrastruktur</h1><p>Monitor penggunaan Supabase & Cloudinary</p></div>
+      <div class="ph-right"><button class="btn btn-primary btn-sm" onclick="loadInfra()"><i class="fas fa-rotate-right"></i> Refresh</button></div>
+    </div>
+
+    <div class="storage-grid">
+      <!-- SUPABASE CARD -->
+      <div class="storage-card">
+        <div class="storage-header">
+          <div class="storage-logo si-green"><i class="fas fa-database"></i></div>
+          <div><div class="storage-title">Supabase</div><div class="storage-sub">Database & Auth</div></div>
+        </div>
+        <div id="supaStats">
+          <div class="loading-center"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- CLOUDINARY CARD -->
+      <div class="storage-card">
+        <div class="storage-header">
+          <div class="storage-logo si-blue"><i class="fas fa-cloud"></i></div>
+          <div><div class="storage-title">Cloudinary</div><div class="storage-sub">Media Storage (drjmclzbi)</div></div>
+        </div>
+        <div id="cloudStats">
+          <div class="loading-center"><div class="spinner"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Counts -->
+    <div class="card-box" style="margin-bottom:20px">
+      <div class="card-box-header"><h3><i class="fas fa-table" style="color:var(--accent); margin-right:6px"></i>Ukuran Tabel Database</h3></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Tabel</th><th>Jumlah Baris</th><th>Estimasi Ukuran</th><th>Status</th></tr></thead>
+          <tbody id="tableCountsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- API Usage -->
+    <div class="card-box">
+      <div class="card-box-header"><h3><i class="fas fa-bolt" style="color:var(--warn); margin-right:6px"></i>Info Koneksi & Batas</h3></div>
+      <div style="padding:20px; display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px" id="apiInfoGrid"></div>
+    </div>
+  </div>
+
+  <!-- ─────────────── USERS ─────────────── -->
+  <div class="pv" id="pv-users">
+    <div class="ph">
+      <div class="ph-left"><h1>Pengguna</h1><p>Manajemen semua member XREZZKY</p></div>
+      <div class="ph-right">
+        <div class="search-input-wrap"><i class="fas fa-search"></i><input class="search-input" id="userSearch" placeholder="Cari nama / email..." oninput="filterUsers()" /></div>
+        <select class="filter-sel" id="userRoleFilter" onchange="filterUsers()">
+          <option value="">Semua Role</option>
+          <option value="admin">Admin</option>
+          <option value="seller">Seller</option>
+          <option value="buyer">Buyer</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-box">
+      <div class="card-box-header"><h3 id="userCountLabel">Memuat...</h3></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>User</th><th>Role</th><th>Saldo</th><th>Tgl Daftar</th><th>Status</th><th>Aksi</th></tr></thead>
+          <tbody id="usersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── PRODUCTS ─────────────── -->
+  <div class="pv" id="pv-products">
+    <div class="ph">
+      <div class="ph-left"><h1>Produk</h1><p>Kelola semua listing produk</p></div>
+      <div class="ph-right">
+        <div class="search-input-wrap"><i class="fas fa-search"></i><input class="search-input" id="prodSearch" placeholder="Cari produk..." oninput="filterProducts()" /></div>
+        <button class="btn btn-primary" onclick="openAddProduct()"><i class="fas fa-plus"></i> Tambah Produk</button>
+      </div>
+    </div>
+    <div class="card-box">
+      <div class="card-box-header"><h3 id="prodCountLabel">Memuat...</h3></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Produk</th><th>Kategori</th><th>Harga</th><th>Terjual</th><th>Rating</th><th>Status</th><th>Aksi</th></tr></thead>
+          <tbody id="productsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── ORDERS ─────────────── -->
+  <div class="pv" id="pv-orders">
+    <div class="ph">
+      <div class="ph-left"><h1>Pesanan</h1><p>Monitor & update status pesanan</p></div>
+      <div class="ph-right">
+        <select class="filter-sel" id="orderStatusFilter" onchange="filterOrders()">
+          <option value="">Semua Status</option>
+          <option value="pending">Pending</option>
+          <option value="processing">Diproses</option>
+          <option value="completed">Selesai</option>
+          <option value="cancelled">Dibatalkan</option>
+        </select>
+      </div>
+    </div>
+    <div class="card-box">
+      <div class="card-box-header"><h3 id="orderCountLabel">Memuat...</h3></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Order ID</th><th>Pembeli</th><th>Produk</th><th>Total</th><th>Tgl</th><th>Status</th><th>Aksi</th></tr></thead>
+          <tbody id="ordersTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── TESTIMONIALS ─────────────── -->
+  <div class="pv" id="pv-testimonials">
+    <div class="ph">
+      <div class="ph-left"><h1>Testimoni</h1><p>Kelola ulasan produk dari pembeli</p></div>
+    </div>
+    <div class="card-box">
+      <div class="card-box-header"><h3 id="testiCountLabel">Memuat...</h3></div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Reviewer</th><th>Produk</th><th>Rating</th><th>Komentar</th><th>Tgl</th><th>Aksi</th></tr></thead>
+          <tbody id="testiTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─────────────── ACTIVITY LOG ─────────────── -->
+  <div class="pv" id="pv-activity">
+    <div class="ph">
+      <div class="ph-left"><h1>Log Aktivitas</h1><p>Riwayat aksi di platform</p></div>
+      <div class="ph-right"><button class="btn btn-ghost btn-sm" onclick="loadActivityLog()"><i class="fas fa-rotate-right"></i></button></div>
+    </div>
+    <div class="card-box">
+      <div class="card-box-header"><h3>Aktivitas Terbaru</h3></div>
+      <div style="padding:0 20px" id="activityLogWrap"><div class="loading-center"><div class="spinner"></div></div></div>
+    </div>
+  </div>
+
+  <!-- ─────────────── SETTINGS ─────────────── -->
+  <div class="pv" id="pv-settings">
+    <div class="ph"><div class="ph-left"><h1>Pengaturan</h1><p>Konfigurasi sistem XREZZKY</p></div></div>
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchSettingsTab('general', this)">Umum</button>
+      <button class="tab-btn" onclick="switchSettingsTab('koneksi', this)">Koneksi</button>
+      <button class="tab-btn" onclick="switchSettingsTab('admin', this)">Admin</button>
+    </div>
+
+    <div class="tab-panel active" id="tp-general">
+      <div style="max-width:520px">
+        <div class="card-box" style="margin-bottom:16px">
+          <div class="card-box-header"><h3>Identitas Toko</h3></div>
+          <div style="padding:20px">
+            <div class="fg"><label>Nama Toko</label><input type="text" value="XREZZKY OFFICIAL STORE" /></div>
+            <div class="fg"><label>Deskripsi</label><textarea>Marketplace digital terpercaya untuk akun, item, joki, dan layanan gaming.</textarea></div>
+            <div class="fg"><label>Maintenance Mode</label>
+              <select><option>OFF — Toko Aktif</option><option>ON — Maintenance</option></select>
+            </div>
+            <button class="btn btn-primary"><i class="fas fa-save"></i> Simpan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tp-koneksi">
+      <div style="max-width:520px">
+        <div class="card-box">
+          <div class="card-box-header"><h3>Konfigurasi Aktif</h3></div>
+          <div style="padding:20px; display:flex; flex-direction:column; gap:10px">
+            <div class="ud-field"><div class="uf-lab">Supabase URL</div><div class="uf-val" style="font-size:12px; color:var(--txt2)">https://jydfjfjttpmropoczgop.supabase.co</div></div>
+            <div class="ud-field"><div class="uf-lab">Cloudinary Cloud</div><div class="uf-val" style="color:var(--accent)">drjmclzbi</div></div>
+            <div class="ud-field"><div class="uf-lab">Upload Preset</div><div class="uf-val" style="color:var(--accent)">xrezzky_unsigned</div></div>
+            <div class="ud-field"><div class="uf-lab">API Key Cloudinary</div><div class="uf-val">511338818668895</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tp-admin">
+      <div style="max-width:520px">
+        <div class="card-box">
+          <div class="card-box-header"><h3>Ubah Password Admin</h3></div>
+          <div style="padding:20px">
+            <div class="fg"><label>Password Baru</label><input type="password" placeholder="••••••••" id="newPassInput" /></div>
+            <div class="fg"><label>Konfirmasi</label><input type="password" placeholder="••••••••" id="confPassInput" /></div>
+            <button class="btn btn-primary" onclick="changeAdminPass()"><i class="fas fa-key"></i> Update Password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══ MODALS ══ -->
+
+<!-- USER DETAIL -->
+<div class="modal-overlay" id="userDetailModal">
+  <div class="modal-box" style="max-width:560px">
+    <div class="modal-head"><h3>Detail Pengguna</h3><button class="modal-close-btn" onclick="closeModal('userDetailModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="userDetailBody"><div class="loading-center"><div class="spinner"></div></div></div>
+    <div class="modal-foot" id="userDetailFoot"></div>
+  </div>
+</div>
+
+<!-- ADD/EDIT PRODUCT -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-box" style="max-width:540px">
+    <div class="modal-head"><h3 id="prodModalTitle">Tambah Produk</h3><button class="modal-close-btn" onclick="closeModal('productModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <input type="hidden" id="prodEditId" />
+      <div class="fg-row">
+        <div class="fg"><label>Nama Produk *</label><input type="text" id="pName" placeholder="Nama produk" /></div>
+        <div class="fg"><label>Kategori *</label>
+          <select id="pCat">
+            <option value="">— pilih —</option>
+            <option value="akun">Akun</option>
+            <option value="joki">Joki</option>
+            <option value="item">Item</option>
+            <option value="top-up">Top Up</option>
+            <option value="digital">Digital</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg"><label>Deskripsi</label><textarea id="pDesc" placeholder="Deskripsi produk..."></textarea></div>
+      <div class="fg-row">
+        <div class="fg"><label>Harga (Rp) *</label><input type="number" id="pPrice" placeholder="0" /></div>
+        <div class="fg"><label>Stok</label><input type="number" id="pStock" placeholder="1" /></div>
+      </div>
+      <div class="fg"><label>Cloudinary Image URL</label><input type="text" id="pImageUrl" placeholder="folder/nama_file (tanpa base URL)" /></div>
+      <div class="fg-note">Contoh: <code>products/nama_file.jpg</code> — upload via Cloudinary dashboard dulu</div>
+      <div class="fg" style="margin-top:12px">
+        <label>Status</label>
+        <select id="pStatus"><option value="true">Aktif</option><option value="false">Nonaktif</option></select>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('productModal')">Batal</button>
+      <button class="btn btn-primary" onclick="saveProduct()"><i class="fas fa-save"></i> Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER DETAIL / UPDATE STATUS -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal-box" style="max-width:460px">
+    <div class="modal-head"><h3>Update Status Pesanan</h3><button class="modal-close-btn" onclick="closeModal('orderModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="orderModalBody"></div>
+    <div class="modal-foot" id="orderModalFoot"></div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box" style="max-width:360px">
+    <div class="modal-body" style="padding:28px">
+      <div class="confirm-icon" id="confirmIcon">⚠️</div>
+      <div class="confirm-text" id="confirmText">Yakin?</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Batal</button>
+      <button class="btn btn-danger" id="confirmBtn">Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast-c"></div>
+
+<!-- ══ SUPABASE SDK ══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ══════════════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════════════
+const SUPA_URL  = 'https://jydfjfjttpmropoczgop.supabase.co';
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const SUPA_SERVICE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODEwODI1MSwiZXhwIjoyMDkzNjg0MjUxfQ.rBuBsXDRaesLKR6as1lNk3nIp25l34VKY6-6x8gnPZg';
+const CLD_CLOUD  = 'drjmclzbi';
+const CLD_KEY    = '511338818668895';
+const CLD_SECRET = 'dQgtFA-mKUR5qSQPT3HOJ-ehOXQ';
+const CLD_BASE   = `https://res.cloudinary.com/${CLD_CLOUD}/image/upload/`;
+
+const sb  = supabase.createClient(SUPA_URL, SUPA_KEY);
+const sbS = supabase.createClient(SUPA_URL, SUPA_SERVICE);
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let currentAdmin = null;
+let allUsers     = [];
+let allProducts  = [];
+let allOrders    = [];
+let allTestis    = [];
+let activePage   = 'dashboard';
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { toast('Belum login. Redirect...', 'error'); setTimeout(() => location.href='index.html', 1500); return; }
+  currentAdmin = session.user;
+  loadAdminProfile();
+  refreshAll();
+});
+
+async function loadAdminProfile() {
+  const { data } = await sb.from('profiles').select('*').eq('id', currentAdmin.id).maybeSingle();
+  const name = data?.username || currentAdmin.email.split('@')[0];
+  document.getElementById('adminName').textContent = name;
+  const av = document.getElementById('adminAv');
+  if (data?.avatar_url) av.innerHTML = `<img src="${CLD_BASE}${data.avatar_url}" />`;
+  else av.textContent = name[0].toUpperCase();
+}
+
+async function refreshAll() {
+  document.getElementById('lastUpdated').textContent = 'Memperbarui...';
+  await Promise.all([loadDashboard(), loadUsers(), loadProducts(), loadOrders(), loadTestimonials()]);
+  document.getElementById('lastUpdated').textContent = 'Update: ' + new Date().toLocaleTimeString('id-ID');
+  if (activePage === 'infra') loadInfra();
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  location.href = 'index.html';
+}
+
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
+function showPage(page, sidebarEl) {
+  activePage = page;
+  document.querySelectorAll('.pv').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.s-item').forEach(i => i.classList.remove('active'));
+  const pv = document.getElementById(`pv-${page}`);
+  if (pv) pv.classList.add('active');
+  if (sidebarEl) sidebarEl.classList.add('active');
+  if (page === 'infra') loadInfra();
+  if (page === 'activity') loadActivityLog();
+}
+
+// ══════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════
+async function loadDashboard() {
+  const [
+    { count: uCount }, { count: pCount }, { count: oCount }, { count: tCount },
+    { data: revenueData }, { count: pendingCount }
+  ] = await Promise.all([
+    sb.from('profiles').select('*', { count:'exact', head:true }),
+    sb.from('products').select('*', { count:'exact', head:true }).eq('is_active', true),
+    sb.from('orders').select('*', { count:'exact', head:true }),
+    sb.from('testimonials').select('*', { count:'exact', head:true }),
+    sb.from('orders').select('total_price').eq('status','completed'),
+    sb.from('orders').select('*', { count:'exact', head:true }).eq('status','pending'),
+  ]);
+
+  const revenue = revenueData ? revenueData.reduce((a, r) => a + (r.total_price || 0), 0) : 0;
+
+  animVal('ds-users',    uCount || 0);
+  animVal('ds-products', pCount || 0);
+  animVal('ds-orders',   oCount || 0);
+  animVal('ds-testis',   tCount || 0);
+  document.getElementById('ds-revenue').textContent = fmtRp(revenue);
+  animVal('ds-pending',  pendingCount || 0);
+
+  document.getElementById('badgeUsers').textContent    = uCount || 0;
+  document.getElementById('badgeProducts').textContent = pCount || 0;
+  document.getElementById('badgeOrders').textContent   = pendingCount || 0;
+
+  // Recent users
+  const { data: ru } = await sb.from('profiles').select('*').order('created_at', { ascending: false }).limit(5);
+  document.getElementById('recentUsersTable').innerHTML = ru && ru.length
+    ? ru.map(u => `<tr>
+        <td><div class="user-cell">
+          <div class="user-av">${u.avatar_url ? `<img src="${CLD_BASE}${u.avatar_url}"/>` : (u.username||'U')[0].toUpperCase()}</div>
+          <div><div class="user-info-name">${esc(u.username||'—')}</div><div class="user-info-email">${esc(u.email||'')}</div></div>
+        </div></td>
+        <td class="td-muted">${fmtDate(u.created_at)}</td>
+        <td><span class="chip chip-green">Aktif</span></td>
+      </tr>`).join('')
+    : '<tr class="empty-row"><td colspan="3">Belum ada member</td></tr>';
+
+  // Recent orders
+  const { data: ro } = await sb.from('orders').select('*, products(name)').order('created_at', { ascending: false }).limit(5);
+  document.getElementById('recentOrdersTable').innerHTML = ro && ro.length
+    ? ro.map(o => `<tr>
+        <td>${esc(o.products?.name || '—')}</td>
+        <td style="color:var(--accent); font-weight:600">${fmtRp(o.total_price)}</td>
+        <td>${statusChip(o.status)}</td>
+      </tr>`).join('')
+    : '<tr class="empty-row"><td colspan="3">Belum ada pesanan</td></tr>';
+
+  // Charts
+  buildChart('regChart', 'regChartX', await getDailyRegistrations(), '#4a7dff');
+  buildChart('orderChart', 'orderChartX', await getDailyOrders(), '#22c55e');
+}
+
+async function getDailyRegistrations() {
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const start = d.toISOString().split('T')[0] + 'T00:00:00';
+    const end   = d.toISOString().split('T')[0] + 'T23:59:59';
+    const { count } = await sb.from('profiles').select('*', { count:'exact', head:true }).gte('created_at', start).lte('created_at', end);
+    days.push({ label: d.toLocaleDateString('id-ID', { weekday:'short' }), val: count || 0 });
+  }
+  return days;
+}
+
+async function getDailyOrders() {
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const start = d.toISOString().split('T')[0] + 'T00:00:00';
+    const end   = d.toISOString().split('T')[0] + 'T23:59:59';
+    const { count } = await sb.from('orders').select('*', { count:'exact', head:true }).gte('created_at', start).lte('created_at', end);
+    days.push({ label: d.toLocaleDateString('id-ID', { weekday:'short' }), val: count || 0 });
+  }
+  return days;
+}
+
+function buildChart(chartId, xId, data, color) {
+  const max = Math.max(...data.map(d => d.val), 1);
+  const chart = document.getElementById(chartId);
+  const xaxis = document.getElementById(xId);
+  chart.innerHTML = data.map(d => {
+    const pct = Math.max((d.val / max) * 100, 4);
+    return `<div class="mini-bar" style="background:${color}; height:${pct}%; opacity:.85" title="${d.label}: ${d.val}"></div>`;
+  }).join('');
+  xaxis.innerHTML = data.map(d => `<span>${d.label}</span>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  INFRASTRUKTUR
+// ══════════════════════════════════════════
+async function loadInfra() {
+  loadSupabaseStats();
+  loadCloudinaryStats();
+  loadTableCounts();
+  loadApiInfo();
+}
+
+async function loadSupabaseStats() {
+  const el = document.getElementById('supaStats');
+  // Get actual row counts
+  const tables = ['profiles','products','orders','testimonials'];
+  let totalRows = 0;
+  const counts = {};
+  for (const t of tables) {
+    const { count } = await sb.from(t).select('*', { count:'exact', head:true });
+    counts[t] = count || 0;
+    totalRows += (count || 0);
+  }
+
+  // Supabase free tier: 500MB DB, 1GB storage, 50k MAU auth
+  const dbUsedMB = Math.round(totalRows * 0.002 * 100) / 100; // rough estimate
+  const dbLimitMB = 500;
+  const dbPct = Math.min((dbUsedMB / dbLimitMB) * 100, 100).toFixed(1);
+
+  el.innerHTML = `
+    <div class="storage-stat"><span class="sk">Project Ref</span><span class="sv" style="color:var(--accent); font-size:12px">jydfjfjttpmropoczgop</span></div>
+    <div class="storage-stat"><span class="sk">Total Rows</span><span class="sv">${totalRows.toLocaleString('id-ID')}</span></div>
+    <div class="storage-stat"><span class="sk">Estimasi DB Size</span><span class="sv">${dbUsedMB} MB</span></div>
+    <div class="storage-stat"><span class="sk">Batas Free Tier DB</span><span class="sv">500 MB</span></div>
+    <div class="progress-wrap" style="margin-bottom:0">
+      <div class="progress-label"><span class="name">Penggunaan Database</span><span class="pct" style="color:${dbPct > 80 ? 'var(--danger)' : 'var(--success)'}">${dbPct}%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${dbPct}%; background:${dbPct > 80 ? 'var(--danger)' : 'var(--success)'}"></div></div>
+    </div>
+    <div class="storage-status" style="margin-top:14px">
+      <div class="status-dot" style="background:var(--success)"></div>
+      <span style="color:var(--txt2); font-size:12px">Koneksi aktif — Free Tier</span>
+    </div>
+    <div class="storage-stat" style="margin-top:10px"><span class="sk">Auth MAU (estimasi)</span><span class="sv">${counts.profiles || 0} / 50.000</span></div>
+    <div class="progress-wrap" style="margin-top:6px">
+      <div class="progress-label"><span class="name">Auth Usage</span><span class="pct">${Math.min(((counts.profiles||0)/50000)*100, 100).toFixed(2)}%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min(((counts.profiles||0)/50000)*100,100)}%; background:var(--accent)"></div></div>
+    </div>`;
+}
+
+async function loadCloudinaryStats() {
+  const el = document.getElementById('cloudStats');
+  // Cloudinary free tier: 25 GB storage, 25 GB bandwidth/mo
+  // We count approximate by getting product count with images
+  const { count: prodWithImg } = await sb.from('products').select('*', { count:'exact', head:true }).not('image_url', 'is', null);
+  const { count: profWithImg } = await sb.from('profiles').select('*', { count:'exact', head:true }).not('avatar_url', 'is', null);
+
+  const estImages = (prodWithImg || 0) + (profWithImg || 0);
+  const estMB = Math.round(estImages * 0.5 * 100) / 100; // ~500KB avg
+  const limitMB = 25 * 1024; // 25GB in MB
+  const pct = Math.min((estMB / limitMB) * 100, 100).toFixed(3);
+
+  el.innerHTML = `
+    <div class="storage-stat"><span class="sk">Cloud Name</span><span class="sv" style="color:var(--accent)">drjmclzbi</span></div>
+    <div class="storage-stat"><span class="sk">API Key</span><span class="sv" style="font-size:12px">511338818668895</span></div>
+    <div class="storage-stat"><span class="sk">Estimasi File</span><span class="sv">${estImages} file</span></div>
+    <div class="storage-stat"><span class="sk">Estimasi Storage</span><span class="sv">${estMB} MB</span></div>
+    <div class="storage-stat"><span class="sk">Batas Free Tier</span><span class="sv">25 GB</span></div>
+    <div class="progress-wrap" style="margin-bottom:0">
+      <div class="progress-label"><span class="name">Storage Usage</span><span class="pct" style="color:var(--success)">${pct}%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%; background:var(--accent)"></div></div>
+    </div>
+    <div class="storage-status" style="margin-top:14px">
+      <div class="status-dot" style="background:var(--success)"></div>
+      <span style="color:var(--txt2); font-size:12px">Aktif — Upload Preset: xrezzky_unsigned</span>
+    </div>
+    <div class="storage-stat" style="margin-top:10px"><span class="sk">Bandwidth / bulan (est.)</span><span class="sv">${Math.round(estMB * 2)} MB / 25 GB</span></div>
+    <div class="progress-wrap" style="margin-top:6px">
+      <div class="progress-label"><span class="name">Bandwidth Usage</span><span class="pct">${Math.min((estMB*2)/(25*1024)*100, 100).toFixed(3)}%</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${Math.min((estMB*2)/(25*1024)*100,100)}%; background:var(--cyan, #06b6d4)"></div></div>
+    </div>`;
+}
+
+async function loadTableCounts() {
+  const tables = ['profiles','products','orders','testimonials'];
+  const labels = { profiles:'Pengguna', products:'Produk', orders:'Pesanan', testimonials:'Testimoni' };
+  const body = document.getElementById('tableCountsBody');
+  body.innerHTML = '';
+  for (const t of tables) {
+    const { count } = await sb.from(t).select('*', { count:'exact', head:true });
+    const estKB = Math.round((count||0) * 0.5);
+    body.innerHTML += `<tr>
+      <td><strong>${labels[t]}</strong> <span class="td-muted">(${t})</span></td>
+      <td>${(count||0).toLocaleString('id-ID')} baris</td>
+      <td>~${estKB} KB</td>
+      <td><span class="chip chip-green">Normal</span></td>
+    </tr>`;
+  }
+}
+
+function loadApiInfo() {
+  const infos = [
+    { label:'Supabase Tier', val:'Free', color:'var(--success)' },
+    { label:'Max DB Size', val:'500 MB', color:'var(--txt)' },
+    { label:'Auth MAU Limit', val:'50.000', color:'var(--txt)' },
+    { label:'API Requests/bulan', val:'500.000', color:'var(--txt)' },
+    { label:'Cloudinary Tier', val:'Free', color:'var(--success)' },
+    { label:'Media Storage', val:'25 GB', color:'var(--txt)' },
+    { label:'Bandwidth/bulan', val:'25 GB', color:'var(--txt)' },
+    { label:'Transformasi/bulan', val:'25.000', color:'var(--txt)' },
+  ];
+  document.getElementById('apiInfoGrid').innerHTML = infos.map(i => `
+    <div class="ud-field">
+      <div class="uf-lab">${i.label}</div>
+      <div class="uf-val" style="color:${i.color}">${i.val}</div>
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════
+//  USERS
+// ══════════════════════════════════════════
+async function loadUsers() {
+  const { data, count } = await sb.from('profiles').select('*', { count:'exact' }).order('created_at', { ascending: false });
+  allUsers = data || [];
+  document.getElementById('userCountLabel').textContent = `${count || 0} Pengguna Terdaftar`;
+  renderUsers(allUsers);
+}
+
+function renderUsers(users) {
+  const body = document.getElementById('usersTableBody');
+  if (!users.length) { body.innerHTML = '<tr class="empty-row"><td colspan="6">Tidak ada pengguna</td></tr>'; return; }
+  body.innerHTML = users.map(u => `
+    <tr>
+      <td><div class="user-cell">
+        <div class="user-av">${u.avatar_url ? `<img src="${CLD_BASE}${u.avatar_url}"/>` : (u.username||'U')[0].toUpperCase()}</div>
+        <div><div class="user-info-name">${esc(u.username||'—')}</div><div class="user-info-email">${esc(u.email||'')}</div></div>
+      </div></td>
+      <td><span class="chip ${u.role === 'admin' ? 'chip-red' : u.role === 'seller' ? 'chip-yellow' : 'chip-blue'}">${u.role||'buyer'}</span></td>
+      <td style="color:var(--success); font-weight:600">${fmtRp(u.balance||0)}</td>
+      <td class="td-muted">${fmtDate(u.created_at)}</td>
+      <td><span class="chip chip-green">Aktif</span></td>
+      <td>
+        <button class="btn btn-ghost btn-xs" onclick="openUserDetail('${u.id}')"><i class="fas fa-eye"></i></button>
+        <button class="btn btn-danger btn-xs" onclick="confirmAction('Hapus user ini?', '🗑️', () => deleteUser('${u.id}'))"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+function filterUsers() {
+  const q    = document.getElementById('userSearch').value.toLowerCase();
+  const role = document.getElementById('userRoleFilter').value;
+  const filtered = allUsers.filter(u =>
+    (!q    || (u.username||'').toLowerCase().includes(q) || (u.email||'').toLowerCase().includes(q)) &&
+    (!role || (u.role||'buyer') === role)
+  );
+  renderUsers(filtered);
+}
+
+async function openUserDetail(id) {
+  openModal('userDetailModal');
+  const body = document.getElementById('userDetailBody');
+  const foot = document.getElementById('userDetailFoot');
+  body.innerHTML = '<div class="loading-center"><div class="spinner"></div></div>';
+  foot.innerHTML = '';
+
+  const user = allUsers.find(u => u.id === id);
+  if (!user) { body.innerHTML = '<p style="color:var(--txt2); padding:20px">User tidak ditemukan</p>'; return; }
+
+  // orders count
+  const { count: ordCount } = await sb.from('orders').select('*', { count:'exact', head:true }).eq('user_id', id);
+  // recent orders
+  const { data: orders } = await sb.from('orders').select('*, products(name)').eq('user_id', id).order('created_at', { ascending: false }).limit(5);
+
+  const avHtml = user.avatar_url
+    ? `<img src="${CLD_BASE}${user.avatar_url}" />`
+    : (user.username||'U')[0].toUpperCase();
+
+  body.innerHTML = `
+    <div class="ud-top">
+      <div class="ud-av">${avHtml}</div>
+      <div>
+        <div class="ud-name">${esc(user.username || '—')}</div>
+        <div class="ud-email">${esc(user.email || '')}</div>
+        <div class="ud-chips">
+          <span class="chip ${user.role === 'admin' ? 'chip-red' : user.role === 'seller' ? 'chip-yellow' : 'chip-blue'}">${user.role||'buyer'}</span>
+          <span class="chip chip-green">Aktif</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ud-section">Info Akun</div>
+    <div class="ud-grid">
+      <div class="ud-field"><div class="uf-lab">User ID</div><div class="uf-val" style="font-size:11px; color:var(--txt2)">${user.id}</div></div>
+      <div class="ud-field"><div class="uf-lab">Saldo</div><div class="uf-val" style="color:var(--success)">${fmtRp(user.balance||0)}</div></div>
+      <div class="ud-field"><div class="uf-lab">Total Pesanan</div><div class="uf-val">${ordCount||0}</div></div>
+      <div class="ud-field"><div class="uf-lab">Bergabung</div><div class="uf-val">${fmtDate(user.created_at)}</div></div>
+    </div>
+
+    <div class="ud-section">Ubah Role</div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px">
+      ${['buyer','seller','admin'].map(r => `<button class="btn ${(user.role||'buyer')===r ? 'btn-primary' : 'btn-ghost'} btn-sm" onclick="updateUserRole('${user.id}','${r}',this)">${r}</button>`).join('')}
+    </div>
+
+    <div class="ud-section">Riwayat Pesanan (5 Terakhir)</div>
+    <div class="ud-orders">
+      ${orders && orders.length ? orders.map(o => `
+        <div class="ud-order-row">
+          <div>
+            <div style="font-size:13px; font-weight:500">${esc(o.products?.name||'—')}</div>
+            <div style="font-size:11px; color:var(--txt2)">${fmtDate(o.created_at)}</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:10px">
+            <span style="color:var(--accent); font-weight:600; font-size:13px">${fmtRp(o.total_price)}</span>
+            ${statusChip(o.status)}
+          </div>
+        </div>`).join('') : '<div style="text-align:center; color:var(--txt2); font-size:13px; padding:16px">Belum ada pesanan</div>'}
+    </div>`;
+
+  foot.innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal('userDetailModal')">Tutup</button>
+    <button class="btn btn-danger btn-sm" onclick="confirmAction('Hapus user ini secara permanen?','🗑️', () => deleteUser('${id}'))">Hapus User</button>`;
+}
+
+async function updateUserRole(userId, role, btn) {
+  const { error } = await sb.from('profiles').update({ role }).eq('id', userId);
+  if (error) return toast('Gagal update role: ' + error.message, 'error');
+  btn.closest('.modal-body').querySelectorAll('[onclick*=updateUserRole]').forEach(b => b.classList.replace('btn-primary', 'btn-ghost'));
+  btn.classList.replace('btn-ghost', 'btn-primary');
+  allUsers = allUsers.map(u => u.id === userId ? { ...u, role } : u);
+  toast('Role diupdate ✅', 'success');
+  loadUsers();
+}
+
+async function deleteUser(id) {
+  closeModal('confirmModal');
+  const { error } = await sbS.from('profiles').delete().eq('id', id);
+  if (error) return toast('Gagal hapus: ' + error.message, 'error');
+  toast('User dihapus', 'success');
+  closeModal('userDetailModal');
+  loadUsers();
+}
+
+// ══════════════════════════════════════════
+//  PRODUCTS
+// ══════════════════════════════════════════
+async function loadProducts() {
+  const { data, count } = await sb.from('products').select('*', { count:'exact' }).order('created_at', { ascending: false });
+  allProducts = data || [];
+  document.getElementById('prodCountLabel').textContent = `${count||0} Produk`;
+  renderProducts(allProducts);
+}
+
+function renderProducts(products) {
+  const body = document.getElementById('productsTableBody');
+  if (!products.length) { body.innerHTML = '<tr class="empty-row"><td colspan="7">Tidak ada produk</td></tr>'; return; }
+  body.innerHTML = products.map(p => `
+    <tr>
+      <td><div style="display:flex; align-items:center; gap:10px">
+        ${p.image_url ? `<img src="${CLD_BASE}${p.image_url}" style="width:36px; height:36px; border-radius:6px; object-fit:cover" />` : `<div style="width:36px; height:36px; border-radius:6px; background:var(--surface); display:flex; align-items:center; justify-content:center; color:var(--txt2); font-size:14px"><i class="fas fa-box"></i></div>`}
+        <div><div style="font-size:13px; font-weight:500">${esc(p.name)}</div><div class="td-muted" style="font-size:11px">${p.id.slice(0,8)}...</div></div>
+      </div></td>
+      <td><span class="chip chip-blue">${esc(p.category||'—')}</span></td>
+      <td style="color:var(--accent); font-weight:600">${fmtRp(p.price)}</td>
+      <td>${(p.sold_count||0).toLocaleString('id-ID')}</td>
+      <td>${p.avg_rating ? `<span style="color:var(--warn)">★ ${Number(p.avg_rating).toFixed(1)}</span>` : '—'}</td>
+      <td><span class="chip ${p.is_active ? 'chip-green' : 'chip-gray'}">${p.is_active ? 'Aktif' : 'Nonaktif'}</span></td>
+      <td style="display:flex; gap:4px">
+        <button class="btn btn-ghost btn-xs" onclick="openEditProduct('${p.id}')"><i class="fas fa-pen"></i></button>
+        <button class="btn ${p.is_active ? 'btn-danger' : 'btn-success'} btn-xs" onclick="toggleProduct('${p.id}', ${p.is_active})">${p.is_active ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>'}</button>
+        <button class="btn btn-danger btn-xs" onclick="confirmAction('Hapus produk ini?','🗑️', () => deleteProduct('${p.id}'))"><i class="fas fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+function filterProducts() {
+  const q = document.getElementById('prodSearch').value.toLowerCase();
+  renderProducts(allProducts.filter(p => (p.name||'').toLowerCase().includes(q) || (p.category||'').toLowerCase().includes(q)));
+}
+
+function openAddProduct() {
+  document.getElementById('prodModalTitle').textContent = 'Tambah Produk';
+  document.getElementById('prodEditId').value = '';
+  ['pName','pDesc','pPrice','pStock','pImageUrl'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('pCat').value = '';
+  document.getElementById('pStatus').value = 'true';
+  openModal('productModal');
+}
+
+function openEditProduct(id) {
+  const p = allProducts.find(p => p.id === id);
+  if (!p) return;
+  document.getElementById('prodModalTitle').textContent = 'Edit Produk';
+  document.getElementById('prodEditId').value = id;
+  document.getElementById('pName').value     = p.name || '';
+  document.getElementById('pDesc').value     = p.description || '';
+  document.getElementById('pPrice').value    = p.price || '';
+  document.getElementById('pStock').value    = p.stock || 1;
+  document.getElementById('pCat').value      = p.category || '';
+  document.getElementById('pImageUrl').value = p.image_url || '';
+  document.getElementById('pStatus').value   = p.is_active ? 'true' : 'false';
+  openModal('productModal');
+}
+
+async function saveProduct() {
+  const id       = document.getElementById('prodEditId').value;
+  const name     = document.getElementById('pName').value.trim();
+  const cat      = document.getElementById('pCat').value;
+  const desc     = document.getElementById('pDesc').value.trim();
+  const price    = parseFloat(document.getElementById('pPrice').value) || 0;
+  const stock    = parseInt(document.getElementById('pStock').value) || 1;
+  const imageUrl = document.getElementById('pImageUrl').value.trim();
+  const isActive = document.getElementById('pStatus').value === 'true';
+
+  if (!name || !cat) return toast('Nama dan kategori wajib diisi', 'error');
+
+  const payload = { name, category: cat, description: desc, price, stock, image_url: imageUrl || null, is_active: isActive };
+
+  let error;
+  if (id) {
+    ({ error } = await sb.from('products').update(payload).eq('id', id));
+  } else {
+    payload.created_at = new Date().toISOString();
+    payload.sold_count = 0;
+    ({ error } = await sb.from('products').insert([payload]));
+  }
+
+  if (error) return toast('Gagal: ' + error.message, 'error');
+  toast(id ? 'Produk diperbarui ✅' : 'Produk ditambahkan ✅', 'success');
+  closeModal('productModal');
+  loadProducts();
+}
+
+async function toggleProduct(id, current) {
+  const { error } = await sb.from('products').update({ is_active: !current }).eq('id', id);
+  if (error) return toast('Gagal: ' + error.message, 'error');
+  toast(`Produk ${current ? 'dinonaktifkan' : 'diaktifkan'}`, 'success');
+  loadProducts();
+}
+
+async function deleteProduct(id) {
+  closeModal('confirmModal');
+  const { error } = await sb.from('products').delete().eq('id', id);
+  if (error) return toast('Gagal hapus: ' + error.message, 'error');
+  toast('Produk dihapus', 'success');
+  loadProducts();
+}
+
+// ══════════════════════════════════════════
+//  ORDERS
+// ══════════════════════════════════════════
+async function loadOrders() {
+  const { data, count } = await sb.from('orders').select('*, products(name), profiles(username, email)', { count:'exact' }).order('created_at', { ascending: false });
+  allOrders = data || [];
+  document.getElementById('orderCountLabel').textContent = `${count||0} Pesanan`;
+  renderOrders(allOrders);
+}
+
+function renderOrders(orders) {
+  const body = document.getElementById('ordersTableBody');
+  if (!orders.length) { body.innerHTML = '<tr class="empty-row"><td colspan="7">Tidak ada pesanan</td></tr>'; return; }
+  body.innerHTML = orders.map(o => `
+    <tr>
+      <td style="font-size:11px; color:var(--txt2)">${o.id.slice(0,8)}...</td>
+      <td><div class="user-info-name" style="font-size:13px">${esc(o.profiles?.username||'—')}</div><div class="user-info-email">${esc(o.profiles?.email||'')}</div></td>
+      <td>${esc(o.products?.name||'—')}</td>
+      <td style="color:var(--accent); font-weight:600">${fmtRp(o.total_price)}</td>
+      <td class="td-muted">${fmtDate(o.created_at)}</td>
+      <td>${statusChip(o.status)}</td>
+      <td><button class="btn btn-ghost btn-xs" onclick="openOrderModal('${o.id}')"><i class="fas fa-pen"></i> Update</button></td>
+    </tr>`).join('');
+}
+
+function filterOrders() {
+  const s = document.getElementById('orderStatusFilter').value;
+  renderOrders(s ? allOrders.filter(o => o.status === s) : allOrders);
+}
+
+function openOrderModal(id) {
+  const o = allOrders.find(o => o.id === id);
+  if (!o) return;
+  openModal('orderModal');
+  const statuses = ['pending','processing','completed','cancelled'];
+  document.getElementById('orderModalBody').innerHTML = `
+    <div class="ud-field" style="margin-bottom:12px"><div class="uf-lab">Order ID</div><div class="uf-val" style="font-size:12px">${o.id}</div></div>
+    <div class="ud-field" style="margin-bottom:12px"><div class="uf-lab">Pembeli</div><div class="uf-val">${esc(o.profiles?.username||'—')} — ${esc(o.profiles?.email||'')}</div></div>
+    <div class="ud-field" style="margin-bottom:12px"><div class="uf-lab">Produk</div><div class="uf-val">${esc(o.products?.name||'—')}</div></div>
+    <div class="ud-field" style="margin-bottom:16px"><div class="uf-lab">Total</div><div class="uf-val" style="color:var(--accent)">${fmtRp(o.total_price)}</div></div>
+    <div class="fg"><label>Status Baru</label>
+      <select id="orderNewStatus">
+        ${statuses.map(s => `<option value="${s}" ${o.status===s?'selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+      </select>
+    </div>`;
+  document.getElementById('orderModalFoot').innerHTML = `
+    <button class="btn btn-ghost" onclick="closeModal('orderModal')">Batal</button>
+    <button class="btn btn-primary" onclick="updateOrderStatus('${id}')"><i class="fas fa-save"></i> Simpan</button>`;
+}
+
+async function updateOrderStatus(id) {
+  const status = document.getElementById('orderNewStatus').value;
+  const { error } = await sb.from('orders').update({ status }).eq('id', id);
+  if (error) return toast('Gagal: ' + error.message, 'error');
+  toast('Status diperbarui ✅', 'success');
+  closeModal('orderModal');
+  loadOrders();
+}
+
+// ══════════════════════════════════════════
+//  TESTIMONIALS
+// ══════════════════════════════════════════
+async function loadTestimonials() {
+  const { data, count } = await sb.from('testimonials').select('*, products(name), profiles(username)', { count:'exact' }).order('created_at', { ascending: false });
+  allTestis = data || [];
+  document.getElementById('testiCountLabel').textContent = `${count||0} Testimoni`;
+  const body = document.getElementById('testiTableBody');
+  if (!allTestis.length) { body.innerHTML = '<tr class="empty-row"><td colspan="6">Tidak ada testimoni</td></tr>'; return; }
+  body.innerHTML = allTestis.map(t => `
+    <tr>
+      <td>${esc(t.profiles?.username||'Anonymous')}</td>
+      <td>${esc(t.products?.name||'—')}</td>
+      <td><span style="color:var(--warn)">${'★'.repeat(t.rating||5)}</span></td>
+      <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--txt2); font-size:12px">${esc(t.comment||'—')}</td>
+      <td class="td-muted">${fmtDate(t.created_at)}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="confirmAction('Hapus testimoni ini?','🗑️', () => deleteTesti('${t.id}'))"><i class="fas fa-trash"></i></button></td>
+    </tr>`).join('');
+}
+
+async function deleteTesti(id) {
+  closeModal('confirmModal');
+  const { error } = await sb.from('testimonials').delete().eq('id', id);
+  if (error) return toast('Gagal: ' + error.message, 'error');
+  toast('Testimoni dihapus', 'success');
+  loadTestimonials();
+}
+
+// ══════════════════════════════════════════
+//  ACTIVITY LOG (from audit table or fallback)
+// ══════════════════════════════════════════
+async function loadActivityLog() {
+  const wrap = document.getElementById('activityLogWrap');
+  wrap.innerHTML = '<div class="loading-center"><div class="spinner"></div></div>';
+
+  // Try audit_logs table, fallback to synthetic from orders/profiles
+  const { data: logs } = await sb.from('audit_logs').select('*').order('created_at', { ascending: false }).limit(30);
+  if (logs && logs.length) {
+    wrap.innerHTML = `<div class="log-list">${logs.map(l => `
+      <div class="log-item">
+        <div class="log-icon si-blue"><i class="fas fa-bolt"></i></div>
+        <div class="log-content">
+          <div class="lc-text">${esc(l.action||'—')} — ${esc(l.description||'')}</div>
+          <div class="lc-time">${fmtDate(l.created_at)}</div>
+        </div>
+      </div>`).join('')}</div>`;
+    return;
+  }
+
+  // Synthetic log from recent data
+  const [{ data: newUsers }, { data: newOrders }, { data: newProds }] = await Promise.all([
+    sb.from('profiles').select('username, created_at').order('created_at', { ascending: false }).limit(5),
+    sb.from('orders').select('id, status, created_at, profiles(username)').order('created_at', { ascending: false }).limit(5),
+    sb.from('products').select('name, created_at').order('created_at', { ascending: false }).limit(5),
+  ]);
+
+  const events = [
+    ...(newUsers||[]).map(u => ({ icon:'user-plus', color:'var(--accent)', text:`User baru mendaftar: <strong>${esc(u.username||'—')}</strong>`, time: u.created_at })),
+    ...(newOrders||[]).map(o => ({ icon:'receipt', color:'var(--warn)', text:`Pesanan ${o.id.slice(0,8)} — Status: <strong>${o.status}</strong> oleh ${esc(o.profiles?.username||'—')}`, time: o.created_at })),
+    ...(newProds||[]).map(p => ({ icon:'box', color:'var(--success)', text:`Produk ditambahkan: <strong>${esc(p.name)}</strong>`, time: p.created_at })),
+  ].sort((a, b) => new Date(b.time) - new Date(a.time));
+
+  if (!events.length) { wrap.innerHTML = '<div style="text-align:center; color:var(--txt2); padding:30px; font-size:13px">Belum ada log aktivitas</div>'; return; }
+  wrap.innerHTML = `<div class="log-list">${events.map(e => `
+    <div class="log-item">
+      <div class="log-icon" style="background:rgba(74,125,255,.1)"><i class="fas fa-${e.icon}" style="color:${e.color}"></i></div>
+      <div class="log-content">
+        <div class="lc-text">${e.text}</div>
+        <div class="lc-time">${fmtDate(e.time)}</div>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+// ══════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════
+async function changeAdminPass() {
+  const p1 = document.getElementById('newPassInput').value;
+  const p2 = document.getElementById('confPassInput').value;
+  if (!p1 || !p2) return toast('Isi kedua field', 'error');
+  if (p1 !== p2) return toast('Password tidak cocok', 'error');
+  if (p1.length < 6) return toast('Min. 6 karakter', 'error');
+  const { error } = await sb.auth.updateUser({ password: p1 });
+  if (error) return toast('Gagal: ' + error.message, 'error');
+  toast('Password diperbarui ✅', 'success');
+  document.getElementById('newPassInput').value = '';
+  document.getElementById('confPassInput').value = '';
+}
+
+function switchSettingsTab(tab, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(`tp-${tab}`).classList.add('active');
+}
+
+// ══════════════════════════════════════════
+//  MODAL HELPERS
+// ══════════════════════════════════════════
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) closeModal(el.id); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
+});
+
+function confirmAction(text, icon, callback) {
+  document.getElementById('confirmText').innerHTML = text;
+  document.getElementById('confirmIcon').textContent = icon || '⚠️';
+  const btn = document.getElementById('confirmBtn');
+  btn.onclick = () => callback();
+  openModal('confirmModal');
+}
+
+// ══════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════
+function fmtRp(val) {
+  if (!val && val !== 0) return '—';
+  if (val === 0) return 'Gratis';
+  return 'Rp ' + Number(val).toLocaleString('id-ID');
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+}
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function statusChip(s) {
+  const map = { pending:'chip-yellow', processing:'chip-blue', completed:'chip-green', cancelled:'chip-red' };
+  return `<span class="chip ${map[s]||'chip-gray'}">${s||'—'}</span>`;
+}
+function animVal(id, target) {
+  const el = document.getElementById(id);
+  const steps = 20; let i = 0;
+  const iv = setInterval(() => {
+    i++; el.textContent = Math.round(target*(i/steps)).toLocaleString('id-ID');
+    if (i >= steps) { clearInterval(iv); el.textContent = target.toLocaleString('id-ID'); }
+  }, 600/steps);
+}
+function toast(msg, type='info') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  document.getElementById('toast-c').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+</script>
+<!-- ══ XREZZKY BOTTOM NAV — persistent fixed ══ -->
+<style>
+/* ── XBN BASE ── */
+#xbn {
+  display: none;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  background: rgba(23,28,36,.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(74,125,255,.18);
+  height: 64px;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 24px rgba(0,0,0,.5);
+}
+#xbn .xbn-inner {
+  display: flex; align-items: center;
+  width: 100%; height: 100%;
+}
+.xbn-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px;
+  background: none; border: none; cursor: pointer;
+  color: #6b7a8d; font-family: 'Poppins', sans-serif;
+  padding: 4px 0; position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .2s; border-radius: 12px; min-height: 52px;
+  text-decoration: none;
+}
+.xbn-btn i {
+  font-size: 21px; line-height: 1;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .2s;
+  display: block;
+}
+.xbn-btn span { font-size: 10px; font-weight: 600; letter-spacing: .02em; line-height: 1; }
+.xbn-btn.active { color: #4a7dff; }
+.xbn-btn.active i { transform: translateY(-2px) scale(1.15); color: #4a7dff; }
+.xbn-btn::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, #4a7dff, #7c3aed);
+  transition: width .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 0 8px rgba(74,125,255,.8);
+}
+.xbn-btn.active::after { width: 24px; }
+.xbn-btn:active { transform: scale(.88); }
+.xbn-ripple {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: rgba(74,125,255,.25);
+  transform: scale(0); animation: xbnRipple .5s ease-out forwards;
+}
+@keyframes xbnRipple { to { transform: scale(4); opacity: 0; } }
+.xbn-fab-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding-bottom: 6px; gap: 2px;
+}
+.xbn-fab {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #4a7dff 0%, #7c3aed 100%);
+  color: #fff; font-size: 22px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(74,125,255,.55);
+  margin-bottom: 2px;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.xbn-fab:active { transform: scale(.85); box-shadow: 0 2px 10px rgba(74,125,255,.4); }
+.xbn-fab.pulse { animation: xbnFabPulse .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes xbnFabPulse {
+  0%{transform:scale(1)} 40%{transform:scale(.82)} 70%{transform:scale(1.15)} 100%{transform:scale(1)}
+}
+.xbn-fab-label { font-size: 10px; font-weight: 600; color: #9ba6b2; line-height: 1; }
+.xbn-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #1d2430; border: 2px solid transparent;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #6b7a8d;
+  transition: border-color .2s;
+}
+.xbn-av img { width:100%; height:100%; object-fit:cover; }
+.xbn-btn.active .xbn-av { border-color: #4a7dff; color: #4a7dff; }
+/* Page header on mobile */
+#mobilePageHeader {
+  display: none;
+  position: sticky; top: 0; z-index: 200;
+  background: #171c24; border-bottom: 1px solid #2a3442;
+  height: 52px; align-items: center; padding: 0 14px; gap: 12px;
+}
+#mobilePageHeader .mph-back {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #1d2430; border: 1px solid #2a3442; color: #f5f7fa;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+}
+#mobilePageHeader .mph-back:active { transform: scale(.9); }
+#mobilePageHeader .mph-title { font-size: 15px; font-weight: 700; color: #f5f7fa; flex: 1; }
+#mobilePageHeader .mph-logo { font-size: 11px; font-weight: 700; color: #4a7dff; opacity: .7; }
+/* Hide top nav, show bottom nav on mobile */
+@media (max-width: 900px) {
+  #xbn { display: flex !important; }
+  #mobilePageHeader { display: flex !important; }
+  nav:not(#xbn) { display: none !important; }
+  #topbar { display: none !important; }
+  #sidebar { display: none !important; }
+  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
+  body > .main, main, .page, #main { padding-bottom: 80px !important; padding-top: 0 !important; }
+  .page { min-height: calc(100vh - 52px); }
+}
+@media (min-width: 901px) {
+  #xbn { display: none !important; }
+  #mobilePageHeader { display: none !important; }
+}
+</style>
+
+<!-- Mobile Page Header -->
+<div id="mobilePageHeader">
+  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <div class="mph-title" id="mphTitle">XREZZKY</div>
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+<!-- Bottom Nav -->
+<div id="xbn">
+  <div class="xbn-inner">
+    <a class="xbn-btn" href="index.html" id="xbn-home" aria-label="Beranda" onclick="xbnSetActive('home')">
+      <i class="fas fa-home"></i><span>Beranda</span>
+    </a>
+    <button class="xbn-btn" id="xbn-info" onclick="xbnNavInfo(this)" aria-label="Info">
+      <i class="fas fa-bell"></i><span>Info</span>
+    </button>
+    <div class="xbn-fab-wrap">
+      <a class="xbn-fab" href="deposit.html" onclick="xbnFabAnim(this)" aria-label="Deposit">
+        <i class="fas fa-wallet"></i>
+      </a>
+      <span class="xbn-fab-label">Deposit</span>
+    </div>
+    <a class="xbn-btn" href="riwayat.html" id="xbn-riwayat" aria-label="Riwayat" onclick="xbnSetActive('riwayat')">
+      <i class="fas fa-receipt"></i><span>Riwayat</span>
+    </a>
+    <a class="xbn-btn" href="profil.html" id="xbn-profil" aria-label="Profil" onclick="xbnSetActive('profil')">
+      <div class="xbn-av" id="xbnAv"><i class="fas fa-user-circle"></i></div>
+      <span>Profil</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// ── Auto-highlight active nav item based on current page ──
+(function() {
+  var page = location.pathname.split('/').pop() || 'index.html';
+  var map = {
+    'index.html':'home', '':'home',
+    'riwayat.html':'riwayat',
+    'deposit.html':'deposit',
+    'profil.html':'profil',
+    'checkout.html':'home',
+    'seller-dashboard.html':'home',
+    'cs-dashboard.html':'home',
+    'admin-panel.html':'home',
+    'deposit-admin.html':'home',
+    'info-admin.html':'home',
+  };
+  var active = map[page];
+  if (active) {
+    var el = document.getElementById('xbn-' + active);
+    if (el) el.classList.add('active');
+  }
+  // Set page title in mobile header
+  var titles = {
+    'riwayat.html':'Riwayat Transaksi',
+    'deposit.html':'Deposit Saldo',
+    'profil.html':'Profil',
+    'checkout.html':'Checkout',
+    'seller-dashboard.html':'Seller Dashboard',
+    'cs-dashboard.html':'CS Dashboard',
+    'admin-panel.html':'Admin Panel',
+    'deposit-admin.html':'Kelola Deposit',
+    'info-admin.html':'Kelola Info',
+  };
+  var titleEl = document.getElementById('mphTitle');
+  if (titleEl && titles[page]) titleEl.textContent = titles[page];
+  // Add bottom padding to content
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth <= 900) {
+      var els = document.querySelectorAll('main, .main, .page, #main');
+      els.forEach(function(el) {
+        var pb = parseInt(getComputedStyle(el).paddingBottom) || 0;
+        if (pb < 70) el.style.paddingBottom = '80px';
+      });
+    }
+    // Load avatar from Supabase if logged in
+    if (typeof supabase !== 'undefined') {
+      try {
+        var sb2 = supabase.createClient(
+          'https://jydfjfjttpmropoczgop.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+        );
+        sb2.auth.getSession().then(function(r) {
+          var session = r.data && r.data.session;
+          if (!session) return;
+          sb2.from('profiles').select('avatar_url,username').eq('id', session.user.id).maybeSingle().then(function(pr) {
+            var p = pr.data;
+            if (!p) return;
+            var avEl = document.getElementById('xbnAv');
+            if (!avEl) return;
+            if (p.avatar_url) {
+              avEl.innerHTML = '<img src="https://res.cloudinary.com/drjmclzbi/image/upload/' + p.avatar_url + '" alt="av"/>';
+            } else {
+              var nm = p.username || session.user.email[0];
+              avEl.style.background = '#4a7dff';
+              avEl.style.color = '#fff';
+              avEl.innerHTML = '<span style="font-size:12px;font-weight:800">' + nm[0].toUpperCase() + '</span>';
+            }
+          });
+        });
+      } catch(e) {}
+    }
+  });
+})();
+
+function xbnSetActive(tab) {
+  document.querySelectorAll('.xbn-btn').forEach(function(b){ b.classList.remove('active'); });
+  var el = document.getElementById('xbn-' + tab);
+  if (el) el.classList.add('active');
+}
+function xbnFabAnim(el) {
+  el.classList.remove('pulse');
+  void el.offsetWidth;
+  el.classList.add('pulse');
+  setTimeout(function(){ el.classList.remove('pulse'); }, 500);
+}
+function xbnNavInfo(el) {
+  // On inner pages, just go to index with info hash
+  location.href = 'index.html#info';
+}
+function xbnRipple(btn) {
+  var r = document.createElement('span');
+  r.className = 'xbn-ripple';
+  r.style.cssText = 'width:40px;height:40px;margin:-20px 0 0 -20px;top:50%;left:50%;position:absolute';
+  btn.appendChild(r);
+  setTimeout(function(){ r.remove(); }, 600);
+}
+// Add ripple to all xbn-btn clicks
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.xbn-btn');
+  if (btn) xbnRipple(btn);
+});
+</script>
+
+</body>
+</html>

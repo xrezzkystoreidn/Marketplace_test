@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XREZZKY — Deposit QRIS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1115; --nav: #171c24; --surface: #1d2430; --border: #2a3442;
+      --accent: #4a7dff; --ah: #5d8fff; --txt: #f5f7fa; --txt2: #9ba6b2;
+      --success: #22c55e; --warn: #f59e0b; --danger: #ef4444;
+      --radius: 14px; --rsm: 9px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; }
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(23,28,36,.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 56px; display: flex; align-items: center; padding: 0 20px; gap: 14px;
+    }
+    .nb { display: flex; align-items: center; gap: 8px; font-family: 'Syne',sans-serif; font-size: 15px; font-weight: 700; text-decoration: none; color: var(--txt); }
+    .nb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+    .ns { flex: 1; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .18s; text-decoration: none; }
+    .bp { background: var(--accent); color: #fff; } .bp:hover { background: var(--ah); }
+    .bg { background: transparent; color: var(--txt2); border: 1px solid var(--border); } .bg:hover { color: var(--txt); border-color: var(--txt2); }
+    .bsm { padding: 5px 11px; font-size: 12px; }
+    .page { max-width: 520px; margin: 0 auto; padding: 24px 16px 40px; }
+    .steps-row { display: flex; gap: 0; background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 22px; }
+    .step-pill { flex: 1; padding: 10px 8px; text-align: center; font-size: 12px; font-weight: 600; color: var(--txt2); transition: all .2s; }
+    .step-pill span { display: block; font-size: 10px; opacity: .7; margin-top: 2px; font-weight: 400; }
+    .step-pill.active { background: var(--accent); color: #fff; }
+    .step-pill.done { background: rgba(34,197,94,.12); color: var(--success); }
+    .balance-strip { display: flex; align-items: center; justify-content: space-between; background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 18px; }
+    .bs-amount { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 800; color: var(--success); margin-top: 2px; }
+    .bs-right a { font-size: 12px; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 5px; }
+    .card { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 14px; }
+    .card-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .card-head .iw { width: 28px; height: 28px; border-radius: var(--rsm); background: rgba(74,125,255,.15); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .card-head h3 { font-size: 14px; font-weight: 600; }
+    .card-body { padding: 18px; }
+    .nom-input-wrap { position: relative; margin-bottom: 12px; }
+    .nom-prefix { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-family: 'Syne',sans-serif; font-size: 15px; font-weight: 700; color: var(--txt2); pointer-events: none; }
+    .nom-input { width: 100%; background: var(--surface); border: 2px solid var(--border); border-radius: var(--rsm); padding: 14px 14px 14px 42px; color: var(--txt); font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 800; outline: none; transition: border .2s; -moz-appearance: textfield; }
+    .nom-input::-webkit-outer-spin-button, .nom-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .nom-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(74,125,255,.1); }
+    .nom-input::placeholder { color: var(--txt2); opacity: .4; font-size: 15px; font-family: 'Poppins',sans-serif; font-weight: 400; }
+    .nom-input.warn-b { border-color: var(--warn) !important; }
+    .nom-warning { display: none; align-items: flex-start; gap: 8px; background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.25); border-radius: var(--rsm); padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: var(--warn); line-height: 1.6; }
+    .nom-warning.show { display: flex; }
+    .quick-noms { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+    .qn-chip { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: var(--surface); border: 1px solid var(--border); color: var(--txt2); cursor: pointer; transition: all .18s; }
+    .qn-chip:hover { border-color: var(--accent); color: var(--accent); }
+    .qn-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .fee-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 12px 14px; display: none; }
+    .fee-box.show { display: block; }
+    .fee-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; font-size: 13px; }
+    .fee-row:not(:last-child) { border-bottom: 1px dashed rgba(42,52,66,.7); }
+    .fee-row .lbl { color: var(--txt2); }
+    .fee-row .val { font-weight: 700; }
+    .fee-row.total-fee { margin-top: 4px; padding-top: 10px; border-top: 2px solid var(--border) !important; border-bottom: none !important; }
+    .fee-row.total-fee .lbl { font-size: 14px; font-weight: 700; color: var(--txt); }
+    .fee-row.total-fee .val { font-family: 'Syne',sans-serif; font-size: 18px; color: var(--accent); }
+    .fee-tier-note { font-size: 11px; color: var(--txt2); margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(42,52,66,.7); display: flex; align-items: center; gap: 5px; }
+    .proceed-btn { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; }
+    .proceed-btn:hover { background: var(--ah); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(74,125,255,.3); }
+    .proceed-btn:disabled { background: var(--surface); color: var(--txt2); cursor: not-allowed; border: 1px solid var(--border); transform: none; box-shadow: none; }
+    #qrisSection { display: none; }
+    #qrisSection.show { display: block; }
+    .countdown-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .cd-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: cdpulse 1.5s ease infinite; }
+    .cd-dot.urgent { background: var(--danger); animation: cdpulse .6s ease infinite; }
+    @keyframes cdpulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+    .cd-timer { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 800; color: var(--warn); }
+    .cd-timer.urgent { color: var(--danger); }
+    .qris-card { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 14px; }
+    .qc-header { background: linear-gradient(135deg, #0f1a2e, #1a2540); padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(74,125,255,.2); }
+    .qc-title { font-family: 'Syne',sans-serif; font-size: 16px; font-weight: 800; color: #fff; }
+    .qc-sub { font-size: 11px; color: rgba(255,255,255,.5); margin-top: 2px; }
+    .qc-logo { font-size: 11px; font-weight: 700; color: var(--accent); background: rgba(74,125,255,.2); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(74,125,255,.3); }
+    .qc-body { padding: 20px; display: flex; flex-direction: column; align-items: center; }
+    .qr-img-wrap { width: 240px; height: 240px; background: #fff; border-radius: 12px; padding: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+    .qr-img-wrap img { width: 100%; height: 100%; object-fit: contain; }
+    .qr-placeholder { display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 8px; color: #999; width: 100%; height: 100%; }
+    .qr-placeholder i { font-size: 48px; opacity: .3; }
+    .qr-placeholder p { font-size: 11px; color: #888; text-align: center; }
+    .qc-detail { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 14px; margin-bottom: 16px; }
+    .qcd-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; font-size: 13px; border-bottom: 1px dashed rgba(42,52,66,.6); }
+    .qcd-row:last-child { border-bottom: none; }
+    .qcd-row .k { color: var(--txt2); }
+    .qcd-row .v { font-weight: 700; }
+    .qcd-row.total-row .k { font-size: 14px; font-weight: 700; color: var(--txt); }
+    .qcd-row.total-row .v { font-family: 'Syne',sans-serif; font-size: 20px; color: var(--accent); }
+    .qc-warning { width: 100%; background: rgba(245,158,11,.07); border: 1px solid rgba(245,158,11,.25); border-radius: var(--rsm); padding: 12px 14px; margin-bottom: 16px; font-size: 12px; color: var(--warn); line-height: 1.7; }
+    .qc-warning ul { padding-left: 16px; margin-top: 4px; }
+    .download-btn { width: 100%; padding: 11px; background: var(--surface); border: 1px solid var(--border); color: var(--txt); border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .18s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 6px; }
+    .download-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .upload-zone { border: 2px dashed var(--border); border-radius: var(--rsm); padding: 28px 16px; text-align: center; cursor: pointer; transition: all .2s; position: relative; background: var(--surface); }
+    .upload-zone:hover { border-color: var(--accent); background: rgba(74,125,255,.04); }
+    .upload-zone.drag-over { border-color: var(--accent); background: rgba(74,125,255,.08); }
+    .upload-zone.has-file { border-color: var(--success); background: rgba(34,197,94,.04); }
+    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .uz-icon { font-size: 32px; color: var(--txt2); opacity: .4; margin-bottom: 10px; }
+    .uz-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .uz-sub { font-size: 12px; color: var(--txt2); }
+    .uz-preview { width: 100%; max-height: 200px; object-fit: contain; border-radius: 8px; margin-top: 10px; display: none; }
+    .upload-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; display: none; margin-top: 10px; }
+    .upload-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .3s; }
+    .submit-btn { width: 100%; padding: 14px; background: var(--success); color: #fff; border: none; border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; }
+    .submit-btn:hover { background: #1fb554; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(34,197,94,.3); }
+    .submit-btn:disabled { background: var(--border); color: var(--txt2); cursor: not-allowed; transform: none; box-shadow: none; }
+    #statusSection { display: none; }
+    #statusSection.show { display: block; }
+    .status-card { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px 20px; text-align: center; margin-bottom: 14px; }
+    .sc-icon { width: 72px; height: 72px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 16px; }
+    .sc-icon.pending { background: rgba(245,158,11,.1); border: 2px solid rgba(245,158,11,.3); color: var(--warn); animation: pendingPulse 2s ease infinite; }
+    .sc-icon.success { background: rgba(34,197,94,.1); border: 2px solid rgba(34,197,94,.3); color: var(--success); }
+    .sc-icon.failed  { background: rgba(239,68,68,.1); border: 2px solid rgba(239,68,68,.3); color: var(--danger); }
+    @keyframes pendingPulse { 0%,100%{box-shadow:0 0 0 0 rgba(245,158,11,.4)} 50%{box-shadow:0 0 0 10px rgba(245,158,11,0)} }
+    .sc-title { font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+    .sc-sub { font-size: 13px; color: var(--txt2); margin-bottom: 16px; }
+    .sc-detail { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 12px 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; }
+    .scd-row { display: flex; justify-content: space-between; font-size: 13px; }
+    .scd-row .sk { color: var(--txt2); }
+    .chip { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .cy { background: rgba(245,158,11,.15); color: var(--warn); }
+    .cg { background: rgba(34,197,94,.15); color: var(--success); }
+    .cr { background: rgba(239,68,68,.15); color: var(--danger); }
+    .hist-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .hist-table th { padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: .05em; color: var(--txt2); text-transform: uppercase; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .hist-table td { padding: 11px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .hist-table tr:last-child td { border-bottom: none; }
+    .hist-table tr:hover td { background: rgba(29,36,48,.5); }
+    .expired-overlay { position: fixed; inset: 0; background: rgba(15,17,21,.96); z-index: 200; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 16px; padding: 20px; text-align: center; }
+    .expired-overlay.show { display: flex; }
+    .expired-title { font-family: 'Syne',sans-serif; font-size: 24px; font-weight: 800; color: var(--danger); }
+    .expired-sub { font-size: 14px; color: var(--txt2); max-width: 320px; }
+    #tc { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+    .toast { background: var(--nav); border: 1px solid var(--border); border-left: 3px solid var(--accent); color: var(--txt); font-size: 13px; padding: 10px 16px; border-radius: var(--rsm); min-width: 260px; animation: sli .3s ease; pointer-events: auto; }
+    .toast.s { border-left-color: var(--success); } .toast.e { border-left-color: var(--danger); } .toast.w { border-left-color: var(--warn); }
+    @keyframes sli { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+    .sp { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spn .7s linear infinite; }
+    @keyframes spn { to{transform:rotate(360deg)} }
+    #qrisCanvas { display: none; }
+    @keyframes fadeSlide { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+    .anim { animation: fadeSlide .35s ease both; }
+    .anim2 { animation: fadeSlide .35s .08s ease both; }
+    .anim3 { animation: fadeSlide .35s .16s ease both; }
+  </style>
+
+</head>
+<body>
+
+<!-- ── Mobile Page Header ── -->
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+<nav>
+  <a class="nb" href="index.html"><div class="nb-dot"></div>XREZZKY</a>
+  <div class="ns"></div>
+  <a href="riwayat.html" class="btn bg bsm"><i class="fas fa-receipt"></i> Riwayat</a>
+  <a href="profil.html" class="btn bg bsm"><i class="fas fa-user"></i> Profil</a>
+</nav>
+<canvas id="qrisCanvas"></canvas>
+<div class="page">
+  <div class="steps-row anim" id="stepsRow">
+    <div class="step-pill active" id="sp1">1<span>Nominal</span></div>
+    <div class="step-pill" id="sp2">2<span>Bayar QRIS</span></div>
+    <div class="step-pill" id="sp3">3<span>Upload Bukti</span></div>
+    <div class="step-pill" id="sp4">4<span>Menunggu</span></div>
+  </div>
+  <div class="balance-strip anim2">
+    <div><div style="font-size:12px;color:var(--txt2)">Saldo Kamu</div><div class="bs-amount" id="balanceDisplay">Rp 0</div></div>
+    <div class="bs-right"><a href="riwayat.html"><i class="fas fa-clock-rotate-left"></i> Riwayat</a></div>
+  </div>
+  <!-- STEP 1 -->
+  <div id="step1Section" class="anim3">
+    <div class="card">
+      <div class="card-head"><div class="iw"><i class="fas fa-coins"></i></div><h3>Masukkan Nominal Deposit</h3></div>
+      <div class="card-body">
+        <div class="quick-noms" id="quickNoms">
+          <div class="qn-chip" onclick="setQuickNom(10000,this)">10K</div>
+          <div class="qn-chip" onclick="setQuickNom(20000,this)">20K</div>
+          <div class="qn-chip" onclick="setQuickNom(50000,this)">50K</div>
+          <div class="qn-chip" onclick="setQuickNom(100000,this)">100K</div>
+          <div class="qn-chip" onclick="setQuickNom(200000,this)">200K</div>
+          <div class="qn-chip" onclick="setQuickNom(500000,this)">500K</div>
+          <div class="qn-chip" onclick="setQuickNom(1000000,this)">1JT</div>
+        </div>
+        <div class="nom-input-wrap">
+          <div class="nom-prefix">Rp</div>
+          <input class="nom-input" type="number" id="nomInput" min="1000" placeholder="Ketik nominal lainnya..." oninput="onNomInput(this.value)" />
+        </div>
+        <div class="nom-warning" id="nomWarning">
+          <i class="fas fa-triangle-exclamation" style="flex-shrink:0;margin-top:1px"></i>
+          <span id="nomWarningText"></span>
+        </div>
+        <div class="fee-box" id="feeBox">
+          <div class="fee-row"><span class="lbl">Nominal Deposit</span><span class="val" id="fb-nom">—</span></div>
+          <div class="fee-row"><span class="lbl">Admin Fee</span><span class="val" id="fb-fee" style="color:var(--warn)">—</span></div>
+          <div class="fee-row total-fee"><span class="lbl">Total Transfer</span><span class="val" id="fb-total">—</span></div>
+          <div class="fee-tier-note" id="feeTierNote"><i class="fas fa-info-circle" style="color:var(--accent)"></i><span></span></div>
+        </div>
+        <button class="proceed-btn" id="proceedBtn" onclick="proceedToQris()" disabled><i class="fas fa-qrcode"></i> Lanjut ke QRIS</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="iw" style="background:rgba(245,158,11,.15);color:var(--warn)"><i class="fas fa-list"></i></div><h3>Tabel Admin Fee</h3></div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead><tr style="background:var(--surface)">
+            <th style="padding:10px 16px;text-align:left;color:var(--txt2);font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;border-bottom:1px solid var(--border)">Nominal</th>
+            <th style="padding:10px 16px;text-align:right;color:var(--txt2);font-size:11px;text-transform:uppercase;letter-spacing:.05em;font-weight:600;border-bottom:1px solid var(--border)">Admin Fee</th>
+          </tr></thead>
+          <tbody id="feeTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- STEP 2+3 -->
+  <div id="qrisSection">
+    <div class="countdown-bar anim" id="countdownBar">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="cd-dot" id="cdDot"></div>
+        <div>
+          <div style="font-size:12px;font-weight:600">Sesi Pembayaran Aktif</div>
+          <div style="font-size:11px;color:var(--txt2)" id="cdExpireText">Habis pukul —</div>
+        </div>
+      </div>
+      <div class="cd-timer" id="cdTimer">15:00</div>
+    </div>
+    <div class="qris-card anim2">
+      <div class="qc-header">
+        <div><div class="qc-title">Scan & Transfer</div><div class="qc-sub">Gunakan aplikasi apapun yang mendukung QRIS</div></div>
+        <div class="qc-logo">QRIS</div>
+      </div>
+      <div class="qc-body">
+        <div class="qr-img-wrap" id="qrImgWrap">
+          <div class="qr-placeholder"><i class="fas fa-qrcode"></i><p>Memuat QR...</p></div>
+        </div>
+        <div class="qc-detail">
+          <div class="qcd-row"><span class="k">Nominal Deposit</span><span class="v" id="qd-nom">—</span></div>
+          <div class="qcd-row"><span class="k">Admin Fee</span><span class="v" id="qd-fee" style="color:var(--warn)">—</span></div>
+          <div class="qcd-row total-row"><span class="k">TRANSFER TEPAT</span><span class="v" id="qd-total">—</span></div>
+        </div>
+        <div class="qc-warning">
+          <strong>⚠️ PENTING — Baca sebelum transfer!</strong>
+          <ul>
+            <li>Transfer <strong>TEPAT</strong> sesuai total di atas (sudah termasuk admin fee)</li>
+            <li>Nominal berbeda = deposit <strong>TIDAK TERDETEKSI</strong></li>
+            <li>Batas waktu <strong>15 menit</strong> sejak sesi dimulai — hangus otomatis</li>
+            <li>Upload bukti transfer setelah selesai bayar</li>
+          </ul>
+        </div>
+        <button class="download-btn" onclick="downloadQrisCard()"><i class="fas fa-download"></i> Download QRIS + Detail Pembayaran</button>
+      </div>
+    </div>
+    <div class="card anim3">
+      <div class="card-head"><div class="iw" style="background:rgba(34,197,94,.15);color:var(--success)"><i class="fas fa-image"></i></div><h3>Upload Bukti Transfer</h3></div>
+      <div class="card-body">
+        <div class="upload-zone" id="uploadZone" ondragover="event.preventDefault();this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event)">
+          <input type="file" id="buktiFile" accept="image/*" onchange="handleBuktiSelect(event)" />
+          <div id="uzContent">
+            <div class="uz-icon"><i class="fas fa-cloud-arrow-up"></i></div>
+            <div class="uz-title">Klik atau drag foto bukti transfer</div>
+            <div class="uz-sub">JPG, PNG, WEBP — maks 5MB</div>
+          </div>
+          <img id="uzPreview" class="uz-preview" alt="preview" />
+        </div>
+        <div class="upload-bar" id="upBar"><div class="upload-fill" id="upFill" style="width:0%"></div></div>
+        <div style="margin-top:10px;font-size:12px;color:var(--txt2)"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:4px"></i>Pastikan nominal transfer terlihat jelas di screenshot</div>
+        <button class="submit-btn" id="submitBtn" onclick="submitDeposit()" disabled><i class="fas fa-paper-plane"></i> Kirim Bukti &amp; Tunggu Konfirmasi</button>
+      </div>
+    </div>
+  </div>
+  <!-- STEP 4 -->
+  <div id="statusSection">
+    <div class="status-card anim">
+      <div class="sc-icon pending" id="scIcon"><i class="fas fa-clock" id="scIconI"></i></div>
+      <div class="sc-title" id="scTitle">Menunggu Konfirmasi</div>
+      <div class="sc-sub" id="scSub">Admin sedang memeriksa bukti transfermu. Biasanya 5–15 menit.</div>
+      <div class="sc-detail" id="scDetail"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+      <button class="btn bg" onclick="location.reload()"><i class="fas fa-rotate-right"></i> Cek Status</button>
+      <button class="btn bp" onclick="newDeposit()"><i class="fas fa-plus"></i> Deposit Baru</button>
+      <a href="index.html" class="btn bg bsm"><i class="fas fa-store"></i> Ke Toko</a>
+    </div>
+  </div>
+  <!-- HISTORY -->
+  <div class="card anim3" style="margin-top:20px">
+    <div class="card-head"><div class="iw" style="background:rgba(168,85,247,.15);color:#a855f7"><i class="fas fa-clock-rotate-left"></i></div><h3>Riwayat Deposit</h3></div>
+    <div style="overflow-x:auto">
+      <table class="hist-table">
+        <thead><tr><th>Nominal</th><th>Fee</th><th>Total</th><th>Waktu</th><th>Status</th></tr></thead>
+        <tbody id="histBody"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--txt2);font-size:13px">Belum ada riwayat</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="expired-overlay" id="expiredOverlay">
+  <div style="font-size:56px">⏰</div>
+  <div class="expired-title">Sesi Hangus!</div>
+  <div class="expired-sub">Waktu 15 menit telah habis. Buat sesi deposit baru.</div>
+  <button class="btn bp" onclick="location.reload()" style="margin-top:8px;padding:12px 28px;font-size:14px"><i class="fas fa-rotate-right"></i> Mulai Ulang</button>
+</div>
+<div id="tc"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL='https://jydfjfjttpmropoczgop.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const CLD_CLOUD='drjmclzbi',CLD_PRESET='xrezzky_unsigned';
+const CLD_BASE=`https://res.cloudinary.com/${CLD_CLOUD}/image/upload/`;
+const CLD_UPLOAD=`https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`;
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+const FEE_TIERS=[
+  {min:1000,   max:19999,  fee:300,  label:'< Rp 20.000'},
+  {min:20000,  max:49999,  fee:500,  label:'Rp 20K – 49K'},
+  {min:50000,  max:99999,  fee:1000, label:'Rp 50K – 99K'},
+  {min:100000, max:499999, fee:2000, label:'Rp 100K – 499K'},
+  {min:500000, max:999999, fee:3000, label:'Rp 500K – 999K'},
+  {min:1000000,max:Infinity,fee:5000,label:'Rp 1JT+'}
+];
+let user=null,profile=null,nominal=0,adminFee=0,totalTransfer=0;
+let qrisImageUrl=null,buktiUploadUrl=null,countdownInterval=null,activeDepositId=null;
+
+document.addEventListener('DOMContentLoaded',async()=>{
+  const{data:{session}}=await sb.auth.getSession();
+  if(!session){toast('Login dulu untuk deposit','e');setTimeout(()=>location.href='index.html',1500);return;}
+  user=session.user;
+  const{data:p}=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
+  profile=p||{id:user.id,balance:0};
+  document.getElementById('balanceDisplay').textContent=fmtRp(profile.balance||0);
+  buildFeeTable();
+  await loadQrisImage();
+  await loadDepositHistory();
+  await checkPendingDeposit();
+});
+
+async function loadQrisImage(){
+  const{data}=await sb.from('app_settings').select('value').eq('key','qris_image').maybeSingle();
+  if(data?.value)qrisImageUrl=data.value;
+}
+
+function buildFeeTable(){
+  document.getElementById('feeTableBody').innerHTML=FEE_TIERS.map(t=>`
+    <tr>
+      <td style="padding:10px 16px;border-bottom:1px solid var(--border);color:var(--txt2)">${t.label}</td>
+      <td style="padding:10px 16px;border-bottom:1px solid var(--border);text-align:right;font-weight:700;color:var(--warn)">${fmtRp(t.fee)}</td>
+    </tr>`).join('');
+}
+
+function getAdminFee(nom){
+  for(const t of FEE_TIERS)if(nom>=t.min&&nom<=t.max)return{fee:t.fee,tier:t};
+  return{fee:0,tier:null};
+}
+
+function setQuickNom(val,el){
+  document.querySelectorAll('.qn-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('nomInput').value=val;
+  onNomInput(val);
+}
+
+function onNomInput(val){
+  const numVal=parseInt(val)||0;
+  const presets=[10000,20000,50000,100000,200000,500000,1000000];
+  if(!presets.includes(numVal))document.querySelectorAll('.qn-chip').forEach(c=>c.classList.remove('active'));
+  nominal=numVal;
+  const feeBox=document.getElementById('feeBox');
+  const warning=document.getElementById('nomWarning');
+  const proceedBtn=document.getElementById('proceedBtn');
+  const nomInput=document.getElementById('nomInput');
+  if(nominal<1000){
+    feeBox.classList.remove('show');warning.classList.remove('show');
+    proceedBtn.disabled=true;nomInput.classList.remove('warn-b');return;
+  }
+  const{fee,tier}=getAdminFee(nominal);
+  adminFee=fee;totalTransfer=nominal+adminFee;
+  document.getElementById('fb-nom').textContent=fmtRp(nominal);
+  document.getElementById('fb-fee').textContent='+'+fmtRp(adminFee);
+  document.getElementById('fb-total').textContent=fmtRp(totalTransfer);
+  const tn=document.getElementById('feeTierNote').querySelector('span');
+  if(tier)tn.textContent='Fee berdasarkan nominal '+tier.label;
+  feeBox.classList.add('show');
+  document.getElementById('nomWarningText').innerHTML=`Transfer harus <strong>TEPAT Rp ${totalTransfer.toLocaleString('id-ID')}</strong> (nominal Rp ${nominal.toLocaleString('id-ID')} + admin fee Rp ${adminFee.toLocaleString('id-ID')}). Nominal berbeda tidak terdeteksi.`;
+  warning.classList.add('show');
+  nomInput.classList.add('warn-b');
+  proceedBtn.disabled=false;
+}
+
+async function proceedToQris(){
+  if(nominal<1000){toast('Nominal minimal Rp 1.000','e');return;}
+  const expiry=new Date(Date.now()+15*60*1000);
+  const{data:dep,error}=await sb.from('deposit_requests').insert([{
+    user_id:user.id,amount:nominal,admin_fee:adminFee,total_paid:totalTransfer,
+    method:'qris',status:'pending',expires_at:expiry.toISOString(),created_at:new Date().toISOString()
+  }]).select().single();
+  if(error&&!error.message.includes('does not exist')){toast('Gagal membuat sesi: '+error.message,'e');return;}
+  if(dep)activeDepositId=dep.id;
+  goStep(2);showQrisSection();startCountdown(expiry);
+}
+
+function showQrisSection(){
+  document.getElementById('step1Section').style.display='none';
+  document.getElementById('qrisSection').classList.add('show');
+  document.getElementById('qd-nom').textContent=fmtRp(nominal);
+  document.getElementById('qd-fee').textContent='+'+fmtRp(adminFee);
+  document.getElementById('qd-total').textContent=fmtRp(totalTransfer);
+  const wrap=document.getElementById('qrImgWrap');
+  if(qrisImageUrl){
+    wrap.innerHTML=`<img src="${CLD_BASE}${qrisImageUrl}" alt="QRIS" style="width:100%;height:100%;object-fit:contain"/>`;
+  } else {
+    wrap.innerHTML=`<div class="qr-placeholder"><i class="fas fa-qrcode"></i><p style="font-size:11px;color:#888">QRIS belum diupload.<br/>Hubungi admin.</p></div>`;
+  }
+}
+
+function startCountdown(expiry){
+  if(countdownInterval)clearInterval(countdownInterval);
+  const expiryStr=new Date(expiry).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('cdExpireText').textContent=`Hangus pukul ${expiryStr}`;
+  function tick(){
+    const rem=Math.max(0,Math.floor((new Date(expiry)-Date.now())/1000));
+    const m=Math.floor(rem/60).toString().padStart(2,'0');
+    const s=(rem%60).toString().padStart(2,'0');
+    const te=document.getElementById('cdTimer');
+    const de=document.getElementById('cdDot');
+    if(!te){clearInterval(countdownInterval);return;}
+    te.textContent=`${m}:${s}`;
+    if(rem<=60){te.classList.add('urgent');de.classList.add('urgent');}
+    if(rem===0){clearInterval(countdownInterval);expireSession();}
+  }
+  tick();countdownInterval=setInterval(tick,1000);
+}
+
+async function expireSession(){
+  if(activeDepositId)await sb.from('deposit_requests').update({status:'expired'}).eq('id',activeDepositId);
+  document.getElementById('expiredOverlay').classList.add('show');
+}
+
+async function downloadQrisCard(){
+  const canvas=document.getElementById('qrisCanvas');
+  const ctx=canvas.getContext('2d');
+  const W=520,H=800;canvas.width=W;canvas.height=H;
+  const bgG=ctx.createLinearGradient(0,0,W,H);bgG.addColorStop(0,'#0f1a2e');bgG.addColorStop(1,'#1a2540');
+  ctx.fillStyle=bgG;rr(ctx,0,0,W,H,20);ctx.fill();
+  const hG=ctx.createLinearGradient(0,0,W,0);hG.addColorStop(0,'#4a7dff');hG.addColorStop(1,'#a855f7');
+  ctx.fillStyle=hG;rr(ctx,0,0,W,72,20,true);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 22px sans-serif';ctx.textAlign='left';ctx.fillText('XREZZKY',24,44);
+  ctx.font='13px sans-serif';ctx.fillStyle='rgba(255,255,255,.65)';ctx.fillText('Official Store — Deposit via QRIS',24,62);
+  ctx.fillStyle='rgba(255,255,255,.15)';rr(ctx,W-90,18,72,30,15);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText('QRIS',W-54,37);
+  const qrY=92,qrS=260,qrX=(W-qrS)/2;
+  ctx.fillStyle='#fff';rr(ctx,qrX-14,qrY-14,qrS+28,qrS+28,16);ctx.fill();
+  if(qrisImageUrl){
+    try{
+      const img=new Image();img.crossOrigin='anonymous';
+      await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=CLD_BASE+qrisImageUrl+'?t='+Date.now();});
+      ctx.drawImage(img,qrX,qrY,qrS,qrS);
+    }catch{
+      ctx.fillStyle='#ddd';rr(ctx,qrX,qrY,qrS,qrS,8);ctx.fill();
+      ctx.fillStyle='#888';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.fillText('QR tidak tersedia',qrX+qrS/2,qrY+qrS/2);
+    }
+  } else {
+    ctx.fillStyle='#ddd';rr(ctx,qrX,qrY,qrS,qrS,8);ctx.fill();
+    ctx.fillStyle='#888';ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.fillText('XREZZKY QRIS',qrX+qrS/2,qrY+qrS/2);
+  }
+  const dY=qrY+qrS+36;
+  ctx.fillStyle='rgba(29,36,48,.9)';rr(ctx,20,dY,W-40,198,14);ctx.fill();
+  ctx.strokeStyle='rgba(42,52,66,.8)';ctx.lineWidth=1;rr(ctx,20,dY,W-40,198,14);ctx.stroke();
+  let ry=dY+24;
+  [{l:'Nominal Deposit',v:fmtRp(nominal),c:'#f5f7fa'},{l:'Admin Fee',v:'+'+fmtRp(adminFee),c:'#f59e0b'}].forEach((r,i)=>{
+    ctx.fillStyle='#9ba6b2';ctx.font='13px sans-serif';ctx.textAlign='left';ctx.fillText(r.l,36,ry);
+    ctx.fillStyle=r.c;ctx.font='bold 14px sans-serif';ctx.textAlign='right';ctx.fillText(r.v,W-36,ry);
+    ctx.strokeStyle='rgba(42,52,66,.5)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(36,ry+13);ctx.lineTo(W-36,ry+13);ctx.stroke();ctx.setLineDash([]);
+    ry+=40;
+  });
+  ctx.strokeStyle='#2a3442';ctx.lineWidth=2;ctx.setLineDash([]);ctx.beginPath();ctx.moveTo(36,ry+4);ctx.lineTo(W-36,ry+4);ctx.stroke();ry+=20;
+  ctx.fillStyle='#9ba6b2';ctx.font='bold 15px sans-serif';ctx.textAlign='left';ctx.fillText('TRANSFER TEPAT',36,ry);
+  ctx.fillStyle='#4a7dff';ctx.font='bold 26px sans-serif';ctx.textAlign='right';ctx.fillText(fmtRp(totalTransfer),W-36,ry+2);
+  const wY=dY+212;
+  ctx.fillStyle='rgba(245,158,11,.08)';rr(ctx,20,wY,W-40,90,10);ctx.fill();
+  ctx.strokeStyle='rgba(245,158,11,.3)';ctx.lineWidth=1;rr(ctx,20,wY,W-40,90,10);ctx.stroke();
+  ctx.fillStyle='#f59e0b';ctx.font='bold 12px sans-serif';ctx.textAlign='left';ctx.fillText('⚠️  Transfer TEPAT sesuai nominal di atas',34,wY+22);
+  ctx.fillStyle='rgba(245,158,11,.75)';ctx.font='11px sans-serif';
+  ctx.fillText('Nominal berbeda tidak terdeteksi otomatis',34,wY+42);
+  ctx.fillText('Batas waktu 15 menit — hangus otomatis',34,wY+60);
+  ctx.fillText('Upload bukti transfer setelah membayar',34,wY+78);
+  ctx.fillStyle='rgba(155,166,178,.4)';ctx.font='11px sans-serif';ctx.textAlign='center';
+  ctx.fillText(`XREZZKY Official Store • ${new Date().toLocaleString('id-ID')}`,W/2,H-20);
+  const link=document.createElement('a');link.download=`XREZZKY_QRIS_Rp${nominal}.png`;link.href=canvas.toDataURL('image/png');link.click();
+  toast('QRIS berhasil didownload ✅','s');
+}
+
+function rr(ctx,x,y,w,h,r,topOnly=false){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  if(!topOnly){ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);}
+  else{ctx.lineTo(x+w,y+h);ctx.lineTo(x,y+h);}
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+function handleBuktiSelect(e){processBuktiFile(e.target.files[0]);}
+function handleDrop(e){e.preventDefault();document.getElementById('uploadZone').classList.remove('drag-over');if(e.dataTransfer.files[0])processBuktiFile(e.dataTransfer.files[0]);}
+
+function processBuktiFile(file){
+  if(!file)return;
+  if(file.size>5*1024*1024){toast('Ukuran file maks 5MB','e');return;}
+  if(!file.type.startsWith('image/')){toast('Hanya file gambar','e');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const prev=document.getElementById('uzPreview');
+    prev.src=e.target.result;prev.style.display='block';
+    document.getElementById('uzContent').style.display='none';
+    document.getElementById('uploadZone').classList.add('has-file');
+  };
+  reader.readAsDataURL(file);
+  document.getElementById('submitBtn').disabled=false;
+  goStep(3);
+  toast('Bukti siap diupload','s');
+}
+
+async function submitDeposit(){
+  const file=document.getElementById('buktiFile').files[0];
+  if(!file){toast('Pilih bukti transfer dulu','e');return;}
+  const submitBtn=document.getElementById('submitBtn');
+  submitBtn.innerHTML='<div class="sp"></div> Mengupload...';submitBtn.disabled=true;
+  const bar=document.getElementById('upBar'),fill=document.getElementById('upFill');
+  bar.style.display='block';fill.style.width='20%';
+  try{
+    const fd=new FormData();fd.append('file',file);fd.append('upload_preset',CLD_PRESET);fd.append('folder','deposit_proofs');
+    fill.style.width='60%';
+    const res=await fetch(CLD_UPLOAD,{method:'POST',body:fd});
+    const data=await res.json();fill.style.width='100%';
+    if(data.error)throw new Error(data.error.message);
+    buktiUploadUrl=data.public_id+'.'+data.format;
+    if(activeDepositId){
+      await sb.from('deposit_requests').update({proof_image:buktiUploadUrl,status:'waiting_review',submitted_at:new Date().toISOString()}).eq('id',activeDepositId);
+    } else {
+      const{data:dep}=await sb.from('deposit_requests').insert([{
+        user_id:user.id,amount:nominal,admin_fee:adminFee,total_paid:totalTransfer,
+        method:'qris',proof_image:buktiUploadUrl,status:'waiting_review',
+        submitted_at:new Date().toISOString(),created_at:new Date().toISOString()
+      }]).select().single();
+      if(dep)activeDepositId=dep.id;
+    }
+    clearInterval(countdownInterval);
+    toast('Bukti berhasil dikirim! Menunggu konfirmasi admin ✅','s');
+    showStatusSection('waiting_review',nominal,adminFee,totalTransfer);
+    await loadDepositHistory();
+  }catch(err){
+    toast('Gagal upload: '+err.message,'e');
+    submitBtn.innerHTML='<i class="fas fa-paper-plane"></i> Kirim Bukti & Tunggu Konfirmasi';
+    submitBtn.disabled=false;
+  }finally{setTimeout(()=>{bar.style.display='none';fill.style.width='0%';},800);}
+}
+
+function showStatusSection(status,nom,fee,total){
+  document.getElementById('qrisSection').classList.remove('show');
+  document.getElementById('statusSection').classList.add('show');
+  goStep(4);
+  const icon=document.getElementById('scIcon'),iconI=document.getElementById('scIconI');
+  const title=document.getElementById('scTitle'),sub=document.getElementById('scSub');
+  if(status==='waiting_review'||status==='pending'){
+    icon.className='sc-icon pending';iconI.className='fas fa-clock';
+    title.textContent='Menunggu Konfirmasi Admin';
+    sub.textContent='Bukti kamu sudah diterima. Admin akan memverifikasi dan mengkreditkan saldo dalam 5–15 menit.';
+  } else if(status==='completed'){
+    icon.className='sc-icon success';iconI.className='fas fa-check';
+    title.textContent='Deposit Berhasil! 🎉';sub.textContent='Saldo kamu sudah ditambahkan.';
+  } else {
+    icon.className='sc-icon failed';iconI.className='fas fa-times';
+    title.textContent='Deposit Ditolak';sub.textContent='Bukti tidak valid. Hubungi CS.';
+  }
+  document.getElementById('scDetail').innerHTML=`
+    <div class="scd-row"><span class="sk">Nominal</span><span style="font-weight:600">${fmtRp(nom)}</span></div>
+    <div class="scd-row"><span class="sk">Admin Fee</span><span style="font-weight:600;color:var(--warn)">${fmtRp(fee)}</span></div>
+    <div class="scd-row"><span class="sk">Total Transfer</span><span style="font-weight:700;color:var(--accent)">${fmtRp(total)}</span></div>
+    <div class="scd-row"><span class="sk">Status</span><span><span class="chip ${status==='completed'?'cg':status==='rejected'?'cr':'cy'}">${status==='completed'?'Berhasil':status==='rejected'?'Ditolak':'Menunggu'}</span></span></div>`;
+}
+
+async function checkPendingDeposit(){
+  const{data}=await sb.from('deposit_requests').select('*').eq('user_id',user.id).in('status',['pending','waiting_review']).order('created_at',{ascending:false}).limit(1).maybeSingle();
+  if(!data)return;
+  activeDepositId=data.id;
+  if(data.status==='waiting_review'){showStatusSection('waiting_review',data.amount,data.admin_fee||0,data.total_paid);return;}
+  const expiry=new Date(data.expires_at);
+  if(expiry<new Date()){await sb.from('deposit_requests').update({status:'expired'}).eq('id',data.id);return;}
+  nominal=data.amount;adminFee=data.admin_fee||0;totalTransfer=data.total_paid;
+  toast('Sesi deposit aktif ditemukan, dilanjutkan','w');
+  goStep(2);showQrisSection();startCountdown(expiry);
+}
+
+async function loadDepositHistory(){
+  const{data}=await sb.from('deposit_requests').select('*').eq('user_id',user.id).order('created_at',{ascending:false}).limit(10);
+  const body=document.getElementById('histBody');
+  if(!data||!data.length){body.innerHTML='<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--txt2);font-size:13px">Belum ada riwayat</td></tr>';return;}
+  body.innerHTML=data.map(d=>{
+    const chip=d.status==='completed'?'<span class="chip cg">Berhasil</span>':d.status==='rejected'?'<span class="chip cr">Ditolak</span>':d.status==='expired'?'<span class="chip" style="background:rgba(155,166,178,.1);color:var(--txt2)">Hangus</span>':'<span class="chip cy">Menunggu</span>';
+    return`<tr><td style="font-weight:600">${fmtRp(d.amount)}</td><td style="color:var(--warn)">${fmtRp(d.admin_fee||0)}</td><td style="color:var(--accent);font-weight:700">${fmtRp(d.total_paid)}</td><td style="color:var(--txt2);font-size:11px">${fmtDate(d.created_at)}</td><td>${chip}</td></tr>`;
+  }).join('');
+}
+
+function goStep(n){for(let i=1;i<=4;i++){const el=document.getElementById('sp'+i);if(!el)continue;el.classList.remove('active','done');if(i<n)el.classList.add('done');if(i===n)el.classList.add('active');}}
+
+function newDeposit(){
+  activeDepositId=null;nominal=0;adminFee=0;totalTransfer=0;buktiUploadUrl=null;
+  clearInterval(countdownInterval);
+  document.getElementById('statusSection').classList.remove('show');
+  document.getElementById('step1Section').style.display='block';
+  document.getElementById('nomInput').value='';
+  document.getElementById('feeBox').classList.remove('show');
+  document.getElementById('nomWarning').classList.remove('show');
+  document.getElementById('proceedBtn').disabled=true;
+  document.querySelectorAll('.qn-chip').forEach(c=>c.classList.remove('active'));
+  goStep(1);
+}
+
+function fmtRp(v){if(!v&&v!==0)return'—';if(v===0)return'Rp 0';return'Rp '+Number(v).toLocaleString('id-ID');}
+function fmtDate(d){if(!d)return'—';return new Date(d).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function toast(msg,type=''){const el=document.createElement('div');el.className=`toast ${type}`;el.textContent=msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),3800);}
+</script>
+<!-- ══ XREZZKY BOTTOM NAV — persistent fixed ══ -->
+<style>
+/* ── XBN BASE ── */
+#xbn {
+  display: none;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  background: rgba(23,28,36,.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(74,125,255,.18);
+  height: 64px;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 24px rgba(0,0,0,.5);
+}
+#xbn .xbn-inner {
+  display: flex; align-items: center;
+  width: 100%; height: 100%;
+}
+.xbn-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px;
+  background: none; border: none; cursor: pointer;
+  color: #6b7a8d; font-family: 'Poppins', sans-serif;
+  padding: 4px 0; position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .2s; border-radius: 12px; min-height: 52px;
+  text-decoration: none;
+}
+.xbn-btn i {
+  font-size: 21px; line-height: 1;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .2s;
+  display: block;
+}
+.xbn-btn span { font-size: 10px; font-weight: 600; letter-spacing: .02em; line-height: 1; }
+.xbn-btn.active { color: #4a7dff; }
+.xbn-btn.active i { transform: translateY(-2px) scale(1.15); color: #4a7dff; }
+.xbn-btn::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, #4a7dff, #7c3aed);
+  transition: width .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 0 8px rgba(74,125,255,.8);
+}
+.xbn-btn.active::after { width: 24px; }
+.xbn-btn:active { transform: scale(.88); }
+.xbn-ripple {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: rgba(74,125,255,.25);
+  transform: scale(0); animation: xbnRipple .5s ease-out forwards;
+}
+@keyframes xbnRipple { to { transform: scale(4); opacity: 0; } }
+.xbn-fab-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding-bottom: 6px; gap: 2px;
+}
+.xbn-fab {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #4a7dff 0%, #7c3aed 100%);
+  color: #fff; font-size: 22px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(74,125,255,.55);
+  margin-bottom: 2px;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.xbn-fab:active { transform: scale(.85); box-shadow: 0 2px 10px rgba(74,125,255,.4); }
+.xbn-fab.pulse { animation: xbnFabPulse .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes xbnFabPulse {
+  0%{transform:scale(1)} 40%{transform:scale(.82)} 70%{transform:scale(1.15)} 100%{transform:scale(1)}
+}
+.xbn-fab-label { font-size: 10px; font-weight: 600; color: #9ba6b2; line-height: 1; }
+.xbn-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #1d2430; border: 2px solid transparent;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #6b7a8d;
+  transition: border-color .2s;
+}
+.xbn-av img { width:100%; height:100%; object-fit:cover; }
+.xbn-btn.active .xbn-av { border-color: #4a7dff; color: #4a7dff; }
+/* Page header on mobile */
+#mobilePageHeader {
+  display: none;
+  position: sticky; top: 0; z-index: 200;
+  background: #171c24; border-bottom: 1px solid #2a3442;
+  height: 52px; align-items: center; padding: 0 14px; gap: 12px;
+}
+#mobilePageHeader .mph-back {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #1d2430; border: 1px solid #2a3442; color: #f5f7fa;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+}
+#mobilePageHeader .mph-back:active { transform: scale(.9); }
+#mobilePageHeader .mph-title { font-size: 15px; font-weight: 700; color: #f5f7fa; flex: 1; }
+#mobilePageHeader .mph-logo { font-size: 11px; font-weight: 700; color: #4a7dff; opacity: .7; }
+/* Hide top nav, show bottom nav on mobile */
+@media (max-width: 900px) {
+  #xbn { display: flex !important; }
+  #mobilePageHeader { display: flex !important; }
+  nav:not(#xbn) { display: none !important; }
+  #topbar { display: none !important; }
+  #sidebar { display: none !important; }
+  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
+  body > .main, main, .page, #main { padding-bottom: 80px !important; padding-top: 0 !important; }
+  .page { min-height: calc(100vh - 52px); }
+}
+@media (min-width: 901px) {
+  #xbn { display: none !important; }
+  #mobilePageHeader { display: none !important; }
+}
+</style>
+
+<!-- Mobile Page Header -->
+<div id="mobilePageHeader">
+  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <div class="mph-title" id="mphTitle">XREZZKY</div>
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+<!-- Bottom Nav -->
+<div id="xbn">
+  <div class="xbn-inner">
+    <a class="xbn-btn" href="index.html" id="xbn-home" aria-label="Beranda" onclick="xbnSetActive('home')">
+      <i class="fas fa-home"></i><span>Beranda</span>
+    </a>
+    <button class="xbn-btn" id="xbn-info" onclick="xbnNavInfo(this)" aria-label="Info">
+      <i class="fas fa-bell"></i><span>Info</span>
+    </button>
+    <div class="xbn-fab-wrap">
+      <a class="xbn-fab" href="deposit.html" onclick="xbnFabAnim(this)" aria-label="Deposit">
+        <i class="fas fa-wallet"></i>
+      </a>
+      <span class="xbn-fab-label">Deposit</span>
+    </div>
+    <a class="xbn-btn" href="riwayat.html" id="xbn-riwayat" aria-label="Riwayat" onclick="xbnSetActive('riwayat')">
+      <i class="fas fa-receipt"></i><span>Riwayat</span>
+    </a>
+    <a class="xbn-btn" href="profil.html" id="xbn-profil" aria-label="Profil" onclick="xbnSetActive('profil')">
+      <div class="xbn-av" id="xbnAv"><i class="fas fa-user-circle"></i></div>
+      <span>Profil</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// ── Auto-highlight active nav item based on current page ──
+(function() {
+  var page = location.pathname.split('/').pop() || 'index.html';
+  var map = {
+    'index.html':'home', '':'home',
+    'riwayat.html':'riwayat',
+    'deposit.html':'deposit',
+    'profil.html':'profil',
+    'checkout.html':'home',
+    'seller-dashboard.html':'home',
+    'cs-dashboard.html':'home',
+    'admin-panel.html':'home',
+    'deposit-admin.html':'home',
+    'info-admin.html':'home',
+  };
+  var active = map[page];
+  if (active) {
+    var el = document.getElementById('xbn-' + active);
+    if (el) el.classList.add('active');
+  }
+  // Set page title in mobile header
+  var titles = {
+    'riwayat.html':'Riwayat Transaksi',
+    'deposit.html':'Deposit Saldo',
+    'profil.html':'Profil',
+    'checkout.html':'Checkout',
+    'seller-dashboard.html':'Seller Dashboard',
+    'cs-dashboard.html':'CS Dashboard',
+    'admin-panel.html':'Admin Panel',
+    'deposit-admin.html':'Kelola Deposit',
+    'info-admin.html':'Kelola Info',
+  };
+  var titleEl = document.getElementById('mphTitle');
+  if (titleEl && titles[page]) titleEl.textContent = titles[page];
+  // Add bottom padding to content
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth <= 900) {
+      var els = document.querySelectorAll('main, .main, .page, #main');
+      els.forEach(function(el) {
+        var pb = parseInt(getComputedStyle(el).paddingBottom) || 0;
+        if (pb < 70) el.style.paddingBottom = '80px';
+      });
+    }
+    // Load avatar from Supabase if logged in
+    if (typeof supabase !== 'undefined') {
+      try {
+        var sb2 = supabase.createClient(
+          'https://jydfjfjttpmropoczgop.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+        );
+        sb2.auth.getSession().then(function(r) {
+          var session = r.data && r.data.session;
+          if (!session) return;
+          sb2.from('profiles').select('avatar_url,username').eq('id', session.user.id).maybeSingle().then(function(pr) {
+            var p = pr.data;
+            if (!p) return;
+            var avEl = document.getElementById('xbnAv');
+            if (!avEl) return;
+            if (p.avatar_url) {
+              avEl.innerHTML = '<img src="https://res.cloudinary.com/drjmclzbi/image/upload/' + p.avatar_url + '" alt="av"/>';
+            } else {
+              var nm = p.username || session.user.email[0];
+              avEl.style.background = '#4a7dff';
+              avEl.style.color = '#fff';
+              avEl.innerHTML = '<span style="font-size:12px;font-weight:800">' + nm[0].toUpperCase() + '</span>';
+            }
+          });
+        });
+      } catch(e) {}
+    }
+  });
+})();
+
+function xbnSetActive(tab) {
+  document.querySelectorAll('.xbn-btn').forEach(function(b){ b.classList.remove('active'); });
+  var el = document.getElementById('xbn-' + tab);
+  if (el) el.classList.add('active');
+}
+function xbnFabAnim(el) {
+  el.classList.remove('pulse');
+  void el.offsetWidth;
+  el.classList.add('pulse');
+  setTimeout(function(){ el.classList.remove('pulse'); }, 500);
+}
+function xbnNavInfo(el) {
+  // On inner pages, just go to index with info hash
+  location.href = 'index.html#info';
+}
+function xbnRipple(btn) {
+  var r = document.createElement('span');
+  r.className = 'xbn-ripple';
+  r.style.cssText = 'width:40px;height:40px;margin:-20px 0 0 -20px;top:50%;left:50%;position:absolute';
+  btn.appendChild(r);
+  setTimeout(function(){ r.remove(); }, 600);
+}
+// Add ripple to all xbn-btn clicks
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.xbn-btn');
+  if (btn) xbnRipple(btn);
+});
+</script>
+
+</body>
+</html>

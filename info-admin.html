@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XREZZKY — Kelola Info</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#0f1115; --nav:#171c24; --surface:#1d2430; --border:#2a3442;
+      --accent:#4a7dff; --ah:#5d8fff; --txt:#f5f7fa; --txt2:#9ba6b2;
+      --success:#22c55e; --warn:#f59e0b; --danger:#ef4444; --purple:#a855f7;
+      --radius:13px; --rsm:8px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family:'Poppins',sans-serif; background:var(--bg); color:var(--txt); min-height:100vh; }
+    ::-webkit-scrollbar{width:5px} ::-webkit-scrollbar-track{background:var(--bg)} ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+    /* TOPBAR */
+    #topbar {
+      position:fixed; top:0; left:0; right:0; height:56px; z-index:200;
+      background:var(--nav); border-bottom:1px solid var(--border);
+      display:flex; align-items:center; padding:0 20px; gap:14px;
+    }
+    .tb-brand { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px; }
+    .tb-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); }
+    .tb-badge { font-size:9px; font-weight:700; background:rgba(74,125,255,.2); color:var(--accent); border:1px solid rgba(74,125,255,.3); padding:2px 8px; border-radius:4px; }
+    .tb-sp { flex:1; }
+    .tb-r { display:flex; align-items:center; gap:10px; }
+    .btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:var(--rsm); font-family:'Poppins',sans-serif; font-size:13px; font-weight:500; cursor:pointer; border:none; transition:all .18s; text-decoration:none; }
+    .bp { background:var(--accent); color:#fff; } .bp:hover { background:var(--ah); }
+    .bg { background:transparent; color:var(--txt2); border:1px solid var(--border); } .bg:hover { color:var(--txt); border-color:var(--txt2); }
+    .bd { background:rgba(239,68,68,.1); color:var(--danger); border:1px solid rgba(239,68,68,.2); } .bd:hover { background:rgba(239,68,68,.2); }
+    .bsm { padding:5px 11px; font-size:12px; }
+
+    /* MAIN */
+    .main { padding: 24px 20px 40px; margin-top:56px; max-width:900px; margin-left:auto; margin-right:auto; }
+    .ph { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:22px; flex-wrap:wrap; gap:12px; }
+    .ph h1 { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; }
+    .ph p  { font-size:12px; color:var(--txt2); margin-top:3px; }
+
+    /* POST CARDS */
+    .posts-list { display:flex; flex-direction:column; gap:12px; }
+    .post-card {
+      background:var(--nav); border:1px solid var(--border); border-radius:var(--radius);
+      overflow:hidden; transition:border .2s;
+    }
+    .post-card:hover { border-color:rgba(74,125,255,.4); }
+    .pc-header { padding:14px 18px; display:flex; align-items:center; gap:12px; }
+    .pc-type-icon { width:38px; height:38px; border-radius:var(--rsm); display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+    .pc-info { flex:1; min-width:0; }
+    .pc-title { font-size:14px; font-weight:700; }
+    .pc-meta  { font-size:11px; color:var(--txt2); margin-top:3px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .pc-right { display:flex; gap:6px; align-items:center; flex-shrink:0; }
+    .pc-body  { padding:0 18px 14px; }
+    .pc-content { font-size:13px; color:var(--txt2); line-height:1.65; }
+    .pc-image   { width:100%; max-height:180px; object-fit:cover; border-radius:var(--rsm); margin-bottom:10px; border:1px solid var(--border); }
+    .pc-link    { display:inline-flex; align-items:center; gap:7px; padding:7px 14px; border-radius:var(--rsm); font-size:12px; font-weight:600; text-decoration:none; border:1px solid; transition:all .18s; margin-top:8px; }
+    .chip { display:inline-block; padding:2px 9px; border-radius:20px; font-size:11px; font-weight:600; }
+    .cg { background:rgba(34,197,94,.15); color:var(--success); }
+    .cr { background:rgba(239,68,68,.15); color:var(--danger); }
+    .cb { background:rgba(74,125,255,.15); color:var(--accent); }
+    .cy { background:rgba(245,158,11,.15); color:var(--warn); }
+    .cgr { background:rgba(155,166,178,.1); color:var(--txt2); }
+
+    /* EMPTY */
+    .empty { text-align:center; padding:60px 20px; color:var(--txt2); }
+    .empty .ei { font-size:40px; display:block; margin-bottom:14px; opacity:.25; }
+
+    /* MODAL */
+    .mo { position:fixed; inset:0; z-index:500; background:rgba(0,0,0,.72); display:none; align-items:center; justify-content:center; padding:20px; }
+    .mo.open { display:flex; }
+    .mb { background:var(--nav); border:1px solid var(--border); border-radius:var(--radius); width:100%; max-width:560px; animation:fup .28s ease; overflow:hidden; }
+    @keyframes fup { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+    .mh { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .mh h3 { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; }
+    .mbody { padding:20px; overflow-y:auto; max-height:72vh; }
+    .mbody::-webkit-scrollbar { width:4px; }
+    .mfoot { padding:13px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:8px; }
+    .mc-btn { background:none; border:none; color:var(--txt2); font-size:16px; cursor:pointer; }
+    .fg { margin-bottom:14px; }
+    .fg label { display:block; font-size:12px; color:var(--txt2); margin-bottom:5px; font-weight:500; }
+    .fg input, .fg textarea, .fg select { width:100%; background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:9px 12px; color:var(--txt); font-family:'Poppins',sans-serif; font-size:13px; outline:none; transition:border .18s; }
+    .fg input:focus, .fg textarea:focus, .fg select:focus { border-color:var(--accent); }
+    .fg input::placeholder, .fg textarea::placeholder { color:var(--txt2); opacity:.5; }
+    .fg textarea { resize:vertical; min-height:90px; }
+    .fg2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .fg-note { font-size:11px; color:var(--txt2); margin-top:4px; }
+    .req { color:var(--danger); }
+
+    /* Image upload */
+    .img-upload-wrap { position:relative; }
+    .img-upload-zone { border:2px dashed var(--border); border-radius:var(--rsm); padding:20px; text-align:center; cursor:pointer; background:var(--surface); transition:border .18s; }
+    .img-upload-zone:hover { border-color:var(--accent); }
+    .img-upload-zone input { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+    .img-preview-thumb { width:100%; max-height:140px; object-fit:cover; border-radius:var(--rsm); margin-top:8px; display:none; }
+    .upload-bar { height:4px; background:var(--border); border-radius:2px; overflow:hidden; display:none; margin-top:8px; }
+    .upload-fill { height:100%; background:var(--accent); border-radius:2px; transition:width .3s; }
+
+    /* Link section toggle */
+    .link-section { background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:14px; margin-top:4px; }
+
+    /* Toast */
+    #tc { position:fixed; bottom:20px; right:20px; z-index:9999; display:flex; flex-direction:column; gap:8px; }
+    .toast { background:var(--nav); border:1px solid var(--border); border-left:3px solid var(--accent); color:var(--txt); font-size:13px; padding:10px 16px; border-radius:var(--rsm); min-width:260px; animation:sli .3s ease; }
+    .toast.s{border-left-color:var(--success)} .toast.e{border-left-color:var(--danger)} .toast.w{border-left-color:var(--warn)}
+    @keyframes sli { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+    .sp { width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spn .7s linear infinite; margin:0 auto; }
+    @keyframes spn { to{transform:rotate(360deg)} }
+    .lc { display:flex; align-items:center; justify-content:center; padding:40px; }
+
+    /* Preview card */
+    .preview-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:14px; margin-bottom:14px; }
+    .pc-prev-label { font-size:11px; color:var(--txt2); font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; }
+
+    @media (max-width:600px) { .fg2 { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="tb-brand"><div class="tb-dot"></div>XREZZKY <span class="tb-badge">INFO ADMIN</span></div>
+  <div class="tb-sp"></div>
+  <div class="tb-r">
+    <button class="btn bg bsm" onclick="loadPosts()"><i class="fas fa-rotate-right"></i></button>
+    <a href="deposit-admin.html" class="btn bg bsm"><i class="fas fa-qrcode"></i> Deposit</a>
+    <a href="admin-panel.html"   class="btn bg bsm"><i class="fas fa-chart-pie"></i> Admin</a>
+    <a href="index.html"         class="btn bg bsm"><i class="fas fa-home"></i> Toko</a>
+    <button class="btn bp bsm" onclick="openNewPost()"><i class="fas fa-plus"></i> Post Baru</button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="ph">
+    <div>
+      <h1>Kelola Info & Update</h1>
+      <p>Buat pengumuman, promo, link download, dan update untuk user</p>
+    </div>
+    <div style="display:flex; gap:8px; flex-wrap:wrap">
+      <button class="btn bp" onclick="openNewPost()"><i class="fas fa-plus"></i> Post Baru</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; margin-bottom:20px" id="statsRow">
+    <div style="background:var(--nav);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:4px">Total Post</div>
+      <div style="font-size:22px;font-weight:800;font-family:'Syne',sans-serif" id="st-total">—</div>
+    </div>
+    <div style="background:var(--nav);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:4px">Aktif</div>
+      <div style="font-size:22px;font-weight:800;font-family:'Syne',sans-serif;color:var(--success)" id="st-active">—</div>
+    </div>
+    <div style="background:var(--nav);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:4px">Nonaktif</div>
+      <div style="font-size:22px;font-weight:800;font-family:'Syne',sans-serif;color:var(--txt2)" id="st-inactive">—</div>
+    </div>
+  </div>
+
+  <!-- Posts list -->
+  <div class="posts-list" id="postsList">
+    <div class="lc"><div class="sp"></div></div>
+  </div>
+</div>
+
+<!-- NEW/EDIT POST MODAL -->
+<div class="mo" id="postModal">
+  <div class="mb">
+    <div class="mh"><h3 id="postModalTitle">Post Baru</h3><button class="mc-btn" onclick="closeMo('postModal')"><i class="fas fa-times"></i></button></div>
+    <div class="mbody">
+      <input type="hidden" id="editPostId" />
+
+      <!-- Preview -->
+      <div class="preview-card" id="livePreview" style="display:none">
+        <div class="pc-prev-label">Preview</div>
+        <div id="previewContent"></div>
+      </div>
+
+      <div class="fg2">
+        <div class="fg">
+          <label>Tipe Post <span class="req">*</span></label>
+          <select id="postType" onchange="updatePreview()">
+            <option value="announcement">📢 Pengumuman</option>
+            <option value="update">🔄 Update</option>
+            <option value="promo">🏷️ Promo</option>
+            <option value="maintenance">🔧 Maintenance</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>Status</label>
+          <select id="postStatus">
+            <option value="true">Aktif — Tampil ke user</option>
+            <option value="false">Draft — Tidak tampil</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fg">
+        <label>Judul <span class="req">*</span></label>
+        <input type="text" id="postTitle" placeholder="Judul info / update..." oninput="updatePreview()" maxlength="100" />
+      </div>
+
+      <div class="fg">
+        <label>Isi Konten <span class="req">*</span></label>
+        <textarea id="postContent" placeholder="Tulis isi informasi, detail promo, atau deskripsi update..." oninput="updatePreview()"></textarea>
+      </div>
+
+      <!-- Image upload -->
+      <div class="fg">
+        <label>Gambar (opsional)</label>
+        <div class="img-upload-wrap">
+          <div class="img-upload-zone" id="imgUploadZone">
+            <input type="file" id="postImgFile" accept="image/*" onchange="handlePostImg(event)" />
+            <div id="imgUploadContent">
+              <i class="fas fa-image" style="font-size:22px;color:var(--txt2);opacity:.4;margin-bottom:6px;display:block"></i>
+              <div style="font-size:13px;font-weight:500">Klik upload gambar</div>
+              <div style="font-size:11px;color:var(--txt2)">JPG, PNG — maks 3MB</div>
+            </div>
+            <img id="postImgPreview" class="img-preview-thumb" alt="preview" />
+          </div>
+          <div class="upload-bar" id="postImgBar"><div class="upload-fill" id="postImgFill" style="width:0%"></div></div>
+          <input type="hidden" id="postImgUrl" />
+          <button class="btn bg bsm" id="removeImgBtn" style="margin-top:6px;display:none" onclick="removePostImg()"><i class="fas fa-trash"></i> Hapus Gambar</button>
+        </div>
+      </div>
+
+      <!-- Link / Download section -->
+      <div class="fg">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input type="checkbox" id="hasLink" onchange="toggleLinkSection()" style="width:auto" />
+          Tambahkan Tombol Link / Download
+        </label>
+      </div>
+
+      <div class="link-section" id="linkSection" style="display:none">
+        <div class="fg">
+          <label>Label Tombol <span class="req">*</span></label>
+          <input type="text" id="linkLabel" placeholder="mis: Download Sekarang, Lihat Promo, Update App..." oninput="updatePreview()" />
+        </div>
+        <div class="fg">
+          <label>URL Tujuan <span class="req">*</span></label>
+          <input type="url" id="linkUrl" placeholder="https://..." />
+          <div class="fg-note">Bisa berupa link download APK, Google Drive, Telegram, halaman promo, dll</div>
+        </div>
+        <div class="fg2">
+          <div class="fg">
+            <label>Icon Tombol</label>
+            <select id="linkIcon">
+              <option value="fas fa-arrow-right">→ Panah Kanan</option>
+              <option value="fas fa-download">⬇ Download</option>
+              <option value="fas fa-external-link-alt">↗ Link Eksternal</option>
+              <option value="fab fa-whatsapp">💬 WhatsApp</option>
+              <option value="fab fa-telegram">✈ Telegram</option>
+              <option value="fas fa-play">▶ Play</option>
+              <option value="fas fa-gift">🎁 Hadiah</option>
+              <option value="fas fa-share-alt">↗ Share</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Buka di</label>
+            <select id="linkNewTab">
+              <option value="true">Tab Baru</option>
+              <option value="false">Halaman Ini</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeMo('postModal')">Batal</button>
+      <button class="btn bp" onclick="savePost()"><i class="fas fa-save"></i> <span id="savePostLabel">Publish</span></button>
+    </div>
+  </div>
+</div>
+
+<div id="tc"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL  = 'https://jydfjfjttpmropoczgop.supabase.co';
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const SUPA_SVC  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODEwODI1MSwiZXhwIjoyMDkzNjg0MjUxfQ.rBuBsXDRaesLKR6as1lNk3nIp25l34VKY6-6x8gnPZg';
+const CLD_CLOUD  = 'drjmclzbi', CLD_PRESET='xrezzky_unsigned';
+const CLD_BASE   = `https://res.cloudinary.com/${CLD_CLOUD}/image/upload/`;
+const CLD_UPLOAD = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`;
+const sb  = supabase.createClient(SUPA_URL, SUPA_KEY);
+const sbS = supabase.createClient(SUPA_URL, SUPA_SVC);
+
+let allPosts = [];
+const TYPE_CONFIG = {
+  announcement:{ icon:'fas fa-bullhorn', color:'var(--danger)',  label:'Pengumuman' },
+  update:       { icon:'fas fa-rotate',   color:'var(--accent)',  label:'Update' },
+  promo:        { icon:'fas fa-tag',       color:'var(--success)', label:'Promo' },
+  maintenance:  { icon:'fas fa-wrench',    color:'var(--warn)',    label:'Maintenance' },
+};
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data:{ session } } = await sb.auth.getSession();
+  if (!session) { toast('Login dulu','e'); setTimeout(()=>location.href='index.html',1500); return; }
+  // Check admin role
+  const { data:p } = await sb.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
+  if (!p || !['admin','cs'].includes(p.role)) { toast('Akses ditolak','e'); setTimeout(()=>location.href='index.html',1500); return; }
+  await loadPosts();
+});
+
+async function loadPosts() {
+  const { data } = await sb.from('info_posts').select('*').order('created_at', { ascending:false });
+  allPosts = data || [];
+  document.getElementById('st-total').textContent   = allPosts.length;
+  document.getElementById('st-active').textContent  = allPosts.filter(p=>p.is_active).length;
+  document.getElementById('st-inactive').textContent= allPosts.filter(p=>!p.is_active).length;
+  renderPosts();
+}
+
+function renderPosts() {
+  const list = document.getElementById('postsList');
+  if (!allPosts.length) {
+    list.innerHTML = `<div class="empty"><span class="ei">📢</span><p>Belum ada post. Buat info pertama!</p></div>`;
+    return;
+  }
+  list.innerHTML = allPosts.map(p => {
+    const tc = TYPE_CONFIG[p.type] || TYPE_CONFIG.announcement;
+    return `<div class="post-card">
+      <div class="pc-header">
+        <div class="pc-type-icon" style="background:${tc.color}18;color:${tc.color}">
+          <i class="${tc.icon}"></i>
+        </div>
+        <div class="pc-info">
+          <div class="pc-title">${esc(p.title)}</div>
+          <div class="pc-meta">
+            <span class="chip ${p.is_active?'cg':'cgr'}">${p.is_active?'Aktif':'Draft'}</span>
+            <span class="chip cb">${tc.label}</span>
+            <span style="display:flex;align-items:center;gap:3px"><i class="fas fa-clock" style="font-size:9px"></i> ${fmtDate(p.created_at)}</span>
+          </div>
+        </div>
+        <div class="pc-right">
+          <button class="btn bg bsm" onclick="openEditPost('${p.id}')"><i class="fas fa-pen"></i></button>
+          <button class="btn ${p.is_active?'':'bg'}" style="${p.is_active?'background:rgba(245,158,11,.1);color:var(--warn);border:1px solid rgba(245,158,11,.2)':''}" onclick="togglePost('${p.id}',${p.is_active})">
+            <i class="fas ${p.is_active?'fa-eye-slash':'fa-eye'}"></i>
+          </button>
+          <button class="btn bd bsm" onclick="deletePost('${p.id}')"><i class="fas fa-trash"></i></button>
+        </div>
+      </div>
+      <div class="pc-body">
+        ${p.image_url ? `<img src="${CLD_BASE}${p.image_url}" class="pc-image" loading="lazy" />` : ''}
+        <div class="pc-content">${esc(p.content)}</div>
+        ${p.link_url && p.link_label ? `
+          <a href="${esc(p.link_url)}" target="${p.link_new_tab?'_blank':'_self'}" class="pc-link"
+            style="color:${tc.color};border-color:${tc.color}44;background:${tc.color}12">
+            <i class="${p.link_icon||'fas fa-arrow-right'}"></i> ${esc(p.link_label)}
+          </a>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── OPEN MODALS ──
+function openNewPost() {
+  document.getElementById('postModalTitle').textContent = 'Post Baru';
+  document.getElementById('savePostLabel').textContent  = 'Publish';
+  document.getElementById('editPostId').value   = '';
+  document.getElementById('postTitle').value    = '';
+  document.getElementById('postContent').value  = '';
+  document.getElementById('postType').value     = 'announcement';
+  document.getElementById('postStatus').value   = 'true';
+  document.getElementById('linkLabel').value    = '';
+  document.getElementById('linkUrl').value      = '';
+  document.getElementById('linkIcon').value     = 'fas fa-arrow-right';
+  document.getElementById('linkNewTab').value   = 'true';
+  document.getElementById('hasLink').checked    = false;
+  document.getElementById('linkSection').style.display = 'none';
+  document.getElementById('postImgUrl').value   = '';
+  document.getElementById('postImgPreview').style.display = 'none';
+  document.getElementById('removeImgBtn').style.display  = 'none';
+  document.getElementById('imgUploadContent').style.display = 'block';
+  document.getElementById('livePreview').style.display   = 'none';
+  openMo('postModal');
+}
+
+function openEditPost(id) {
+  const p = allPosts.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById('postModalTitle').textContent  = 'Edit Post';
+  document.getElementById('savePostLabel').textContent   = 'Simpan';
+  document.getElementById('editPostId').value   = id;
+  document.getElementById('postTitle').value    = p.title || '';
+  document.getElementById('postContent').value  = p.content || '';
+  document.getElementById('postType').value     = p.type || 'announcement';
+  document.getElementById('postStatus').value   = p.is_active ? 'true' : 'false';
+  document.getElementById('postImgUrl').value   = p.image_url || '';
+  if (p.image_url) {
+    const prev = document.getElementById('postImgPreview');
+    prev.src   = CLD_BASE + p.image_url;
+    prev.style.display = 'block';
+    document.getElementById('imgUploadContent').style.display = 'none';
+    document.getElementById('removeImgBtn').style.display  = 'inline-flex';
+  }
+  if (p.link_url) {
+    document.getElementById('hasLink').checked  = true;
+    document.getElementById('linkSection').style.display = 'block';
+    document.getElementById('linkLabel').value  = p.link_label || '';
+    document.getElementById('linkUrl').value    = p.link_url || '';
+    document.getElementById('linkIcon').value   = p.link_icon || 'fas fa-arrow-right';
+    document.getElementById('linkNewTab').value = p.link_new_tab ? 'true' : 'false';
+  } else {
+    document.getElementById('hasLink').checked  = false;
+    document.getElementById('linkSection').style.display = 'none';
+  }
+  updatePreview();
+  openMo('postModal');
+}
+
+function toggleLinkSection() {
+  const show = document.getElementById('hasLink').checked;
+  document.getElementById('linkSection').style.display = show ? 'block' : 'none';
+}
+
+// ── LIVE PREVIEW ──
+function updatePreview() {
+  const title   = document.getElementById('postTitle').value;
+  const content = document.getElementById('postContent').value;
+  const type    = document.getElementById('postType').value;
+  const label   = document.getElementById('linkLabel').value;
+  const hasLnk  = document.getElementById('hasLink').checked;
+  if (!title && !content) { document.getElementById('livePreview').style.display='none'; return; }
+  const tc = TYPE_CONFIG[type] || TYPE_CONFIG.announcement;
+  document.getElementById('livePreview').style.display = 'block';
+  document.getElementById('previewContent').innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:10px">
+      <div style="width:34px;height:34px;border-radius:8px;background:${tc.color}18;color:${tc.color};display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0"><i class="${tc.icon}"></i></div>
+      <div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px">${esc(title)||'(judul)'}</div>
+        <div style="font-size:12px;color:var(--txt2);line-height:1.5">${esc(content)||'(konten)'}</div>
+        ${hasLnk && label ? `<div style="margin-top:8px"><span style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:6px;background:${tc.color};color:#fff;font-size:11px;font-weight:600"><i class="fas fa-arrow-right"></i>${esc(label)}</span></div>` : ''}
+      </div>
+    </div>`;
+}
+
+// ── IMAGE UPLOAD ──
+async function handlePostImg(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 3*1024*1024) { toast('Maks 3MB','e'); return; }
+  const bar = document.getElementById('postImgBar'), fill = document.getElementById('postImgFill');
+  bar.style.display='block'; fill.style.width='20%';
+  try {
+    const fd = new FormData();
+    fd.append('file',file); fd.append('upload_preset',CLD_PRESET); fd.append('folder','info_posts');
+    fill.style.width='60%';
+    const res  = await fetch(CLD_UPLOAD, { method:'POST', body:fd });
+    const data = await res.json();
+    fill.style.width='100%';
+    if (data.error) throw new Error(data.error.message);
+    document.getElementById('postImgUrl').value = data.public_id+'.'+data.format;
+    const prev = document.getElementById('postImgPreview');
+    prev.src   = data.secure_url; prev.style.display='block';
+    document.getElementById('imgUploadContent').style.display='none';
+    document.getElementById('removeImgBtn').style.display='inline-flex';
+    toast('Gambar diupload ✅','s');
+  } catch(err) { toast('Gagal upload: '+err.message,'e'); }
+  finally { setTimeout(()=>{ bar.style.display='none'; fill.style.width='0%'; },800); }
+}
+
+function removePostImg() {
+  document.getElementById('postImgUrl').value = '';
+  document.getElementById('postImgPreview').style.display='none';
+  document.getElementById('removeImgBtn').style.display='none';
+  document.getElementById('imgUploadContent').style.display='block';
+  document.getElementById('postImgFile').value='';
+}
+
+// ── SAVE ──
+async function savePost() {
+  const id       = document.getElementById('editPostId').value;
+  const title    = document.getElementById('postTitle').value.trim();
+  const content  = document.getElementById('postContent').value.trim();
+  const type     = document.getElementById('postType').value;
+  const isActive = document.getElementById('postStatus').value === 'true';
+  const imgUrl   = document.getElementById('postImgUrl').value.trim() || null;
+  const hasLnk   = document.getElementById('hasLink').checked;
+  const linkLabel = hasLnk ? document.getElementById('linkLabel').value.trim() : null;
+  const linkUrl   = hasLnk ? document.getElementById('linkUrl').value.trim() : null;
+  const linkIcon  = hasLnk ? document.getElementById('linkIcon').value : null;
+  const linkNew   = hasLnk ? document.getElementById('linkNewTab').value === 'true' : false;
+
+  if (!title)   return toast('Judul wajib diisi','e');
+  if (!content) return toast('Konten wajib diisi','e');
+  if (hasLnk && (!linkLabel || !linkUrl)) return toast('Isi label dan URL tombol','e');
+
+  const payload = {
+    title, content, type, is_active:isActive, image_url:imgUrl,
+    link_label:linkLabel, link_url:linkUrl, link_icon:linkIcon, link_new_tab:linkNew,
+  };
+
+  let error;
+  if (id) {
+    ({ error } = await sbS.from('info_posts').update({ ...payload, updated_at:new Date().toISOString() }).eq('id',id));
+  } else {
+    payload.created_at = new Date().toISOString();
+    ({ error } = await sbS.from('info_posts').insert([payload]));
+  }
+  if (error) return toast('Gagal: '+error.message,'e');
+  toast(id ? 'Post diperbarui ✅' : 'Post dipublish ✅','s');
+  closeMo('postModal');
+  await loadPosts();
+}
+
+async function togglePost(id, current) {
+  const { error } = await sbS.from('info_posts').update({ is_active:!current }).eq('id',id);
+  if (error) return toast('Gagal: '+error.message,'e');
+  toast(`Post ${current?'disembunyikan':'diaktifkan'}`,'s');
+  await loadPosts();
+}
+
+async function deletePost(id) {
+  if (!confirm('Hapus post ini?')) return;
+  const { error } = await sbS.from('info_posts').delete().eq('id',id);
+  if (error) return toast('Gagal: '+error.message,'e');
+  toast('Post dihapus','s');
+  await loadPosts();
+}
+
+// ── MODAL ──
+function openMo(id) { document.getElementById(id).classList.add('open'); }
+function closeMo(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.mo').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)closeMo(el.id);}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.mo.open').forEach(m=>closeMo(m.id));});
+
+// ── UTILS ──
+function fmtDate(d) { if(!d)return'—'; return new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function esc(s) { if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(msg,type='') { const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=msg; document.getElementById('tc').appendChild(el); setTimeout(()=>el.remove(),3500); }
+</script>
+<!-- ══ XREZZKY BOTTOM NAV — persistent fixed ══ -->
+<style>
+/* ── XBN BASE ── */
+#xbn {
+  display: none;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  background: rgba(23,28,36,.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(74,125,255,.18);
+  height: 64px;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 24px rgba(0,0,0,.5);
+}
+#xbn .xbn-inner {
+  display: flex; align-items: center;
+  width: 100%; height: 100%;
+}
+.xbn-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px;
+  background: none; border: none; cursor: pointer;
+  color: #6b7a8d; font-family: 'Poppins', sans-serif;
+  padding: 4px 0; position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .2s; border-radius: 12px; min-height: 52px;
+  text-decoration: none;
+}
+.xbn-btn i {
+  font-size: 21px; line-height: 1;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .2s;
+  display: block;
+}
+.xbn-btn span { font-size: 10px; font-weight: 600; letter-spacing: .02em; line-height: 1; }
+.xbn-btn.active { color: #4a7dff; }
+.xbn-btn.active i { transform: translateY(-2px) scale(1.15); color: #4a7dff; }
+.xbn-btn::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, #4a7dff, #7c3aed);
+  transition: width .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 0 8px rgba(74,125,255,.8);
+}
+.xbn-btn.active::after { width: 24px; }
+.xbn-btn:active { transform: scale(.88); }
+.xbn-ripple {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: rgba(74,125,255,.25);
+  transform: scale(0); animation: xbnRipple .5s ease-out forwards;
+}
+@keyframes xbnRipple { to { transform: scale(4); opacity: 0; } }
+.xbn-fab-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding-bottom: 6px; gap: 2px;
+}
+.xbn-fab {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #4a7dff 0%, #7c3aed 100%);
+  color: #fff; font-size: 22px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(74,125,255,.55);
+  margin-bottom: 2px;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.xbn-fab:active { transform: scale(.85); box-shadow: 0 2px 10px rgba(74,125,255,.4); }
+.xbn-fab.pulse { animation: xbnFabPulse .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes xbnFabPulse {
+  0%{transform:scale(1)} 40%{transform:scale(.82)} 70%{transform:scale(1.15)} 100%{transform:scale(1)}
+}
+.xbn-fab-label { font-size: 10px; font-weight: 600; color: #9ba6b2; line-height: 1; }
+.xbn-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #1d2430; border: 2px solid transparent;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #6b7a8d;
+  transition: border-color .2s;
+}
+.xbn-av img { width:100%; height:100%; object-fit:cover; }
+.xbn-btn.active .xbn-av { border-color: #4a7dff; color: #4a7dff; }
+/* Page header on mobile */
+#mobilePageHeader {
+  display: none;
+  position: sticky; top: 0; z-index: 200;
+  background: #171c24; border-bottom: 1px solid #2a3442;
+  height: 52px; align-items: center; padding: 0 14px; gap: 12px;
+}
+#mobilePageHeader .mph-back {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #1d2430; border: 1px solid #2a3442; color: #f5f7fa;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+}
+#mobilePageHeader .mph-back:active { transform: scale(.9); }
+#mobilePageHeader .mph-title { font-size: 15px; font-weight: 700; color: #f5f7fa; flex: 1; }
+#mobilePageHeader .mph-logo { font-size: 11px; font-weight: 700; color: #4a7dff; opacity: .7; }
+/* Hide top nav, show bottom nav on mobile */
+@media (max-width: 900px) {
+  #xbn { display: flex !important; }
+  #mobilePageHeader { display: flex !important; }
+  nav:not(#xbn) { display: none !important; }
+  #topbar { display: none !important; }
+  #sidebar { display: none !important; }
+  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
+  body > .main, main, .page, #main { padding-bottom: 80px !important; padding-top: 0 !important; }
+  .page { min-height: calc(100vh - 52px); }
+}
+@media (min-width: 901px) {
+  #xbn { display: none !important; }
+  #mobilePageHeader { display: none !important; }
+}
+</style>
+
+<!-- Mobile Page Header -->
+<div id="mobilePageHeader">
+  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <div class="mph-title" id="mphTitle">XREZZKY</div>
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+<!-- Bottom Nav -->
+<div id="xbn">
+  <div class="xbn-inner">
+    <a class="xbn-btn" href="index.html" id="xbn-home" aria-label="Beranda" onclick="xbnSetActive('home')">
+      <i class="fas fa-home"></i><span>Beranda</span>
+    </a>
+    <button class="xbn-btn" id="xbn-info" onclick="xbnNavInfo(this)" aria-label="Info">
+      <i class="fas fa-bell"></i><span>Info</span>
+    </button>
+    <div class="xbn-fab-wrap">
+      <a class="xbn-fab" href="deposit.html" onclick="xbnFabAnim(this)" aria-label="Deposit">
+        <i class="fas fa-wallet"></i>
+      </a>
+      <span class="xbn-fab-label">Deposit</span>
+    </div>
+    <a class="xbn-btn" href="riwayat.html" id="xbn-riwayat" aria-label="Riwayat" onclick="xbnSetActive('riwayat')">
+      <i class="fas fa-receipt"></i><span>Riwayat</span>
+    </a>
+    <a class="xbn-btn" href="profil.html" id="xbn-profil" aria-label="Profil" onclick="xbnSetActive('profil')">
+      <div class="xbn-av" id="xbnAv"><i class="fas fa-user-circle"></i></div>
+      <span>Profil</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// ── Auto-highlight active nav item based on current page ──
+(function() {
+  var page = location.pathname.split('/').pop() || 'index.html';
+  var map = {
+    'index.html':'home', '':'home',
+    'riwayat.html':'riwayat',
+    'deposit.html':'deposit',
+    'profil.html':'profil',
+    'checkout.html':'home',
+    'seller-dashboard.html':'home',
+    'cs-dashboard.html':'home',
+    'admin-panel.html':'home',
+    'deposit-admin.html':'home',
+    'info-admin.html':'home',
+  };
+  var active = map[page];
+  if (active) {
+    var el = document.getElementById('xbn-' + active);
+    if (el) el.classList.add('active');
+  }
+  // Set page title in mobile header
+  var titles = {
+    'riwayat.html':'Riwayat Transaksi',
+    'deposit.html':'Deposit Saldo',
+    'profil.html':'Profil',
+    'checkout.html':'Checkout',
+    'seller-dashboard.html':'Seller Dashboard',
+    'cs-dashboard.html':'CS Dashboard',
+    'admin-panel.html':'Admin Panel',
+    'deposit-admin.html':'Kelola Deposit',
+    'info-admin.html':'Kelola Info',
+  };
+  var titleEl = document.getElementById('mphTitle');
+  if (titleEl && titles[page]) titleEl.textContent = titles[page];
+  // Add bottom padding to content
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth <= 900) {
+      var els = document.querySelectorAll('main, .main, .page, #main');
+      els.forEach(function(el) {
+        var pb = parseInt(getComputedStyle(el).paddingBottom) || 0;
+        if (pb < 70) el.style.paddingBottom = '80px';
+      });
+    }
+    // Load avatar from Supabase if logged in
+    if (typeof supabase !== 'undefined') {
+      try {
+        var sb2 = supabase.createClient(
+          'https://jydfjfjttpmropoczgop.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+        );
+        sb2.auth.getSession().then(function(r) {
+          var session = r.data && r.data.session;
+          if (!session) return;
+          sb2.from('profiles').select('avatar_url,username').eq('id', session.user.id).maybeSingle().then(function(pr) {
+            var p = pr.data;
+            if (!p) return;
+            var avEl = document.getElementById('xbnAv');
+            if (!avEl) return;
+            if (p.avatar_url) {
+              avEl.innerHTML = '<img src="https://res.cloudinary.com/drjmclzbi/image/upload/' + p.avatar_url + '" alt="av"/>';
+            } else {
+              var nm = p.username || session.user.email[0];
+              avEl.style.background = '#4a7dff';
+              avEl.style.color = '#fff';
+              avEl.innerHTML = '<span style="font-size:12px;font-weight:800">' + nm[0].toUpperCase() + '</span>';
+            }
+          });
+        });
+      } catch(e) {}
+    }
+  });
+})();
+
+function xbnSetActive(tab) {
+  document.querySelectorAll('.xbn-btn').forEach(function(b){ b.classList.remove('active'); });
+  var el = document.getElementById('xbn-' + tab);
+  if (el) el.classList.add('active');
+}
+function xbnFabAnim(el) {
+  el.classList.remove('pulse');
+  void el.offsetWidth;
+  el.classList.add('pulse');
+  setTimeout(function(){ el.classList.remove('pulse'); }, 500);
+}
+function xbnNavInfo(el) {
+  // On inner pages, just go to index with info hash
+  location.href = 'index.html#info';
+}
+function xbnRipple(btn) {
+  var r = document.createElement('span');
+  r.className = 'xbn-ripple';
+  r.style.cssText = 'width:40px;height:40px;margin:-20px 0 0 -20px;top:50%;left:50%;position:absolute';
+  btn.appendChild(r);
+  setTimeout(function(){ r.remove(); }, 600);
+}
+// Add ripple to all xbn-btn clicks
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.xbn-btn');
+  if (btn) xbnRipple(btn);
+});
+</script>
+
+</body>
+</html>

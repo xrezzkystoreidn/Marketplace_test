@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XREZZKY — Admin Deposit</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1115; --nav: #171c24; --surface: #1d2430; --border: #2a3442;
+      --accent: #4a7dff; --ah: #5d8fff; --txt: #f5f7fa; --txt2: #9ba6b2;
+      --success: #22c55e; --warn: #f59e0b; --danger: #ef4444;
+      --purple: #a855f7; --radius: 13px; --rsm: 8px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; display: flex; flex-direction: column; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ── TOPBAR ── */
+    #topbar {
+      position: fixed; top: 0; left: 0; right: 0; height: 56px; z-index: 200;
+      background: var(--nav); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 20px; gap: 14px; flex-shrink: 0;
+    }
+    .tb-brand { font-family: 'Syne',sans-serif; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .tb-dot   { width: 7px; height: 7px; border-radius: 50%; background: var(--warn); }
+    .tb-badge { font-size: 9px; font-weight: 700; background: rgba(245,158,11,.2); color: var(--warn); border: 1px solid rgba(245,158,11,.3); padding: 2px 8px; border-radius: 4px; letter-spacing: .04em; }
+    .tb-sp    { flex: 1; }
+    .tb-right { display: flex; align-items: center; gap: 10px; }
+
+    /* live badge */
+    .live-badge { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--txt2); }
+    .live-dot   { width: 7px; height: 7px; border-radius: 50%; background: var(--success); animation: livepulse 2s ease infinite; }
+    @keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.3)} }
+
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .18s; text-decoration: none; }
+    .bp  { background: var(--accent); color: #fff; } .bp:hover { background: var(--ah); }
+    .bg  { background: transparent; color: var(--txt2); border: 1px solid var(--border); } .bg:hover { color: var(--txt); border-color: var(--txt2); }
+    .bs  { background: rgba(34,197,94,.1); color: var(--success); border: 1px solid rgba(34,197,94,.25); } .bs:hover { background: rgba(34,197,94,.2); }
+    .bd  { background: rgba(239,68,68,.1); color: var(--danger); border: 1px solid rgba(239,68,68,.25); } .bd:hover { background: rgba(239,68,68,.2); }
+    .bw  { background: rgba(245,158,11,.1); color: var(--warn); border: 1px solid rgba(245,158,11,.25); } .bw:hover { background: rgba(245,158,11,.2); }
+    .bsm { padding: 5px 11px; font-size: 12px; }
+    .bxs { padding: 3px 8px; font-size: 11px; }
+
+    /* ── LAYOUT ── */
+    #wrapper { display: flex; padding-top: 56px; min-height: 100vh; }
+
+    /* ── SIDEBAR ── */
+    #sidebar {
+      width: 220px; flex-shrink: 0;
+      background: var(--nav); border-right: 1px solid var(--border);
+      padding: 16px 10px; display: flex; flex-direction: column; gap: 2px;
+      position: fixed; top: 56px; bottom: 0; left: 0; overflow-y: auto; z-index: 100;
+    }
+    .sl { font-size: 10px; font-weight: 600; letter-spacing: .08em; color: var(--txt2); text-transform: uppercase; padding: 8px 10px 4px; }
+    .si { display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: var(--rsm); color: var(--txt2); font-size: 13px; font-weight: 500; cursor: pointer; transition: all .18s; border: none; background: none; width: 100%; text-align: left; }
+    .si i { width: 16px; text-align: center; font-size: 13px; }
+    .si:hover  { background: var(--surface); color: var(--txt); }
+    .si.active { background: rgba(245,158,11,.1); color: var(--warn); }
+    .ss { height: 1px; background: var(--border); margin: 8px 0; }
+    .sc-b { margin-left: auto; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center; }
+    .scb-r { background: var(--danger); color: #fff; }
+    .scb-y { background: var(--warn); color: #000; }
+
+    /* ── MAIN ── */
+    #main { margin-left: 220px; flex: 1; padding: 24px; min-height: calc(100vh - 56px); }
+
+    /* ── PAGE VIEWS ── */
+    .pv { display: none; animation: fi .22s ease; }
+    .pv.active { display: block; }
+    @keyframes fi { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+    /* ── PAGE HEADER ── */
+    .ph { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; }
+    .ph h1 { font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 800; }
+    .ph p  { font-size: 12px; color: var(--txt2); margin-top: 3px; }
+    .pha   { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    /* ── STAT GRID ── */
+    .sg { display: grid; grid-template-columns: repeat(auto-fill, minmax(175px,1fr)); gap: 12px; margin-bottom: 22px; }
+    .sc { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; display: flex; align-items: center; gap: 12px; transition: border .2s; }
+    .sc:hover { border-color: var(--accent); }
+    .sc-ico { width: 40px; height: 40px; border-radius: var(--rsm); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+    .siy { background: rgba(245,158,11,.15); color: var(--warn); }
+    .sig { background: rgba(34,197,94,.15);  color: var(--success); }
+    .sir { background: rgba(239,68,68,.15);  color: var(--danger); }
+    .sib { background: rgba(74,125,255,.15); color: var(--accent); }
+    .sc-v { font-size: 20px; font-weight: 700; font-family: 'Syne',sans-serif; line-height: 1.1; }
+    .sc-l { font-size: 11px; color: var(--txt2); margin-top: 3px; }
+
+    /* ── CARD BOX ── */
+    .cb  { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; }
+    .cbh { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .cbh h3 { font-size: 14px; font-weight: 600; }
+    .cbh .ha { display: flex; gap: 8px; align-items: center; }
+    .cbb { padding: 18px; }
+
+    /* ── DEPOSIT CARD (main list item) ── */
+    .dep-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; margin-bottom: 12px; transition: border .2s;
+    }
+    .dep-card:hover { border-color: rgba(245,158,11,.4); }
+    .dep-card.urgent { border-color: rgba(239,68,68,.4); animation: urgentPulse 2s ease infinite; }
+    @keyframes urgentPulse { 0%,100%{border-color:rgba(239,68,68,.4)} 50%{border-color:rgba(239,68,68,.8)} }
+
+    .dep-main { padding: 16px 18px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .dep-av { width: 42px; height: 42px; border-radius: 50%; background: var(--nav); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: var(--accent); overflow: hidden; flex-shrink: 0; }
+    .dep-av img { width: 100%; height: 100%; object-fit: cover; }
+    .dep-info { flex: 1; min-width: 180px; }
+    .dep-user { font-size: 14px; font-weight: 600; }
+    .dep-email { font-size: 12px; color: var(--txt2); margin-top: 2px; }
+    .dep-time  { font-size: 11px; color: var(--txt2); margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+    .dep-amounts { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .da-item { text-align: center; }
+    .da-val   { font-family: 'Syne',sans-serif; font-size: 15px; font-weight: 700; line-height: 1.1; }
+    .da-lbl   { font-size: 10px; color: var(--txt2); text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+    .dep-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+    .chip { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .cy  { background: rgba(245,158,11,.15); color: var(--warn); }
+    .cg  { background: rgba(34,197,94,.15);  color: var(--success); }
+    .cr  { background: rgba(239,68,68,.15);  color: var(--danger); }
+    .cgr { background: rgba(155,166,178,.1); color: var(--txt2); }
+    .cb2 { background: rgba(74,125,255,.15); color: var(--accent); }
+
+    /* Countdown mini */
+    .dep-cd { font-size: 12px; font-weight: 700; color: var(--warn); display: flex; align-items: center; gap: 5px; }
+    .dep-cd.urgent { color: var(--danger); }
+    .dep-cd i { font-size: 11px; }
+
+    /* Proof image expandable */
+    .dep-proof { border-top: 1px solid var(--border); padding: 14px 18px; background: var(--nav); display: none; animation: fi .2s ease; }
+    .dep-proof.open { display: block; }
+    .proof-img-wrap { width: 100%; max-width: 380px; margin: 0 auto 16px; }
+    .proof-img-wrap img { width: 100%; border-radius: var(--rsm); border: 1px solid var(--border); cursor: zoom-in; transition: transform .2s; }
+    .proof-img-wrap img:hover { transform: scale(1.01); }
+    .proof-no-img { background: var(--surface); border: 2px dashed var(--border); border-radius: var(--rsm); padding: 40px; text-align: center; color: var(--txt2); font-size: 13px; }
+    .proof-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .proof-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .pdf { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 10px 12px; }
+    .pdf .k { font-size: 10px; color: var(--txt2); text-transform: uppercase; letter-spacing: .05em; font-weight: 600; margin-bottom: 3px; }
+    .pdf .v { font-size: 13px; font-weight: 600; word-break: break-all; }
+
+    /* Reject reason form */
+    .reject-form { background: rgba(239,68,68,.06); border: 1px solid rgba(239,68,68,.2); border-radius: var(--rsm); padding: 12px; margin-top: 10px; display: none; }
+    .reject-form.open { display: block; }
+    .reject-form textarea { width: 100%; background: var(--nav); border: 1px solid var(--border); border-radius: var(--rsm); padding: 9px 12px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; resize: none; outline: none; min-height: 70px; }
+    .reject-form textarea:focus { border-color: var(--danger); }
+
+    /* ── QRIS SETTINGS ── */
+    .qris-setting-card {
+      background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; margin-bottom: 16px;
+    }
+    .qris-preview { width: 200px; height: 200px; background: #fff; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.3); }
+    .qris-preview img { width: 100%; height: 100%; object-fit: contain; }
+    .qris-placeholder { display: flex; flex-direction: column; align-items: center; gap: 8px; color: #bbb; }
+    .qris-placeholder i { font-size: 40px; opacity: .3; }
+    .upload-zone { border: 2px dashed var(--border); border-radius: var(--rsm); padding: 24px 16px; text-align: center; cursor: pointer; transition: all .2s; position: relative; background: var(--surface); }
+    .upload-zone:hover { border-color: var(--accent); background: rgba(74,125,255,.04); }
+    .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; display: none; margin-top: 10px; }
+    .upload-fill { height: 100%; background: var(--accent); transition: width .3s; }
+
+    /* ── FILTER BAR ── */
+    .filter-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+    .si-inp { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 8px 12px 8px 30px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; outline: none; transition: border .18s; width: 220px; }
+    .si-inp:focus { border-color: var(--accent); }
+    .si-inp::placeholder { color: var(--txt2); }
+    .sw { position: relative; }
+    .sw i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--txt2); font-size: 12px; pointer-events: none; }
+    select.fsel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 8px 11px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 12px; outline: none; cursor: pointer; }
+
+    /* Status tabs */
+    .status-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .st-tab { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; background: var(--surface); border: 1px solid var(--border); color: var(--txt2); cursor: pointer; transition: all .18s; }
+    .st-tab:hover { border-color: var(--warn); color: var(--warn); }
+    .st-tab.active { background: var(--warn); border-color: var(--warn); color: #000; font-weight: 700; }
+    .st-tab .tc { margin-left: 4px; font-size: 10px; opacity: .8; }
+
+    /* ── IMAGE LIGHTBOX ── */
+    .lightbox { position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,.9); display: none; align-items: center; justify-content: center; padding: 20px; }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 100%; max-height: 90vh; border-radius: var(--rsm); box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+    .lb-close { position: absolute; top: 16px; right: 16px; background: var(--nav); border: 1px solid var(--border); color: var(--txt); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; transition: all .18s; }
+    .lb-close:hover { background: var(--danger); border-color: var(--danger); }
+
+    /* ── CONFIRM MODAL ── */
+    .mo { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.72); display: none; align-items: center; justify-content: center; padding: 20px; }
+    .mo.open { display: flex; }
+    .mb { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; max-width: 420px; animation: fup .28s ease; overflow: hidden; }
+    @keyframes fup { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+    .mh { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .mh h3 { font-family: 'Syne',sans-serif; font-size: 16px; font-weight: 700; }
+    .mbody { padding: 20px; }
+    .mfoot { padding: 13px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+    .mc-btn { background: none; border: none; color: var(--txt2); font-size: 16px; cursor: pointer; }
+    .mc-btn:hover { color: var(--txt); }
+    .fg { margin-bottom: 12px; }
+    .fg label { display: block; font-size: 12px; color: var(--txt2); margin-bottom: 5px; font-weight: 500; }
+    .fg textarea, .fg input, .fg select { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 9px 12px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; outline: none; transition: border .18s; }
+    .fg textarea:focus, .fg input:focus, .fg select:focus { border-color: var(--accent); }
+    .fg textarea { resize: none; min-height: 80px; }
+
+    /* ── TOAST ── */
+    #tc { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--nav); border: 1px solid var(--border); border-left: 3px solid var(--accent); color: var(--txt); font-size: 13px; padding: 10px 16px; border-radius: var(--rsm); min-width: 260px; animation: sli .3s ease; }
+    .toast.s { border-left-color: var(--success); } .toast.e { border-left-color: var(--danger); } .toast.w { border-left-color: var(--warn); }
+    @keyframes sli { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+    .sp { width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spn .7s linear infinite; margin: 0 auto; }
+    @keyframes spn { to{transform:rotate(360deg)} }
+    .lc { display: flex; align-items: center; justify-content: center; padding: 40px; }
+
+    /* ── EMPTY STATE ── */
+    .empty { text-align: center; padding: 60px 20px; color: var(--txt2); }
+    .empty i { font-size: 40px; display: block; margin-bottom: 14px; opacity: .25; }
+    .empty p { font-size: 14px; }
+
+    /* ── REALTIME BADGE ── */
+    .rt-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(34,197,94,.1); border: 1px solid rgba(34,197,94,.25); color: var(--success); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+
+    @media (max-width: 768px) {
+      #sidebar { display: none; }
+      #main { margin-left: 0; }
+      .proof-detail-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+<style>
+@media (max-width: 900px) {
+  /* Hide fixed topbar on mobile — mobilePageHeader takes over */
+  #topbar { display: none !important; }
+  #sidebar { display: none !important; }
+  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
+  #main { padding: 14px 14px 80px !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Mobile Page Header ── -->
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+
+<!-- ══ TOPBAR ══ -->
+<div id="topbar">
+  <div class="tb-brand">
+    <div class="tb-dot"></div>
+    XREZZKY <span class="tb-badge">DEPOSIT ADMIN</span>
+  </div>
+  <div class="tb-sp"></div>
+  <div class="tb-right">
+    <div class="live-badge"><div class="live-dot"></div><span id="pendingCountTop">0 pending</span></div>
+    <div class="rt-badge" id="rtBadge"><i class="fas fa-circle-dot" style="font-size:9px"></i> Realtime</div>
+    <button class="btn bg bsm" onclick="refreshAll()"><i class="fas fa-rotate-right"></i></button>
+    <a href="admin-panel.html" class="btn bg bsm"><i class="fas fa-arrow-left"></i> Admin Panel</a>
+    <button class="btn bd bsm" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
+  </div>
+</div>
+
+<!-- ══ SIDEBAR ══ -->
+<div id="sidebar">
+  <div class="sl">Deposit</div>
+  <button class="si active" onclick="showPage('pending',this)">
+    <i class="fas fa-clock"></i> Menunggu ACC
+    <span class="sc-b scb-y" id="sb-pending">0</span>
+  </button>
+  <button class="si" onclick="showPage('all',this)">
+    <i class="fas fa-list"></i> Semua Deposit
+    <span class="sc-b scb-r" id="sb-all">0</span>
+  </button>
+  <button class="si" onclick="showPage('approved',this)">
+    <i class="fas fa-check-circle"></i> Disetujui
+  </button>
+  <button class="si" onclick="showPage('rejected',this)">
+    <i class="fas fa-times-circle"></i> Ditolak
+  </button>
+  <button class="si" onclick="showPage('expired',this)">
+    <i class="fas fa-hourglass-end"></i> Hangus
+  </button>
+
+  <div class="ss"></div>
+  <div class="sl">Pengaturan</div>
+  <button class="si" onclick="showPage('qris-setting',this)">
+    <i class="fas fa-qrcode"></i> Upload QRIS
+  </button>
+  <button class="si" onclick="showPage('fee-setting',this)">
+    <i class="fas fa-coins"></i> Admin Fee
+  </button>
+
+  <div class="ss"></div>
+  <div class="sl">Statistik</div>
+  <button class="si" onclick="showPage('stats',this)">
+    <i class="fas fa-chart-bar"></i> Laporan
+  </button>
+
+  <div class="ss"></div>
+  <div class="sl">Navigasi</div>
+  <a class="si" href="admin-panel.html" style="text-decoration:none"><i class="fas fa-chart-pie"></i> Admin Panel</a>
+  <a class="si" href="info-admin.html"  style="text-decoration:none"><i class="fas fa-bell"></i> Kelola Info</a>
+  <a class="si" href="cs-dashboard.html" style="text-decoration:none"><i class="fas fa-headset"></i> CS Dashboard</a>
+  <a class="si" href="index.html"        style="text-decoration:none"><i class="fas fa-home"></i> Ke Toko</a>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div id="wrapper"><div id="main">
+
+  <!-- ── PENDING ── -->
+  <div class="pv active" id="pv-pending">
+    <div class="ph">
+      <div><h1>Deposit Menunggu ACC</h1><p>Periksa bukti transfer dan setujui atau tolak</p></div>
+      <div class="pha">
+        <button class="btn bg bsm" onclick="refreshAll()"><i class="fas fa-rotate-right"></i> Refresh</button>
+      </div>
+    </div>
+    <div class="sg">
+      <div class="sc"><div class="sc-ico siy"><i class="fas fa-clock"></i></div><div><div class="sc-v" id="st-pending">—</div><div class="sc-l">Menunggu</div></div></div>
+      <div class="sc"><div class="sc-ico sig"><i class="fas fa-check-circle"></i></div><div><div class="sc-v" id="st-approved">—</div><div class="sc-l">Disetujui Hari Ini</div></div></div>
+      <div class="sc"><div class="sc-ico sir"><i class="fas fa-times-circle"></i></div><div><div class="sc-v" id="st-rejected">—</div><div class="sc-l">Ditolak Hari Ini</div></div></div>
+      <div class="sc"><div class="sc-ico sib"><i class="fas fa-money-bill-wave"></i></div><div><div class="sc-v" id="st-totaltoday">—</div><div class="sc-l">Total ACC Hari Ini</div></div></div>
+    </div>
+    <div id="pendingList">
+      <div class="lc"><div class="sp"></div></div>
+    </div>
+  </div>
+
+  <!-- ── ALL ── -->
+  <div class="pv" id="pv-all">
+    <div class="ph"><div><h1>Semua Deposit</h1><p>Riwayat lengkap semua request deposit</p></div></div>
+    <div class="filter-bar">
+      <div class="sw"><i class="fas fa-search"></i><input class="si-inp" id="allSearch" placeholder="Cari username, email..." oninput="renderAllDeposits()" /></div>
+      <select class="fsel" id="allSort" onchange="renderAllDeposits()">
+        <option value="newest">Terbaru</option>
+        <option value="oldest">Terlama</option>
+        <option value="highest">Nominal Terbesar</option>
+      </select>
+    </div>
+    <div class="status-tabs" id="allStatusTabs">
+      <div class="st-tab active" onclick="setAllStatus('',this)">Semua</div>
+      <div class="st-tab" onclick="setAllStatus('waiting_review',this)">Menunggu</div>
+      <div class="st-tab" onclick="setAllStatus('completed',this)">Disetujui</div>
+      <div class="st-tab" onclick="setAllStatus('rejected',this)">Ditolak</div>
+      <div class="st-tab" onclick="setAllStatus('expired',this)">Hangus</div>
+    </div>
+    <div id="allList"></div>
+  </div>
+
+  <!-- ── APPROVED ── -->
+  <div class="pv" id="pv-approved">
+    <div class="ph"><div><h1>Deposit Disetujui</h1></div></div>
+    <div id="approvedList"></div>
+  </div>
+
+  <!-- ── REJECTED ── -->
+  <div class="pv" id="pv-rejected">
+    <div class="ph"><div><h1>Deposit Ditolak</h1></div></div>
+    <div id="rejectedList"></div>
+  </div>
+
+  <!-- ── EXPIRED ── -->
+  <div class="pv" id="pv-expired">
+    <div class="ph"><div><h1>Deposit Hangus</h1><p>Sesi yang melebihi batas waktu 15 menit</p></div></div>
+    <div id="expiredList"></div>
+  </div>
+
+  <!-- ── QRIS SETTING ── -->
+  <div class="pv" id="pv-qris-setting">
+    <div class="ph"><div><h1>Upload QRIS</h1><p>Gambar QRIS yang tampil di halaman deposit user</p></div></div>
+
+    <div class="qris-setting-card">
+      <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap">
+        <div>
+          <div style="font-size:12px; color:var(--txt2); margin-bottom:10px; font-weight:500">QRIS Aktif Saat Ini</div>
+          <div class="qris-preview" id="qrisPreview">
+            <div class="qris-placeholder"><i class="fas fa-qrcode"></i><p style="font-size:11px; color:#aaa">Belum ada QRIS</p></div>
+          </div>
+          <div style="font-size:11px; color:var(--txt2); margin-top:6px" id="qrisUploadTime">—</div>
+        </div>
+        <div style="flex:1; min-width:260px">
+          <div style="font-size:14px; font-weight:600; margin-bottom:14px">Upload QRIS Baru</div>
+
+          <div class="upload-zone" id="qrisUploadZone"
+            ondragover="event.preventDefault(); this.style.borderColor='var(--accent)'"
+            ondragleave="this.style.borderColor='var(--border)'"
+            ondrop="handleQrisDrop(event)">
+            <input type="file" id="qrisFile" accept="image/*" onchange="handleQrisSelect(event)" />
+            <div id="qrisUploadContent">
+              <div style="font-size:28px; color:var(--txt2); opacity:.4; margin-bottom:8px"><i class="fas fa-cloud-arrow-up"></i></div>
+              <div style="font-size:13px; font-weight:600; margin-bottom:4px">Klik atau drag gambar QRIS</div>
+              <div style="font-size:12px; color:var(--txt2)">JPG, PNG — maks 5MB</div>
+            </div>
+            <img id="qrisNewPreview" style="width:100%; max-height:200px; object-fit:contain; border-radius:8px; display:none; margin-top:8px" alt="preview" />
+          </div>
+          <div class="upload-bar" id="qrisUpBar"><div class="upload-fill" id="qrisUpFill" style="width:0%"></div></div>
+          <button class="btn bp" style="width:100%; justify-content:center; padding:12px; margin-top:12px; font-weight:700" id="qrisSaveBtn" onclick="saveQrisImage()" disabled>
+            <i class="fas fa-save"></i> Simpan & Aktifkan QRIS
+          </button>
+
+          <div style="background:rgba(74,125,255,.07); border:1px solid rgba(74,125,255,.2); border-radius:var(--rsm); padding:12px 14px; margin-top:12px; font-size:12px; color:var(--txt2); line-height:1.6">
+            <strong style="color:var(--accent)">💡 Tips:</strong><br/>
+            Upload gambar QRIS tanpa tulisan apapun. Sistem akan otomatis menambahkan nominal, admin fee, dan total saat user download.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FEE SETTING ── -->
+  <div class="pv" id="pv-fee-setting">
+    <div class="ph"><div><h1>Pengaturan Admin Fee</h1><p>Atur tarif admin fee per tier nominal deposit</p></div></div>
+    <div class="cb">
+      <div class="cbh"><h3>Tabel Fee Aktif</h3><div class="ha"><button class="btn bs bsm" onclick="saveFeeSettings()"><i class="fas fa-save"></i> Simpan</button></div></div>
+      <div style="overflow-x:auto">
+        <table style="width:100%; border-collapse:collapse; font-size:13px">
+          <thead><tr style="background:var(--surface)">
+            <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)">Nominal Min</th>
+            <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)">Nominal Max</th>
+            <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)">Admin Fee (Rp)</th>
+            <th style="padding:10px 16px; text-align:left; font-size:11px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)">Label</th>
+          </tr></thead>
+          <tbody id="feeSettingBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div style="background:rgba(245,158,11,.07); border:1px solid rgba(245,158,11,.2); border-radius:var(--rsm); padding:12px 14px; font-size:12px; color:var(--warn)">
+      <i class="fas fa-triangle-exclamation" style="margin-right:6px"></i>
+      Perubahan fee langsung berlaku untuk deposit baru. Deposit yang sudah dibuat tidak terpengaruh.
+    </div>
+  </div>
+
+  <!-- ── STATS ── -->
+  <div class="pv" id="pv-stats">
+    <div class="ph"><div><h1>Laporan Deposit</h1></div><div class="pha"><button class="btn bg bsm" onclick="loadStats()"><i class="fas fa-rotate-right"></i></button></div></div>
+    <div class="sg" id="statsGrid"></div>
+    <div class="cb">
+      <div class="cbh"><h3>Deposit Terbaru Disetujui</h3></div>
+      <div style="overflow-x:auto">
+        <table style="width:100%; border-collapse:collapse; font-size:13px">
+          <thead><tr style="background:var(--surface)">
+            <th style="padding:10px 14px; text-align:left; font-size:11px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)">User</th>
+            <th style="padding:10px 14px; font-size:11px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)">Nominal</th>
+            <th style="padding:10px 14px; font-size:11px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)">Fee</th>
+            <th style="padding:10px 14px; font-size:11px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)">Total</th>
+            <th style="padding:10px 14px; font-size:11px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.05em; border-bottom:1px solid var(--border)">Waktu ACC</th>
+          </tr></thead>
+          <tbody id="statsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div></div><!-- /wrapper -->
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()"><i class="fas fa-times"></i></button>
+  <img id="lightboxImg" src="" alt="bukti" />
+</div>
+
+<!-- CONFIRM ACC MODAL -->
+<div class="mo" id="accModal">
+  <div class="mb">
+    <div class="mh"><h3>Konfirmasi ACC Deposit</h3><button class="mc-btn" onclick="closeMo('accModal')"><i class="fas fa-times"></i></button></div>
+    <div class="mbody" id="accModalBody"></div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeMo('accModal')">Batal</button>
+      <button class="btn bs" id="accConfirmBtn"><i class="fas fa-check"></i> ACC & Kredit Saldo</button>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MODAL -->
+<div class="mo" id="rejectModal">
+  <div class="mb">
+    <div class="mh"><h3>Tolak Deposit</h3><button class="mc-btn" onclick="closeMo('rejectModal')"><i class="fas fa-times"></i></button></div>
+    <div class="mbody">
+      <div class="fg"><label>Alasan Penolakan</label>
+        <select id="rejectReason">
+          <option value="Bukti transfer tidak jelas">Bukti transfer tidak jelas</option>
+          <option value="Nominal tidak sesuai">Nominal tidak sesuai</option>
+          <option value="Bukti sudah digunakan">Bukti sudah pernah digunakan</option>
+          <option value="Bukan bukti transfer QRIS XREZZKY">Bukan bukti transfer QRIS XREZZKY</option>
+          <option value="Waktu transfer tidak sesuai">Waktu transfer tidak sesuai</option>
+          <option value="Lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div class="fg"><label>Catatan Tambahan (opsional)</label><textarea id="rejectNote" placeholder="Tulis catatan untuk user..."></textarea></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeMo('rejectModal')">Batal</button>
+      <button class="btn bd" id="rejectConfirmBtn"><i class="fas fa-times"></i> Tolak Deposit</button>
+    </div>
+  </div>
+</div>
+
+<div id="tc"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ══ CONFIG ══
+const SUPA_URL    = 'https://jydfjfjttpmropoczgop.supabase.co';
+const SUPA_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const SUPA_SVC    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODEwODI1MSwiZXhwIjoyMDkzNjg0MjUxfQ.rBuBsXDRaesLKR6as1lNk3nIp25l34VKY6-6x8gnPZg';
+const CLD_CLOUD   = 'drjmclzbi';
+const CLD_PRESET  = 'xrezzky_unsigned';
+const CLD_BASE    = `https://res.cloudinary.com/${CLD_CLOUD}/image/upload/`;
+const CLD_UPLOAD  = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`;
+
+const sb  = supabase.createClient(SUPA_URL, SUPA_KEY);
+const sbS = supabase.createClient(SUPA_URL, SUPA_SVC);
+
+// ══ STATE ══
+let admin      = null;
+let allDeposits = [];
+let allStatusFilter = '';
+let pendingAcc = null; // deposit being approved
+let pendingRej = null; // deposit being rejected
+let qrisNewFile = null;
+let countdownTimers = {};
+
+const FEE_TIERS = [
+  { min:1000,    max:19999,   fee:300,  label:'< Rp 20.000' },
+  { min:20000,   max:49999,   fee:500,  label:'Rp 20K – 49K' },
+  { min:50000,   max:99999,   fee:1000, label:'Rp 50K – 99K' },
+  { min:100000,  max:499999,  fee:2000, label:'Rp 100K – 499K' },
+  { min:500000,  max:999999,  fee:3000, label:'Rp 500K – 999K' },
+  { min:1000000, max:Infinity,fee:5000, label:'Rp 1JT+' },
+];
+
+// ══ INIT ══
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { toast('Login dulu', 'e'); setTimeout(() => location.href='index.html', 1500); return; }
+  admin = session.user;
+  await refreshAll();
+  subscribeRealtime();
+  buildFeeSettingTable();
+  loadQrisSetting();
+});
+
+// ══ REALTIME ══
+function subscribeRealtime() {
+  sb.channel('deposit-admin-' + Date.now())
+    .on('postgres_changes', { event:'*', schema:'public', table:'deposit_requests' }, async (payload) => {
+      await refreshAll();
+      if (payload.eventType === 'INSERT') {
+        toast('💳 Deposit baru masuk! Segera periksa.', 'w');
+        // Flash tab title
+        let orig = document.title, blink = 0;
+        const iv = setInterval(() => {
+          document.title = blink++ % 2 === 0 ? '🔔 DEPOSIT BARU!' : orig;
+          if (blink > 8) { clearInterval(iv); document.title = orig; }
+        }, 600);
+        // Play beep if possible
+        try {
+          const ctx = new AudioContext();
+          const osc = ctx.createOscillator();
+          osc.connect(ctx.destination);
+          osc.frequency.value = 880;
+          osc.start(); osc.stop(ctx.currentTime + 0.15);
+        } catch(e){}
+      }
+    })
+    .subscribe((status) => {
+      const badge = document.getElementById('rtBadge');
+      if (badge) badge.style.background = status === 'SUBSCRIBED' ? 'rgba(34,197,94,.15)' : 'rgba(239,68,68,.15)';
+    });
+  // Auto-refresh every 30s as fallback
+  setInterval(refreshAll, 30000);
+}
+
+// ══ REFRESH ══
+async function refreshAll() {
+  const { data } = await sb.from('deposit_requests')
+    .select('*, profiles(username, email, avatar_url, balance)')
+    .order('created_at', { ascending: false });
+  allDeposits = data || [];
+
+  updateStats();
+  renderPendingList();
+  renderAllDeposits();
+  renderFilteredList('completed', 'approvedList');
+  renderFilteredList('rejected', 'rejectedList');
+  renderFilteredList('expired', 'expiredList');
+  loadStats();
+}
+
+// ══ STATS ══
+function updateStats() {
+  const pending  = allDeposits.filter(d => ['pending','waiting_review'].includes(d.status));
+  const today    = new Date().toISOString().split('T')[0];
+  const appToday = allDeposits.filter(d => d.status === 'completed' && d.approved_at?.startsWith(today));
+  const rejToday = allDeposits.filter(d => d.status === 'rejected'  && d.rejected_at?.startsWith(today));
+  const totalAcc = appToday.reduce((a, d) => a + (d.amount||0), 0);
+
+  document.getElementById('st-pending').textContent   = pending.length;
+  document.getElementById('st-approved').textContent  = appToday.length;
+  document.getElementById('st-rejected').textContent  = rejToday.length;
+  document.getElementById('st-totaltoday').textContent= fmtRp(totalAcc);
+  document.getElementById('sb-pending').textContent   = pending.length;
+  document.getElementById('sb-all').textContent       = allDeposits.length;
+  document.getElementById('pendingCountTop').textContent = `${pending.length} pending`;
+}
+
+// ══ RENDER PENDING ══
+function renderPendingList() {
+  const pending = allDeposits.filter(d => ['pending','waiting_review'].includes(d.status));
+  const list    = document.getElementById('pendingList');
+  if (!pending.length) {
+    list.innerHTML = `<div class="empty"><i class="fas fa-check-circle" style="color:var(--success)"></i><p>Tidak ada deposit yang menunggu ACC 🎉</p></div>`;
+    return;
+  }
+  list.innerHTML = pending.map(d => renderDepCard(d, true)).join('');
+  // Start countdowns
+  pending.forEach(d => { if (d.expires_at) startMiniCountdown(d.id, d.expires_at); });
+}
+
+// ══ RENDER ALL ══
+function renderAllDeposits() {
+  const q    = document.getElementById('allSearch').value.toLowerCase();
+  const sort = document.getElementById('allSort').value;
+  let data   = allDeposits.filter(d => {
+    const matchStatus = !allStatusFilter || d.status === allStatusFilter;
+    const matchQ = !q || (d.profiles?.username||'').toLowerCase().includes(q) || (d.profiles?.email||'').toLowerCase().includes(q);
+    return matchStatus && matchQ;
+  });
+  if (sort === 'newest')  data.sort((a,b) => new Date(b.created_at)-new Date(a.created_at));
+  if (sort === 'oldest')  data.sort((a,b) => new Date(a.created_at)-new Date(b.created_at));
+  if (sort === 'highest') data.sort((a,b) => (b.amount||0)-(a.amount||0));
+  const list = document.getElementById('allList');
+  list.innerHTML = data.length ? data.map(d => renderDepCard(d, ['pending','waiting_review'].includes(d.status))).join('') : `<div class="empty"><i class="fas fa-inbox"></i><p>Tidak ada data</p></div>`;
+}
+
+function setAllStatus(s, el) {
+  allStatusFilter = s;
+  document.querySelectorAll('#allStatusTabs .st-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderAllDeposits();
+}
+
+function renderFilteredList(status, elementId) {
+  const data = allDeposits.filter(d => d.status === status);
+  const list = document.getElementById(elementId);
+  if (!list) return;
+  list.innerHTML = data.length ? data.map(d => renderDepCard(d, false)).join('') : `<div class="empty"><i class="fas fa-inbox"></i><p>Tidak ada data</p></div>`;
+}
+
+// ══ RENDER CARD ══
+function renderDepCard(d, showActions) {
+  const p = d.profiles || {};
+  const nm = p.username || 'User';
+  const avHtml = p.avatar_url ? `<img src="${CLD_BASE}${p.avatar_url}" alt="av"/>` : nm[0].toUpperCase();
+  const isUrgent = d.status === 'waiting_review' && d.expires_at && new Date(d.expires_at) - Date.now() < 3*60*1000;
+
+  const statusChip = d.status === 'completed'     ? '<span class="chip cg">Disetujui</span>'
+                   : d.status === 'rejected'       ? '<span class="chip cr">Ditolak</span>'
+                   : d.status === 'expired'        ? '<span class="chip cgr">Hangus</span>'
+                   : d.status === 'waiting_review' ? '<span class="chip cy">Menunggu Review</span>'
+                   : '<span class="chip cy">Pending</span>';
+
+  return `<div class="dep-card ${isUrgent?'urgent':''}" id="dc-${d.id}">
+    <div class="dep-main">
+      <div class="dep-av">${avHtml}</div>
+      <div class="dep-info">
+        <div class="dep-user">${esc(nm)}</div>
+        <div class="dep-email">${esc(p.email||'—')}</div>
+        <div class="dep-time">
+          <i class="fas fa-clock"></i>
+          ${fmtDateFull(d.created_at)}
+          ${d.status === 'waiting_review' ? `• <span class="dep-cd ${isUrgent?'urgent':''}" id="cd-${d.id}"><i class="fas fa-stopwatch"></i> —</span>` : ''}
+        </div>
+      </div>
+      <div class="dep-amounts">
+        <div class="da-item">
+          <div class="da-val">${fmtRp(d.amount)}</div>
+          <div class="da-lbl">Nominal</div>
+        </div>
+        <div style="color:var(--border); font-size:18px">+</div>
+        <div class="da-item">
+          <div class="da-val" style="color:var(--warn)">${fmtRp(d.admin_fee||0)}</div>
+          <div class="da-lbl">Fee</div>
+        </div>
+        <div style="color:var(--border); font-size:18px">=</div>
+        <div class="da-item">
+          <div class="da-val" style="color:var(--accent)">${fmtRp(d.total_paid)}</div>
+          <div class="da-lbl">Total</div>
+        </div>
+      </div>
+      <div class="dep-right">
+        ${statusChip}
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end">
+          <button class="btn bg bxs" onclick="toggleProof('${d.id}')"><i class="fas fa-eye"></i> Bukti</button>
+          ${showActions ? `
+            <button class="btn bs bxs" onclick="openAccModal('${d.id}')"><i class="fas fa-check"></i> ACC</button>
+            <button class="btn bd bxs" onclick="openRejectModal('${d.id}')"><i class="fas fa-times"></i> Tolak</button>
+          ` : ''}
+        </div>
+      </div>
+    </div>
+    <div class="dep-proof" id="proof-${d.id}">
+      ${d.proof_image
+        ? `<div class="proof-img-wrap"><img src="${CLD_BASE}${d.proof_image}" alt="Bukti Transfer" onclick="openLightbox('${CLD_BASE}${d.proof_image}')" /></div>`
+        : `<div class="proof-no-img"><i class="fas fa-image" style="font-size:28px; display:block; margin-bottom:8px; opacity:.3"></i>Bukti belum diupload user</div>`}
+      <div class="proof-detail-grid">
+        <div class="pdf"><div class="k">ID Deposit</div><div class="v" style="font-size:11px; color:var(--txt2)">${d.id}</div></div>
+        <div class="pdf"><div class="k">Saldo User Sekarang</div><div class="v" style="color:var(--success)">${fmtRp(p.balance||0)}</div></div>
+        <div class="pdf"><div class="k">Dikirim Pukul</div><div class="v">${d.submitted_at ? fmtDateFull(d.submitted_at) : '—'}</div></div>
+        <div class="pdf"><div class="k">Kedaluwarsa</div><div class="v" style="color:var(--warn)">${d.expires_at ? fmtDateFull(d.expires_at) : '—'}</div></div>
+        ${d.reject_reason ? `<div class="pdf" style="grid-column:1/-1"><div class="k">Alasan Tolak</div><div class="v" style="color:var(--danger)">${esc(d.reject_reason)}</div></div>` : ''}
+        ${d.approved_at ? `<div class="pdf"><div class="k">Disetujui Pukul</div><div class="v" style="color:var(--success)">${fmtDateFull(d.approved_at)}</div></div>` : ''}
+      </div>
+      ${showActions ? `
+        <div class="proof-actions">
+          <button class="btn bs" onclick="openAccModal('${d.id}')"><i class="fas fa-check"></i> ACC Deposit</button>
+          <button class="btn bd" onclick="openRejectModal('${d.id}')"><i class="fas fa-times"></i> Tolak Deposit</button>
+          ${d.proof_image ? `<a href="${CLD_BASE}${d.proof_image}" target="_blank" class="btn bg bsm"><i class="fas fa-external-link-alt"></i> Buka Bukti</a>` : ''}
+        </div>` : ''}
+    </div>
+  </div>`;
+}
+
+// ══ TOGGLE PROOF ══
+function toggleProof(id) {
+  const el = document.getElementById(`proof-${id}`);
+  el.classList.toggle('open');
+}
+
+// ══ MINI COUNTDOWN ══
+function startMiniCountdown(id, expiry) {
+  if (countdownTimers[id]) clearInterval(countdownTimers[id]);
+  function tick() {
+    const el = document.getElementById(`cd-${id}`);
+    if (!el) { clearInterval(countdownTimers[id]); return; }
+    const rem = Math.max(0, Math.floor((new Date(expiry) - Date.now()) / 1000));
+    const m   = Math.floor(rem/60).toString().padStart(2,'0');
+    const s   = (rem%60).toString().padStart(2,'0');
+    el.innerHTML = `<i class="fas fa-stopwatch"></i> ${m}:${s}`;
+    if (rem <= 60) el.classList.add('urgent');
+    if (rem === 0) clearInterval(countdownTimers[id]);
+  }
+  tick();
+  countdownTimers[id] = setInterval(tick, 1000);
+}
+
+// ══ ACC MODAL ══
+function openAccModal(id) {
+  const d = allDeposits.find(x => x.id === id);
+  if (!d) return;
+  pendingAcc = d;
+  const p = d.profiles || {};
+  document.getElementById('accModalBody').innerHTML = `
+    <div style="background:rgba(34,197,94,.07); border:1px solid rgba(34,197,94,.2); border-radius:var(--rsm); padding:14px 16px; margin-bottom:14px">
+      <div style="font-size:12px; color:var(--txt2); margin-bottom:4px">Saldo akan ditambahkan ke akun:</div>
+      <div style="font-size:14px; font-weight:700">${esc(p.username||'—')}</div>
+      <div style="font-size:12px; color:var(--txt2)">${esc(p.email||'')}</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px">
+      <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border)">
+        <span style="color:var(--txt2)">Nominal Deposit</span>
+        <span style="font-weight:700">${fmtRp(d.amount)}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border)">
+        <span style="color:var(--txt2)">Admin Fee</span>
+        <span style="font-weight:700; color:var(--warn)">${fmtRp(d.admin_fee||0)}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:14px; padding:10px 0">
+        <span style="font-weight:700">Saldo Dikreditkan</span>
+        <span style="font-weight:800; color:var(--success); font-family:'Syne',sans-serif; font-size:20px">+${fmtRp(d.amount)}</span>
+      </div>
+    </div>
+    <div style="background:rgba(74,125,255,.07); border:1px solid rgba(74,125,255,.2); border-radius:var(--rsm); padding:10px 12px; font-size:12px; color:var(--txt2)">
+      Saldo user saat ini: <strong style="color:var(--txt)">${fmtRp(p.balance||0)}</strong> → setelah ACC: <strong style="color:var(--success)">${fmtRp((p.balance||0)+d.amount)}</strong>
+    </div>`;
+
+  document.getElementById('accConfirmBtn').onclick = () => executeAcc(id);
+  openMo('accModal');
+}
+
+async function executeAcc(id) {
+  const d = allDeposits.find(x => x.id === id);
+  if (!d) return;
+  const btn = document.getElementById('accConfirmBtn');
+  btn.innerHTML = '<div class="sp" style="width:16px;height:16px;border-width:2px;margin:0"></div>';
+  btn.disabled  = true;
+
+  const p = d.profiles || {};
+  const newBalance = (p.balance || 0) + (d.amount || 0);
+
+  // Update deposit status
+  const { error: e1 } = await sbS.from('deposit_requests').update({
+    status: 'completed', approved_at: new Date().toISOString(), approved_by: admin.id
+  }).eq('id', id);
+
+  // Credit user balance
+  const { error: e2 } = await sbS.from('profiles').update({ balance: newBalance }).eq('id', d.user_id);
+
+  btn.innerHTML = '<i class="fas fa-check"></i> ACC & Kredit Saldo';
+  btn.disabled  = false;
+
+  if (e1 || e2) { toast('Error: ' + (e1||e2).message, 'e'); return; }
+
+  toast(`✅ Deposit ACC! Saldo +${fmtRp(d.amount)} → ${esc(p.username||'user')}`, 's');
+  closeMo('accModal');
+  await refreshAll();
+}
+
+// ══ REJECT MODAL ══
+function openRejectModal(id) {
+  pendingRej = id;
+  document.getElementById('rejectNote').value = '';
+  document.getElementById('rejectReason').selectedIndex = 0;
+  document.getElementById('rejectConfirmBtn').onclick = () => executeReject(id);
+  openMo('rejectModal');
+}
+
+async function executeReject(id) {
+  const reason = document.getElementById('rejectReason').value;
+  const note   = document.getElementById('rejectNote').value.trim();
+  const full   = note ? `${reason}. ${note}` : reason;
+  const btn    = document.getElementById('rejectConfirmBtn');
+  btn.innerHTML = '<div class="sp" style="width:16px;height:16px;border-width:2px;margin:0"></div>';
+  btn.disabled  = true;
+
+  const { error } = await sbS.from('deposit_requests').update({
+    status: 'rejected', reject_reason: full, rejected_at: new Date().toISOString(), rejected_by: admin.id
+  }).eq('id', id);
+
+  btn.innerHTML = '<i class="fas fa-times"></i> Tolak Deposit';
+  btn.disabled  = false;
+
+  if (error) { toast('Error: ' + error.message, 'e'); return; }
+  toast('Deposit ditolak', 'w');
+  closeMo('rejectModal');
+  await refreshAll();
+}
+
+// ══ QRIS SETTING ══
+async function loadQrisSetting() {
+  const { data } = await sb.from('app_settings').select('*').eq('key', 'qris_image').maybeSingle();
+  if (data?.value) {
+    document.getElementById('qrisPreview').innerHTML = `<img src="${CLD_BASE}${data.value}" alt="QRIS" style="width:100%;height:100%;object-fit:contain"/>`;
+    document.getElementById('qrisUploadTime').textContent = `Diupload: ${fmtDate(data.updated_at || data.created_at)}`;
+  }
+}
+
+function handleQrisSelect(e) { processQrisFile(e.target.files[0]); }
+function handleQrisDrop(e) {
+  e.preventDefault();
+  document.getElementById('qrisUploadZone').style.borderColor = 'var(--border)';
+  if (e.dataTransfer.files[0]) processQrisFile(e.dataTransfer.files[0]);
+}
+
+function processQrisFile(file) {
+  if (!file) return;
+  if (file.size > 5*1024*1024) { toast('Maks 5MB', 'e'); return; }
+  qrisNewFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const prev = document.getElementById('qrisNewPreview');
+    prev.src   = e.target.result;
+    prev.style.display = 'block';
+    document.getElementById('qrisUploadContent').style.display = 'none';
+    document.getElementById('qrisSaveBtn').disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveQrisImage() {
+  if (!qrisNewFile) { toast('Pilih file QRIS dulu', 'e'); return; }
+  const btn  = document.getElementById('qrisSaveBtn');
+  const bar  = document.getElementById('qrisUpBar');
+  const fill = document.getElementById('qrisUpFill');
+  btn.disabled  = true;
+  btn.innerHTML = '<div class="sp" style="width:16px;height:16px;border-width:2px;margin:0"></div> Mengupload...';
+  bar.style.display  = 'block';
+  fill.style.width   = '20%';
+
+  try {
+    const fd = new FormData();
+    fd.append('file', qrisNewFile);
+    fd.append('upload_preset', CLD_PRESET);
+    fd.append('folder', 'qris');
+    fill.style.width = '60%';
+    const res  = await fetch(CLD_UPLOAD, { method:'POST', body: fd });
+    const data = await res.json();
+    fill.style.width = '100%';
+    if (data.error) throw new Error(data.error.message);
+    const relPath = data.public_id + '.' + data.format;
+
+    // Upsert to app_settings
+    const { error } = await sbS.from('app_settings').upsert([{
+      key: 'qris_image', value: relPath, updated_at: new Date().toISOString()
+    }], { onConflict: 'key' });
+    if (error) throw new Error(error.message);
+
+    // Update preview
+    document.getElementById('qrisPreview').innerHTML = `<img src="${data.secure_url}" alt="QRIS" style="width:100%;height:100%;object-fit:contain"/>`;
+    document.getElementById('qrisUploadTime').textContent = `Diupload: ${fmtDate(new Date().toISOString())}`;
+    toast('QRIS berhasil diperbarui ✅', 's');
+    qrisNewFile = null;
+  } catch(err) {
+    toast('Gagal: ' + err.message, 'e');
+  } finally {
+    btn.disabled  = false;
+    btn.innerHTML = '<i class="fas fa-save"></i> Simpan & Aktifkan QRIS';
+    setTimeout(() => { bar.style.display='none'; fill.style.width='0%'; }, 800);
+  }
+}
+
+// ══ FEE SETTING ══
+function buildFeeSettingTable() {
+  document.getElementById('feeSettingBody').innerHTML = FEE_TIERS.map((t, i) => `
+    <tr>
+      <td style="padding:10px 14px; border-bottom:1px solid var(--border)"><strong>${fmtRp(t.min)}</strong></td>
+      <td style="padding:10px 14px; border-bottom:1px solid var(--border)">${t.max === Infinity ? '∞' : fmtRp(t.max)}</td>
+      <td style="padding:10px 14px; border-bottom:1px solid var(--border)">
+        <input type="number" value="${t.fee}" id="fee-input-${i}" style="width:120px; background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:6px 10px; color:var(--txt); font-family:'Poppins',sans-serif; font-size:13px; outline:none;" onchange="FEE_TIERS[${i}].fee=parseInt(this.value)||0" />
+      </td>
+      <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--txt2); font-size:12px">${t.label}</td>
+    </tr>`).join('');
+}
+
+async function saveFeeSettings() {
+  const fees = FEE_TIERS.map((t, i) => ({ ...t, fee: parseInt(document.getElementById(`fee-input-${i}`).value) || 0 }));
+  const { error } = await sbS.from('app_settings').upsert([{
+    key: 'fee_tiers', value: JSON.stringify(fees), updated_at: new Date().toISOString()
+  }], { onConflict: 'key' });
+  if (error) { toast('Gagal: ' + error.message, 'e'); return; }
+  fees.forEach((f, i) => FEE_TIERS[i].fee = f.fee);
+  toast('Fee settings disimpan ✅', 's');
+}
+
+// ══ STATS PAGE ══
+async function loadStats() {
+  const total   = allDeposits.length;
+  const approved= allDeposits.filter(d => d.status === 'completed');
+  const pending = allDeposits.filter(d => ['pending','waiting_review'].includes(d.status));
+  const totalIn = approved.reduce((a, d) => a + (d.amount||0), 0);
+  const totalFee= approved.reduce((a, d) => a + (d.admin_fee||0), 0);
+
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="sc"><div class="sc-ico sib"><i class="fas fa-receipt"></i></div><div><div class="sc-v">${total}</div><div class="sc-l">Total Request</div></div></div>
+    <div class="sc"><div class="sc-ico sig"><i class="fas fa-check-circle"></i></div><div><div class="sc-v">${approved.length}</div><div class="sc-l">Berhasil ACC</div></div></div>
+    <div class="sc"><div class="sc-ico siy"><i class="fas fa-clock"></i></div><div><div class="sc-v">${pending.length}</div><div class="sc-l">Pending</div></div></div>
+    <div class="sc"><div class="sc-ico sig"><i class="fas fa-money-bill-wave"></i></div><div><div class="sc-v">${fmtRp(totalIn)}</div><div class="sc-l">Total Dikreditkan</div></div></div>
+    <div class="sc"><div class="sc-ico siy"><i class="fas fa-coins"></i></div><div><div class="sc-v">${fmtRp(totalFee)}</div><div class="sc-l">Total Fee Dikumpulkan</div></div></div>`;
+
+  const tbody = document.getElementById('statsTableBody');
+  if (!tbody) return;
+  tbody.innerHTML = approved.slice(0,20).map(d => {
+    const p = d.profiles || {};
+    return `<tr>
+      <td style="padding:10px 14px; border-bottom:1px solid var(--border)">
+        <div style="font-size:13px; font-weight:500">${esc(p.username||'—')}</div>
+        <div style="font-size:11px; color:var(--txt2)">${esc(p.email||'')}</div>
+      </td>
+      <td style="padding:10px 14px; border-bottom:1px solid var(--border); font-weight:600">${fmtRp(d.amount)}</td>
+      <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--warn)">${fmtRp(d.admin_fee||0)}</td>
+      <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--accent); font-weight:700">${fmtRp(d.total_paid)}</td>
+      <td style="padding:10px 14px; border-bottom:1px solid var(--border); color:var(--txt2); font-size:12px">${fmtDateFull(d.approved_at)}</td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--txt2)">Belum ada deposit disetujui</td></tr>';
+}
+
+// ══ LIGHTBOX ══
+function openLightbox(url) { document.getElementById('lightboxImg').src = url; document.getElementById('lightbox').classList.add('open'); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+// ══ NAV ══
+function showPage(page, el) {
+  document.querySelectorAll('.pv').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.si').forEach(i => i.classList.remove('active'));
+  const pv = document.getElementById(`pv-${page}`);
+  if (pv) pv.classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+// ══ MODAL ══
+function openMo(id)  { document.getElementById(id).classList.add('open'); }
+function closeMo(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.mo').forEach(el => el.addEventListener('click', e => { if (e.target===el) closeMo(el.id); }));
+document.addEventListener('keydown', e => { if (e.key==='Escape') document.querySelectorAll('.mo.open').forEach(m => closeMo(m.id)); });
+
+async function checkExpiredDeposits() {
+  const now = new Date().toISOString();
+  const { data: expired } = await sbS.from('deposit_requests')
+    .select('id')
+    .eq('status','pending')
+    .lt('expires_at', now);
+  if (!expired || !expired.length) { toast('Tidak ada deposit kedaluwarsa', 's'); return; }
+  for (const d of expired) {
+    await sbS.from('deposit_requests').update({ status:'expired' }).eq('id', d.id);
+  }
+  toast(`${expired.length} deposit ditandai hangus`, 'w');
+  await refreshAll();
+}
+
+async function checkExpiredDeposits() {
+  const now = new Date().toISOString();
+  const { data: expired } = await sbS.from('deposit_requests')
+    .select('id').eq('status','pending').lt('expires_at', now);
+  if (!expired || !expired.length) { toast('Tidak ada deposit kedaluwarsa', 's'); return; }
+  for (const d of expired) {
+    await sbS.from('deposit_requests').update({ status:'expired' }).eq('id', d.id);
+  }
+  toast(expired.length + ' deposit ditandai hangus', 'w');
+  await refreshAll();
+}
+
+
+async function doLogout() { await sb.auth.signOut(); location.href = 'index.html'; }
+
+// ══ UTILS ══
+function fmtRp(v) { if (!v&&v!==0) return '—'; if (v===0) return 'Rp 0'; return 'Rp '+Number(v).toLocaleString('id-ID'); }
+function fmtDate(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
+function fmtDateFull(d) { if (!d) return '—'; return new Date(d).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
+function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(msg, type='') {
+  const el = document.createElement('div');
+  el.className = `toast ${type}`; el.textContent = msg;
+  document.getElementById('tc').appendChild(el);
+  setTimeout(() => el.remove(), 3800);
+}
+</script>
+
+<!-- ══ XREZZKY BOTTOM NAV — persistent fixed ══ -->
+<style>
+/* ── XBN BASE ── */
+#xbn {
+  display: none;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  background: rgba(23,28,36,.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(74,125,255,.18);
+  height: 64px;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 24px rgba(0,0,0,.5);
+}
+#xbn .xbn-inner {
+  display: flex; align-items: center;
+  width: 100%; height: 100%;
+}
+.xbn-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px;
+  background: none; border: none; cursor: pointer;
+  color: #6b7a8d; font-family: 'Poppins', sans-serif;
+  padding: 4px 0; position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .2s; border-radius: 12px; min-height: 52px;
+  text-decoration: none;
+}
+.xbn-btn i {
+  font-size: 21px; line-height: 1;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .2s;
+  display: block;
+}
+.xbn-btn span { font-size: 10px; font-weight: 600; letter-spacing: .02em; line-height: 1; }
+.xbn-btn.active { color: #4a7dff; }
+.xbn-btn.active i { transform: translateY(-2px) scale(1.15); color: #4a7dff; }
+.xbn-btn::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, #4a7dff, #7c3aed);
+  transition: width .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 0 8px rgba(74,125,255,.8);
+}
+.xbn-btn.active::after { width: 24px; }
+.xbn-btn:active { transform: scale(.88); }
+.xbn-ripple {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: rgba(74,125,255,.25);
+  transform: scale(0); animation: xbnRipple .5s ease-out forwards;
+}
+@keyframes xbnRipple { to { transform: scale(4); opacity: 0; } }
+.xbn-fab-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding-bottom: 6px; gap: 2px;
+}
+.xbn-fab {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #4a7dff 0%, #7c3aed 100%);
+  color: #fff; font-size: 22px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(74,125,255,.55);
+  margin-bottom: 2px;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.xbn-fab:active { transform: scale(.85); box-shadow: 0 2px 10px rgba(74,125,255,.4); }
+.xbn-fab.pulse { animation: xbnFabPulse .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes xbnFabPulse {
+  0%{transform:scale(1)} 40%{transform:scale(.82)} 70%{transform:scale(1.15)} 100%{transform:scale(1)}
+}
+.xbn-fab-label { font-size: 10px; font-weight: 600; color: #9ba6b2; line-height: 1; }
+.xbn-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #1d2430; border: 2px solid transparent;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #6b7a8d;
+  transition: border-color .2s;
+}
+.xbn-av img { width:100%; height:100%; object-fit:cover; }
+.xbn-btn.active .xbn-av { border-color: #4a7dff; color: #4a7dff; }
+/* Page header on mobile */
+#mobilePageHeader {
+  display: none;
+  position: sticky; top: 0; z-index: 200;
+  background: #171c24; border-bottom: 1px solid #2a3442;
+  height: 52px; align-items: center; padding: 0 14px; gap: 12px;
+}
+#mobilePageHeader .mph-back {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #1d2430; border: 1px solid #2a3442; color: #f5f7fa;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+}
+#mobilePageHeader .mph-back:active { transform: scale(.9); }
+#mobilePageHeader .mph-title { font-size: 15px; font-weight: 700; color: #f5f7fa; flex: 1; }
+#mobilePageHeader .mph-logo { font-size: 11px; font-weight: 700; color: #4a7dff; opacity: .7; }
+/* Hide top nav, show bottom nav on mobile */
+@media (max-width: 900px) {
+  #xbn { display: flex !important; }
+  #mobilePageHeader { display: flex !important; }
+  nav:not(#xbn) { display: none !important; }
+  #topbar { display: none !important; }
+  #sidebar { display: none !important; }
+  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
+  body > .main, main, .page, #main { padding-bottom: 80px !important; padding-top: 0 !important; }
+  .page { min-height: calc(100vh - 52px); }
+}
+@media (min-width: 901px) {
+  #xbn { display: none !important; }
+  #mobilePageHeader { display: none !important; }
+}
+</style>
+
+<!-- Mobile Page Header -->
+<div id="mobilePageHeader">
+  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <div class="mph-title" id="mphTitle">XREZZKY</div>
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+<!-- Bottom Nav -->
+<div id="xbn">
+  <div class="xbn-inner">
+    <a class="xbn-btn" href="index.html" id="xbn-home" aria-label="Beranda" onclick="xbnSetActive('home')">
+      <i class="fas fa-home"></i><span>Beranda</span>
+    </a>
+    <button class="xbn-btn" id="xbn-info" onclick="xbnNavInfo(this)" aria-label="Info">
+      <i class="fas fa-bell"></i><span>Info</span>
+    </button>
+    <div class="xbn-fab-wrap">
+      <a class="xbn-fab" href="deposit.html" onclick="xbnFabAnim(this)" aria-label="Deposit">
+        <i class="fas fa-wallet"></i>
+      </a>
+      <span class="xbn-fab-label">Deposit</span>
+    </div>
+    <a class="xbn-btn" href="riwayat.html" id="xbn-riwayat" aria-label="Riwayat" onclick="xbnSetActive('riwayat')">
+      <i class="fas fa-receipt"></i><span>Riwayat</span>
+    </a>
+    <a class="xbn-btn" href="profil.html" id="xbn-profil" aria-label="Profil" onclick="xbnSetActive('profil')">
+      <div class="xbn-av" id="xbnAv"><i class="fas fa-user-circle"></i></div>
+      <span>Profil</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// ── Auto-highlight active nav item based on current page ──
+(function() {
+  var page = location.pathname.split('/').pop() || 'index.html';
+  var map = {
+    'index.html':'home', '':'home',
+    'riwayat.html':'riwayat',
+    'deposit.html':'deposit',
+    'profil.html':'profil',
+    'checkout.html':'home',
+    'seller-dashboard.html':'home',
+    'cs-dashboard.html':'home',
+    'admin-panel.html':'home',
+    'deposit-admin.html':'home',
+    'info-admin.html':'home',
+  };
+  var active = map[page];
+  if (active) {
+    var el = document.getElementById('xbn-' + active);
+    if (el) el.classList.add('active');
+  }
+  // Set page title in mobile header
+  var titles = {
+    'riwayat.html':'Riwayat Transaksi',
+    'deposit.html':'Deposit Saldo',
+    'profil.html':'Profil',
+    'checkout.html':'Checkout',
+    'seller-dashboard.html':'Seller Dashboard',
+    'cs-dashboard.html':'CS Dashboard',
+    'admin-panel.html':'Admin Panel',
+    'deposit-admin.html':'Kelola Deposit',
+    'info-admin.html':'Kelola Info',
+  };
+  var titleEl = document.getElementById('mphTitle');
+  if (titleEl && titles[page]) titleEl.textContent = titles[page];
+  // Add bottom padding to content
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth <= 900) {
+      var els = document.querySelectorAll('main, .main, .page, #main');
+      els.forEach(function(el) {
+        var pb = parseInt(getComputedStyle(el).paddingBottom) || 0;
+        if (pb < 70) el.style.paddingBottom = '80px';
+      });
+    }
+    // Load avatar from Supabase if logged in
+    if (typeof supabase !== 'undefined') {
+      try {
+        var sb2 = supabase.createClient(
+          'https://jydfjfjttpmropoczgop.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+        );
+        sb2.auth.getSession().then(function(r) {
+          var session = r.data && r.data.session;
+          if (!session) return;
+          sb2.from('profiles').select('avatar_url,username').eq('id', session.user.id).maybeSingle().then(function(pr) {
+            var p = pr.data;
+            if (!p) return;
+            var avEl = document.getElementById('xbnAv');
+            if (!avEl) return;
+            if (p.avatar_url) {
+              avEl.innerHTML = '<img src="https://res.cloudinary.com/drjmclzbi/image/upload/' + p.avatar_url + '" alt="av"/>';
+            } else {
+              var nm = p.username || session.user.email[0];
+              avEl.style.background = '#4a7dff';
+              avEl.style.color = '#fff';
+              avEl.innerHTML = '<span style="font-size:12px;font-weight:800">' + nm[0].toUpperCase() + '</span>';
+            }
+          });
+        });
+      } catch(e) {}
+    }
+  });
+})();
+
+function xbnSetActive(tab) {
+  document.querySelectorAll('.xbn-btn').forEach(function(b){ b.classList.remove('active'); });
+  var el = document.getElementById('xbn-' + tab);
+  if (el) el.classList.add('active');
+}
+function xbnFabAnim(el) {
+  el.classList.remove('pulse');
+  void el.offsetWidth;
+  el.classList.add('pulse');
+  setTimeout(function(){ el.classList.remove('pulse'); }, 500);
+}
+function xbnNavInfo(el) {
+  // On inner pages, just go to index with info hash
+  location.href = 'index.html#info';
+}
+function xbnRipple(btn) {
+  var r = document.createElement('span');
+  r.className = 'xbn-ripple';
+  r.style.cssText = 'width:40px;height:40px;margin:-20px 0 0 -20px;top:50%;left:50%;position:absolute';
+  btn.appendChild(r);
+  setTimeout(function(){ r.remove(); }, 600);
+}
+// Add ripple to all xbn-btn clicks
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.xbn-btn');
+  if (btn) xbnRipple(btn);
+});
+</script>
+
+</body>
+</html>

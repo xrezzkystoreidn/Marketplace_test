@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XREZZKY — Checkout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1115; --nav: #171c24; --surface: #1d2430; --border: #2a3442;
+      --accent: #4a7dff; --ah: #5d8fff; --txt: #f5f7fa; --txt2: #9ba6b2;
+      --success: #22c55e; --warn: #f59e0b; --danger: #ef4444; --radius: 13px; --rsm: 9px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; }
+    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    nav { position: sticky; top: 0; z-index: 100; background: rgba(23,28,36,.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); height: 56px; display: flex; align-items: center; padding: 0 20px; gap: 14px; }
+    .nb { display: flex; align-items: center; gap: 8px; font-family: 'Syne',sans-serif; font-size: 15px; font-weight: 700; text-decoration: none; color: var(--txt); }
+    .nb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+    .ns { flex: 1; }
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .18s; text-decoration: none; }
+    .bp { background: var(--accent); color: #fff; } .bp:hover { background: var(--ah); }
+    .bg { background: transparent; color: var(--txt2); border: 1px solid var(--border); } .bg:hover { color: var(--txt); border-color: var(--txt2); }
+    .bsm { padding: 5px 11px; font-size: 12px; }
+
+    /* ── STEP INDICATOR ── */
+    .steps { display: flex; align-items: center; justify-content: center; gap: 0; padding: 20px; max-width: 500px; margin: 0 auto; }
+    .step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; position: relative; }
+    .step:not(:last-child)::after { content:''; position:absolute; top:16px; left:calc(50% + 20px); right:calc(-50% + 20px); height:2px; background:var(--border); }
+    .step.done::after { background:var(--accent); }
+    .step-dot { width: 32px; height: 32px; border-radius: 50%; background: var(--surface); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; transition: all .3s; z-index: 1; }
+    .step.active .step-dot { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .step.done   .step-dot { background: var(--success); border-color: var(--success); color: #fff; }
+    .step-label { font-size: 11px; color: var(--txt2); font-weight: 500; white-space: nowrap; }
+    .step.active .step-label { color: var(--accent); }
+    .step.done   .step-label { color: var(--success); }
+
+    /* ── PAGE ── */
+    .page { max-width: 860px; margin: 0 auto; padding: 0 20px 32px; }
+    .co-layout { display: grid; grid-template-columns: 1fr 310px; gap: 20px; align-items: start; }
+
+    /* ── SECTION ── */
+    .co-sec { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 14px; }
+    .co-sec-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .co-sec-head .step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .co-sec-head h3 { font-size: 14px; font-weight: 600; }
+    .co-sec-body { padding: 18px; }
+
+    /* Product preview */
+    .prod-preview { display: flex; gap: 14px; align-items: flex-start; }
+    .pp-img { width: 80px; height: 80px; border-radius: var(--rsm); background: var(--surface); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--txt2); font-size: 22px; flex-shrink: 0; border: 1px solid var(--border); }
+    .pp-img img { width: 100%; height: 100%; object-fit: cover; }
+    .pp-cat  { font-size: 11px; font-weight: 600; color: var(--accent); background: rgba(74,125,255,.1); padding: 2px 7px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
+    .pp-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; line-height: 1.3; }
+    .pp-seller { font-size: 12px; color: var(--txt2); margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+    .pp-rating { font-size: 12px; color: var(--warn); }
+    .pp-sold   { font-size: 12px; color: var(--txt2); margin-left: 8px; }
+
+    /* Qty selector */
+    .qty-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+    .qty-label { font-size: 12px; color: var(--txt2); }
+    .qty-ctrl { display: flex; align-items: center; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); overflow: hidden; }
+    .qty-btn { width: 32px; height: 32px; background: none; border: none; color: var(--txt); font-size: 15px; cursor: pointer; transition: background .18s; display: flex; align-items: center; justify-content: center; }
+    .qty-btn:hover { background: var(--border); }
+    .qty-val { width: 40px; text-align: center; font-size: 13px; font-weight: 600; line-height: 32px; }
+    .stock-info { font-size: 12px; color: var(--success); margin-left: 8px; }
+
+    /* Notes */
+    .co-notes { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 9px 12px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; resize: none; outline: none; transition: border .18s; min-height: 70px; }
+    .co-notes:focus { border-color: var(--accent); }
+    .co-notes::placeholder { color: var(--txt2); opacity: .5; }
+
+    /* ── PAYMENT METHOD ── */
+    .pay-methods { display: flex; flex-direction: column; gap: 8px; }
+    .pm-item { display: flex; align-items: center; gap: 12px; padding: 13px 15px; background: var(--surface); border: 2px solid var(--border); border-radius: var(--rsm); cursor: pointer; transition: all .18s; }
+    .pm-item:hover { border-color: rgba(74,125,255,.4); }
+    .pm-item.selected { border-color: var(--accent); background: rgba(74,125,255,.07); }
+    .pm-item.disabled { opacity: .4; cursor: not-allowed; }
+    .pm-item.disabled:hover { border-color: var(--border); }
+    .pm-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .18s; }
+    .pm-item.selected .pm-radio { border-color: var(--accent); background: var(--accent); }
+    .pm-item.selected .pm-radio::after { content:''; width:7px; height:7px; border-radius:50%; background:#fff; }
+    .pm-icon { width: 36px; height: 36px; border-radius: var(--rsm); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+    .pm-info .pm-name { font-size: 13px; font-weight: 600; }
+    .pm-info .pm-sub  { font-size: 11px; color: var(--txt2); margin-top: 2px; }
+    .pm-info .pm-bal  { font-size: 12px; color: var(--success); font-weight: 600; margin-top: 2px; }
+    .pm-badge { margin-left: auto; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
+
+    /* ── VOUCHER ── */
+    .voucher-row { display: flex; gap: 8px; }
+    .voucher-inp { flex: 1; background: var(--surface); border: 2px solid var(--border); border-radius: var(--rsm); padding: 10px 12px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; outline: none; transition: border .18s; }
+    .voucher-inp:focus { border-color: var(--accent); }
+    .voucher-inp::placeholder { color: var(--txt2); opacity: .5; }
+    .voucher-applied { background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2); border-radius: var(--rsm); padding: 10px 12px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--success); margin-top: 8px; }
+    .chip { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .cg { background: rgba(34,197,94,.15); color: var(--success); }
+    .cy { background: rgba(245,158,11,.15); color: var(--warn); }
+
+    /* ── ORDER SUMMARY STICKY ── */
+    .order-summary { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: sticky; top: 72px; }
+    .os-title { font-family: 'Syne',sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+    .os-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(42,52,66,.6); font-size: 13px; }
+    .os-row:last-of-type { border-bottom: none; }
+    .os-label { color: var(--txt2); }
+    .os-val   { font-weight: 600; }
+    .os-total { display: flex; justify-content: space-between; padding-top: 14px; border-top: 2px solid var(--border); margin-top: 4px; }
+    .ot-l { font-size: 15px; font-weight: 600; }
+    .ot-v { font-size: 22px; font-weight: 800; color: var(--accent); font-family: 'Syne',sans-serif; }
+    .buy-btn { width: 100%; padding: 14px; background: var(--success); color: #fff; border: none; border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; }
+    .buy-btn:hover { background: #1fb554; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(34,197,94,.3); }
+    .buy-btn:disabled { background: var(--border); color: var(--txt2); cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* Seller info compact */
+    .seller-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); margin-bottom: 14px; }
+    .sr-av { width: 32px; height: 32px; border-radius: 50%; background: var(--nav); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--accent); overflow: hidden; flex-shrink: 0; }
+    .sr-av img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Guarantees */
+    .guarantees { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .gu-item { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--txt2); }
+    .gu-item i { color: var(--success); font-size: 12px; }
+
+    /* Modal */
+    .mo { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.75); display: none; align-items: center; justify-content: center; padding: 20px; }
+    .mo.open { display: flex; }
+    .mb { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; animation: fup .3s ease; overflow: hidden; }
+    @keyframes fup { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+    .mh { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .mh h3 { font-family: 'Syne',sans-serif; font-size: 16px; font-weight: 700; }
+    .mbody { padding: 22px; }
+    .mc-btn { background: none; border: none; color: var(--txt2); font-size: 16px; cursor: pointer; }
+
+    /* Success */
+    .success-wrap { text-align: center; padding: 10px 0; }
+    .ss-ring { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--success); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 32px; color: var(--success); animation: pop .4s ease; }
+    @keyframes pop { 0%{transform:scale(.5);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+    .ss-title { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .ss-sub { font-size: 13px; color: var(--txt2); margin-bottom: 16px; }
+    .ss-detail { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 14px; margin-bottom: 18px; display: flex; flex-direction: column; gap: 8px; }
+    .ss-detail-row { display: flex; justify-content: space-between; font-size: 13px; }
+    .ss-detail-row .sk { color: var(--txt2); }
+    .ss-acts { display: flex; flex-direction: column; gap: 8px; }
+
+    /* Toast & spinner */
+    #tc { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    .toast { background: var(--nav); border: 1px solid var(--border); border-left: 3px solid var(--accent); color: var(--txt); font-size: 13px; padding: 10px 16px; border-radius: var(--rsm); min-width: 260px; animation: sli .3s ease; }
+    .toast.s { border-left-color: var(--success); } .toast.e { border-left-color: var(--danger); } .toast.w { border-left-color: var(--warn); }
+    @keyframes sli { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+    .sp { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spn .7s linear infinite; }
+    @keyframes spn { to{transform:rotate(360deg)} }
+
+    @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+    .anim { animation: fadeIn .35s ease both; }
+    .anim2 { animation: fadeIn .35s .1s ease both; }
+
+    @media (max-width:700px) { .co-layout { grid-template-columns: 1fr; } .order-summary { position: static; } .guarantees { grid-template-columns: 1fr; } }
+  </style>
+
+</head>
+<body>
+
+<!-- ── Mobile Page Header ── -->
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+
+<nav>
+  <a class="nb" href="index.html"><div class="nb-dot"></div>XREZZKY</a>
+  <div class="ns"></div>
+  <button class="btn bg bsm" onclick="history.back()"><i class="fas fa-arrow-left"></i> Kembali</button>
+</nav>
+
+<!-- STEP INDICATOR -->
+<div class="steps" id="stepsEl">
+  <div class="step active" id="step1">
+    <div class="step-dot">1</div>
+    <div class="step-label">Produk</div>
+  </div>
+  <div class="step" id="step2">
+    <div class="step-dot">2</div>
+    <div class="step-label">Pembayaran</div>
+  </div>
+  <div class="step" id="step3">
+    <div class="step-dot">3</div>
+    <div class="step-label">Konfirmasi</div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="co-layout">
+
+    <!-- LEFT -->
+    <div>
+
+      <!-- PRODUCT INFO -->
+      <div class="co-sec anim" id="prodSection">
+        <div class="co-sec-head">
+          <div class="step-num">1</div>
+          <h3>Detail Produk</h3>
+        </div>
+        <div class="co-sec-body">
+          <div id="prodPreviewWrap">
+            <div style="text-align:center; padding:40px; color:var(--txt2)">
+              <div class="sp" style="border-color:var(--border); border-top-color:var(--accent); width:32px; height:32px; margin:0 auto 12px"></div>
+              Memuat produk...
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTES -->
+      <div class="co-sec anim2">
+        <div class="co-sec-head">
+          <div class="step-num" style="background:var(--surface); color:var(--txt2); border:1px solid var(--border)"><i class="fas fa-note-sticky" style="font-size:10px"></i></div>
+          <h3>Catatan untuk Seller <span style="font-size:11px; color:var(--txt2); font-weight:400">(opsional)</span></h3>
+        </div>
+        <div class="co-sec-body">
+          <textarea class="co-notes" id="orderNotes" placeholder="Misal: akun untuk server Asia, username atau data akun yang diperlukan..."></textarea>
+        </div>
+      </div>
+
+      <!-- PAYMENT METHOD -->
+      <div class="co-sec anim2">
+        <div class="co-sec-head">
+          <div class="step-num">2</div>
+          <h3>Metode Pembayaran</h3>
+        </div>
+        <div class="co-sec-body">
+          <div class="pay-methods" id="payMethods"></div>
+        </div>
+      </div>
+
+      <!-- VOUCHER -->
+      <div class="co-sec anim2">
+        <div class="co-sec-head">
+          <div class="step-num" style="background:var(--surface); color:var(--txt2); border:1px solid var(--border)"><i class="fas fa-tag" style="font-size:10px"></i></div>
+          <h3>Kode Voucher</h3>
+        </div>
+        <div class="co-sec-body">
+          <div class="voucher-row">
+            <input class="voucher-inp" type="text" id="voucherInp" placeholder="Masukkan kode voucher..." style="text-transform:uppercase" />
+            <button class="btn bp" onclick="applyVoucher()"><i class="fas fa-tag"></i> Pakai</button>
+          </div>
+          <div class="voucher-applied" id="voucherApplied" style="display:none">
+            <i class="fas fa-check-circle"></i>
+            <span id="voucherMsg">Voucher berhasil dipakai</span>
+            <button class="btn bg bsm" style="margin-left:auto; padding:3px 8px; font-size:11px" onclick="removeVoucher()">Hapus</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Summary -->
+    <div>
+      <div class="order-summary">
+        <div class="os-title">Ringkasan Order</div>
+
+        <!-- Seller -->
+        <div class="seller-row" id="sellerRowSummary">
+          <div class="sr-av" id="summSellerAv">S</div>
+          <div>
+            <div style="font-size:12px; font-weight:600" id="summSellerName">—</div>
+            <div style="font-size:10px; color:var(--success)">● Verified Seller</div>
+          </div>
+          <a id="summSellerLink" href="#" style="margin-left:auto; font-size:11px; color:var(--accent); text-decoration:none"><i class="fas fa-arrow-up-right-from-square"></i> Profil</a>
+        </div>
+
+        <div class="os-row">
+          <span class="os-label">Produk</span>
+          <span class="os-val" id="sum-prod" style="max-width:160px; text-align:right; font-size:12px">—</span>
+        </div>
+        <div class="os-row">
+          <span class="os-label">Qty</span>
+          <span class="os-val" id="sum-qty">1</span>
+        </div>
+        <div class="os-row">
+          <span class="os-label">Harga Satuan</span>
+          <span class="os-val" id="sum-price">—</span>
+        </div>
+        <div class="os-row" id="row-discount" style="display:none">
+          <span class="os-label" style="color:var(--success)">Diskon Voucher</span>
+          <span class="os-val" style="color:var(--success)" id="sum-discount">—</span>
+        </div>
+        <div class="os-row">
+          <span class="os-label">Biaya Layanan</span>
+          <span class="os-val" id="sum-fee">Rp 0</span>
+        </div>
+        <div class="os-total">
+          <span class="ot-l">Total</span>
+          <span class="ot-v" id="sum-total">—</span>
+        </div>
+
+        <button class="buy-btn" id="buyBtn" onclick="confirmOrder()" disabled>
+          <i class="fas fa-shopping-bag"></i> Beli Sekarang
+        </button>
+
+        <!-- Guarantees -->
+        <div class="guarantees" style="margin-top:14px; margin-bottom:0">
+          <div class="gu-item"><i class="fas fa-shield-halved"></i> Transaksi aman</div>
+          <div class="gu-item"><i class="fas fa-rotate-left"></i> Garansi refund</div>
+          <div class="gu-item"><i class="fas fa-bolt"></i> Proses cepat</div>
+          <div class="gu-item"><i class="fas fa-headset"></i> CS 24 jam</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="mo" id="confirmModal">
+  <div class="mb" style="max-width:440px">
+    <div class="mh"><h3>Konfirmasi Pembelian</h3><button class="mc-btn" onclick="closeMo('confirmModal')"><i class="fas fa-times"></i></button></div>
+    <div class="mbody" id="confirmBody"></div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="mo" id="successModal">
+  <div class="mb" style="max-width:420px">
+    <div class="mbody" id="successBody" style="padding:28px"></div>
+  </div>
+</div>
+
+<div id="tc"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL = 'https://jydfjfjttpmropoczgop.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const CLD_BASE = 'https://res.cloudinary.com/drjmclzbi/image/upload/';
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+
+let user = null, profile = null, product = null, seller = null;
+let qty = 1, selectedPayMethod = null, voucher = null, discount = 0;
+const FEE = 500; // service fee
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const params = new URLSearchParams(location.search);
+  const productId = params.get('product');
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    toast('Login dulu untuk checkout', 'e');
+    setTimeout(() => location.href='index.html', 1500);
+    return;
+  }
+  user    = session.user;
+  const { data: p } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+  profile = p || { id: user.id, balance: 0 };
+
+  if (productId) {
+    await loadProduct(productId);
+  } else {
+    // Demo product
+    product = { id:'demo', name:'Akun Mobile Legends Epic 50 Skin', category:'akun', description:'Akun ML Epic dengan 50+ skin legendary. Server: Asia. Rank: Mythic. Sudah terhubung Moonton.', price:350000, image_url:null, sold_count:124, avg_rating:4.8, seller_id:'demo-seller', stock:3 };
+    seller  = { id:'demo-seller', username:'xrezzky_store', avatar_url:null };
+    renderProduct();
+  }
+  renderPayMethods();
+  updateSummary();
+});
+
+async function loadProduct(id) {
+  const { data: p } = await sb.from('products').select('*').eq('id', id).single();
+  if (!p) { toast('Produk tidak ditemukan', 'e'); history.back(); return; }
+  product = p;
+  if (p.seller_id) {
+    const { data: s } = await sb.from('profiles').select('username, avatar_url').eq('id', p.seller_id).single();
+    seller = s;
+  }
+  renderProduct();
+  updateSummary();
+}
+
+function renderProduct() {
+  if (!product) return;
+  const img = product.image_url ? `<img src="${CLD_BASE}${product.image_url}" loading="lazy" />` : `<i class="fas fa-box-open"></i>`;
+  const s   = seller || {};
+  const avHtml = s.avatar_url ? `<img src="${CLD_BASE}${s.avatar_url}" />` : (s.username||'S')[0].toUpperCase();
+
+  document.getElementById('prodPreviewWrap').innerHTML = `
+    <div class="seller-row" style="margin-bottom:14px">
+      <div class="sr-av">${avHtml}</div>
+      <div>
+        <div style="font-size:12px; font-weight:600">${esc(s.username||'Seller')}</div>
+        <div style="font-size:10px; color:var(--success)">● Verified Seller</div>
+      </div>
+      <a href="profil.html?id=${product.seller_id}" style="margin-left:auto; font-size:11px; color:var(--accent); text-decoration:none"><i class="fas fa-arrow-up-right-from-square"></i> Profil</a>
+    </div>
+
+    <div class="prod-preview">
+      <div class="pp-img">${img}</div>
+      <div style="flex:1; min-width:0">
+        <div class="pp-cat">${esc(product.category||'—')}</div>
+        <div class="pp-name">${esc(product.name)}</div>
+        <div class="pp-seller"><i class="fas fa-store" style="font-size:10px"></i> ${esc(s.username||'—')}</div>
+        <div style="display:flex; align-items:center; gap:4px">
+          ${product.avg_rating ? `<div class="pp-rating">★ ${Number(product.avg_rating).toFixed(1)}</div>` : ''}
+          ${product.sold_count ? `<div class="pp-sold">(${product.sold_count}x terjual)</div>` : ''}
+        </div>
+      </div>
+      <div style="flex-shrink:0; text-align:right">
+        <div style="font-size:20px; font-weight:800; color:var(--accent)">${fmtRp(product.price)}</div>
+      </div>
+    </div>
+
+    ${product.description ? `<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:12px 14px; margin-top:14px; font-size:13px; color:var(--txt2); line-height:1.65">${esc(product.description)}</div>` : ''}
+
+    <div class="qty-row" style="margin-top:14px">
+      <span class="qty-label">Jumlah:</span>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <div class="qty-val" id="qtyDisplay">1</div>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+      ${product.stock ? `<span class="stock-info"><i class="fas fa-box" style="margin-right:3px"></i>${product.stock} stok tersedia</span>` : ''}
+    </div>`;
+
+  // Update summary seller
+  document.getElementById('summSellerAv').innerHTML = avHtml;
+  document.getElementById('summSellerName').textContent = s.username || 'Seller';
+  document.getElementById('summSellerLink').href = `profil.html?id=${product.seller_id}`;
+  document.getElementById('sum-prod').textContent = product.name;
+}
+
+function changeQty(d) {
+  const max = product?.stock || 99;
+  qty = Math.max(1, Math.min(max, qty + d));
+  document.getElementById('qtyDisplay').textContent = qty;
+  document.getElementById('sum-qty').textContent = qty;
+  updateSummary();
+}
+
+function renderPayMethods() {
+  const balance = profile?.balance || 0;
+  const methods = [
+    { id:'saldo',   icon:'fas fa-wallet',        color:'var(--accent)', name:'Saldo XREZZKY', sub: `Saldo: ${fmtRp(balance)}`, balance, badge: balance >= (product?.price||0)*qty ? null : 'Tidak Cukup' },
+    { id:'transfer',icon:'fas fa-building-columns',color:'var(--warn)', name:'Transfer Bank',  sub:'BCA, BNI, BRI, Mandiri', badge: null },
+    { id:'ewallet', icon:'fas fa-mobile-screen',  color:'var(--success)',name:'E-Wallet',       sub:'DANA, GoPay, OVO, ShopeePay', badge: null },
+    { id:'qris',    icon:'fas fa-qrcode',         color:'var(--danger)', name:'QRIS',           sub:'Scan QR dari aplikasi manapun', badge: null },
+  ];
+
+  document.getElementById('payMethods').innerHTML = methods.map(m => {
+    const disabled = m.badge === 'Tidak Cukup';
+    return `<div class="pm-item ${disabled?'disabled':''}" id="pm-${m.id}" onclick="${disabled?'toast(\'Saldo tidak cukup. Deposit dulu\',\'e\')':  `selectPayMethod('${m.id}')`}">
+      <div class="pm-radio"></div>
+      <div class="pm-icon" style="background:${m.color}22; color:${m.color}"><i class="${m.icon}"></i></div>
+      <div class="pm-info">
+        <div class="pm-name">${m.name}</div>
+        <div class="${m.id==='saldo'?'pm-bal':'pm-sub'}">${m.sub}</div>
+      </div>
+      ${m.badge ? `<span class="pm-badge cy">${m.badge}</span>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function selectPayMethod(id) {
+  selectedPayMethod = id;
+  document.querySelectorAll('.pm-item').forEach(el => el.classList.remove('selected'));
+  document.getElementById(`pm-${id}`)?.classList.add('selected');
+  updateSummary();
+}
+
+function applyVoucher() {
+  const code = document.getElementById('voucherInp').value.trim().toUpperCase();
+  if (!code) return toast('Masukkan kode voucher', 'w');
+
+  // Demo vouchers
+  const vouchers = { 'XREZZKY10': { disc: .10, label: 'Diskon 10%' }, 'HEMAT20K': { disc: 20000, label: 'Hemat Rp 20.000', type:'fixed' }, 'NEWUSER': { disc: .15, label: 'Diskon 15% New User' } };
+  const v = vouchers[code];
+  if (!v) { toast('Kode voucher tidak valid', 'e'); return; }
+
+  voucher  = v;
+  discount = v.type === 'fixed' ? v.disc : Math.round((product?.price||0) * qty * v.disc);
+  document.getElementById('voucherApplied').style.display = 'flex';
+  document.getElementById('voucherMsg').textContent = `${v.label} (−${fmtRp(discount)})`;
+  document.getElementById('row-discount').style.display = 'flex';
+  document.getElementById('sum-discount').textContent = `−${fmtRp(discount)}`;
+  toast('Voucher dipakai ✅', 's');
+  updateSummary();
+}
+
+function removeVoucher() {
+  voucher  = null; discount = 0;
+  document.getElementById('voucherApplied').style.display = 'none';
+  document.getElementById('voucherInp').value = '';
+  document.getElementById('row-discount').style.display = 'none';
+  updateSummary();
+}
+
+function updateSummary() {
+  if (!product) return;
+  const subtotal = product.price * qty;
+  const total    = Math.max(0, subtotal - discount + FEE);
+
+  document.getElementById('sum-price').textContent = fmtRp(product.price);
+  document.getElementById('sum-qty').textContent   = qty;
+  document.getElementById('sum-fee').textContent   = fmtRp(FEE);
+  document.getElementById('sum-total').textContent = fmtRp(total);
+
+  // Update step 2
+  const step2 = document.getElementById('step2');
+  const step3 = document.getElementById('step3');
+  if (selectedPayMethod) { step2.classList.add('done'); step2.querySelector('.step-dot').innerHTML = '<i class="fas fa-check" style="font-size:10px"></i>'; step3.classList.add('active'); }
+
+  const buyBtn = document.getElementById('buyBtn');
+  buyBtn.disabled = !(product && selectedPayMethod);
+}
+
+function confirmOrder() {
+  if (!product || !selectedPayMethod) return;
+  const subtotal = product.price * qty;
+  const total    = Math.max(0, subtotal - discount + FEE);
+  const notes    = document.getElementById('orderNotes').value.trim();
+  const methLabels = { saldo:'Saldo XREZZKY', transfer:'Transfer Bank', ewallet:'E-Wallet', qris:'QRIS' };
+  const s = seller || {};
+
+  document.getElementById('confirmBody').innerHTML = `
+    <div style="display:flex; gap:12px; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:13px; margin-bottom:16px">
+      <div style="width:52px; height:52px; border-radius:var(--rsm); background:var(--nav); overflow:hidden; display:flex; align-items:center; justify-content:center; color:var(--txt2); font-size:20px; flex-shrink:0; border:1px solid var(--border)">
+        ${product.image_url ? `<img src="${CLD_BASE}${product.image_url}" style="width:100%;height:100%;object-fit:cover"/>` : '<i class="fas fa-box-open"></i>'}
+      </div>
+      <div>
+        <div style="font-size:14px; font-weight:600">${esc(product.name)}</div>
+        <div style="font-size:12px; color:var(--txt2)">${esc(s.username||'—')} • ${qty}x</div>
+      </div>
+    </div>
+
+    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px">
+      <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border)">
+        <span style="color:var(--txt2)">Subtotal</span><span style="font-weight:600">${fmtRp(subtotal)}</span>
+      </div>
+      ${discount > 0 ? `<div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border)"><span style="color:var(--success)">Diskon</span><span style="color:var(--success); font-weight:600">−${fmtRp(discount)}</span></div>` : ''}
+      <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border)">
+        <span style="color:var(--txt2)">Biaya Layanan</span><span style="font-weight:600">${fmtRp(FEE)}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:15px; padding:10px 0">
+        <span style="font-weight:700">Total Bayar</span><span style="font-weight:800; color:var(--accent); font-family:'Syne',sans-serif; font-size:20px">${fmtRp(total)}</span>
+      </div>
+    </div>
+
+    <div style="background:rgba(74,125,255,.07); border:1px solid rgba(74,125,255,.18); border-radius:var(--rsm); padding:11px 13px; margin-bottom:16px; font-size:12px; display:flex; align-items:center; gap:8px; color:var(--txt2)">
+      <i class="fas fa-credit-card" style="color:var(--accent)"></i>
+      Metode: <strong style="color:var(--txt)">${methLabels[selectedPayMethod]||selectedPayMethod}</strong>
+    </div>
+
+    ${notes ? `<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:10px 12px; margin-bottom:14px; font-size:12px; color:var(--txt2)"><i class="fas fa-note-sticky" style="margin-right:5px; color:var(--warn)"></i>${esc(notes)}</div>` : ''}
+
+    <div style="display:flex; gap:8px">
+      <button class="btn bg" style="flex:1; justify-content:center" onclick="closeMo('confirmModal')">Batal</button>
+      <button class="btn" style="flex:2; justify-content:center; background:var(--success); color:#fff; font-weight:700" onclick="placeOrder()">
+        <i class="fas fa-shopping-bag"></i> Konfirmasi Beli
+      </button>
+    </div>`;
+
+  openMo('confirmModal');
+}
+
+async function placeOrder() {
+  const subtotal = product.price * qty;
+  const total    = Math.max(0, subtotal - discount + FEE);
+  const notes    = document.getElementById('orderNotes').value.trim();
+
+  // Check balance if saldo
+  if (selectedPayMethod === 'saldo' && (profile.balance||0) < total) {
+    closeMo('confirmModal'); toast('Saldo tidak cukup. Silakan deposit dulu', 'e'); return;
+  }
+
+  closeMo('confirmModal');
+  document.getElementById('buyBtn').innerHTML = '<div class="sp"></div> Memproses...';
+  document.getElementById('buyBtn').disabled = true;
+
+  const { data: order, error } = await sb.from('orders').insert([{
+    user_id: user.id, seller_id: product.seller_id, product_id: product.id,
+    total_price: total, quantity: qty, payment_method: selectedPayMethod,
+    notes, status: 'pending', voucher_code: voucher ? document.getElementById('voucherInp').value.toUpperCase() : null,
+    discount, created_at: new Date().toISOString()
+  }]).select().single();
+
+  document.getElementById('buyBtn').innerHTML = '<i class="fas fa-shopping-bag"></i> Beli Sekarang';
+  document.getElementById('buyBtn').disabled = false;
+
+  if (error) { toast('Gagal membuat order: '+error.message, 'e'); return; }
+
+  // Deduct balance if saldo
+  if (selectedPayMethod === 'saldo') {
+    const newBal = (profile.balance||0) - total;
+    await sb.from('profiles').update({ balance: newBal }).eq('id', user.id);
+    profile.balance = newBal;
+  }
+
+  // Update sold count
+  await sb.from('products').update({ sold_count: (product.sold_count||0) + qty }).eq('id', product.id);
+
+  showSuccess(order || { id: Date.now().toString() }, total);
+}
+
+function showSuccess(order, total) {
+  // Mark steps done
+  ['step1','step2','step3'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active');
+    el.classList.add('done');
+    el.querySelector('.step-dot').innerHTML = '<i class="fas fa-check" style="font-size:10px"></i>';
+  });
+
+  document.getElementById('successBody').innerHTML = `
+    <div class="success-wrap">
+      <div class="ss-ring"><i class="fas fa-check"></i></div>
+      <div class="ss-title">Pesanan Dibuat! 🎉</div>
+      <div class="ss-sub">Seller akan segera memproses pesanan kamu</div>
+
+      <div class="ss-detail">
+        <div class="ss-detail-row"><span class="sk">Order ID</span><span style="font-weight:700; font-size:12px">#${order.id.toString().slice(0,8).toUpperCase()}</span></div>
+        <div class="ss-detail-row"><span class="sk">Produk</span><span style="font-weight:600; font-size:12px">${esc(product.name)}</span></div>
+        <div class="ss-detail-row"><span class="sk">Total Bayar</span><span style="font-weight:800; color:var(--success)">${fmtRp(total)}</span></div>
+        <div class="ss-detail-row"><span class="sk">Status</span><span><span class="chip cy">Pending</span></span></div>
+      </div>
+
+      <div class="ss-acts">
+        <a href="riwayat.html" class="btn bp" style="justify-content:center; width:100%; padding:12px"><i class="fas fa-receipt"></i> Lihat Riwayat</a>
+        <a href="index.html" class="btn bg" style="justify-content:center; width:100%; padding:11px"><i class="fas fa-store"></i> Lanjut Belanja</a>
+      </div>
+    </div>`;
+
+  openMo('successModal');
+}
+
+function openMo(id) { document.getElementById(id).classList.add('open'); }
+function closeMo(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.mo').forEach(el => el.addEventListener('click', e => { if(e.target===el && el.id!=='successModal') closeMo(el.id); }));
+document.addEventListener('keydown', e => { if(e.key==='Escape') { closeMo('confirmModal'); } });
+
+function fmtRp(v) { if(!v&&v!==0) return '—'; if(v===0) return 'Gratis'; return 'Rp '+Number(v).toLocaleString('id-ID'); }
+function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(msg, type='') { const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=msg; document.getElementById('tc').appendChild(el); setTimeout(()=>el.remove(),3500); }
+</script>
+<!-- ══ XREZZKY BOTTOM NAV — persistent fixed ══ -->
+<style>
+/* ── XBN BASE ── */
+#xbn {
+  display: none;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  z-index: 9999 !important;
+  background: rgba(23,28,36,.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(74,125,255,.18);
+  height: 64px;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 24px rgba(0,0,0,.5);
+}
+#xbn .xbn-inner {
+  display: flex; align-items: center;
+  width: 100%; height: 100%;
+}
+.xbn-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 3px;
+  background: none; border: none; cursor: pointer;
+  color: #6b7a8d; font-family: 'Poppins', sans-serif;
+  padding: 4px 0; position: relative; overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: color .2s; border-radius: 12px; min-height: 52px;
+  text-decoration: none;
+}
+.xbn-btn i {
+  font-size: 21px; line-height: 1;
+  transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .2s;
+  display: block;
+}
+.xbn-btn span { font-size: 10px; font-weight: 600; letter-spacing: .02em; line-height: 1; }
+.xbn-btn.active { color: #4a7dff; }
+.xbn-btn.active i { transform: translateY(-2px) scale(1.15); color: #4a7dff; }
+.xbn-btn::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, #4a7dff, #7c3aed);
+  transition: width .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow: 0 0 8px rgba(74,125,255,.8);
+}
+.xbn-btn.active::after { width: 24px; }
+.xbn-btn:active { transform: scale(.88); }
+.xbn-ripple {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: rgba(74,125,255,.25);
+  transform: scale(0); animation: xbnRipple .5s ease-out forwards;
+}
+@keyframes xbnRipple { to { transform: scale(4); opacity: 0; } }
+.xbn-fab-wrap {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding-bottom: 6px; gap: 2px;
+}
+.xbn-fab {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #4a7dff 0%, #7c3aed 100%);
+  color: #fff; font-size: 22px; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(74,125,255,.55);
+  margin-bottom: 2px;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
+  position: relative; overflow: hidden;
+}
+.xbn-fab:active { transform: scale(.85); box-shadow: 0 2px 10px rgba(74,125,255,.4); }
+.xbn-fab.pulse { animation: xbnFabPulse .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes xbnFabPulse {
+  0%{transform:scale(1)} 40%{transform:scale(.82)} 70%{transform:scale(1.15)} 100%{transform:scale(1)}
+}
+.xbn-fab-label { font-size: 10px; font-weight: 600; color: #9ba6b2; line-height: 1; }
+.xbn-av {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: #1d2430; border: 2px solid transparent;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #6b7a8d;
+  transition: border-color .2s;
+}
+.xbn-av img { width:100%; height:100%; object-fit:cover; }
+.xbn-btn.active .xbn-av { border-color: #4a7dff; color: #4a7dff; }
+/* Page header on mobile */
+#mobilePageHeader {
+  display: none;
+  position: sticky; top: 0; z-index: 200;
+  background: #171c24; border-bottom: 1px solid #2a3442;
+  height: 52px; align-items: center; padding: 0 14px; gap: 12px;
+}
+#mobilePageHeader .mph-back {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #1d2430; border: 1px solid #2a3442; color: #f5f7fa;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
+}
+#mobilePageHeader .mph-back:active { transform: scale(.9); }
+#mobilePageHeader .mph-title { font-size: 15px; font-weight: 700; color: #f5f7fa; flex: 1; }
+#mobilePageHeader .mph-logo { font-size: 11px; font-weight: 700; color: #4a7dff; opacity: .7; }
+/* Hide top nav, show bottom nav on mobile */
+@media (max-width: 900px) {
+  #xbn { display: flex !important; }
+  #mobilePageHeader { display: flex !important; }
+  nav:not(#xbn) { display: none !important; }
+  #topbar { display: none !important; }
+  #sidebar { display: none !important; }
+  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
+  body > .main, main, .page, #main { padding-bottom: 80px !important; padding-top: 0 !important; }
+  .page { min-height: calc(100vh - 52px); }
+}
+@media (min-width: 901px) {
+  #xbn { display: none !important; }
+  #mobilePageHeader { display: none !important; }
+}
+</style>
+
+<!-- Mobile Page Header -->
+<div id="mobilePageHeader">
+  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <div class="mph-title" id="mphTitle">XREZZKY</div>
+  <div class="mph-logo">XREZZKY</div>
+</div>
+
+<!-- Bottom Nav -->
+<div id="xbn">
+  <div class="xbn-inner">
+    <a class="xbn-btn" href="index.html" id="xbn-home" aria-label="Beranda" onclick="xbnSetActive('home')">
+      <i class="fas fa-home"></i><span>Beranda</span>
+    </a>
+    <button class="xbn-btn" id="xbn-info" onclick="xbnNavInfo(this)" aria-label="Info">
+      <i class="fas fa-bell"></i><span>Info</span>
+    </button>
+    <div class="xbn-fab-wrap">
+      <a class="xbn-fab" href="deposit.html" onclick="xbnFabAnim(this)" aria-label="Deposit">
+        <i class="fas fa-wallet"></i>
+      </a>
+      <span class="xbn-fab-label">Deposit</span>
+    </div>
+    <a class="xbn-btn" href="riwayat.html" id="xbn-riwayat" aria-label="Riwayat" onclick="xbnSetActive('riwayat')">
+      <i class="fas fa-receipt"></i><span>Riwayat</span>
+    </a>
+    <a class="xbn-btn" href="profil.html" id="xbn-profil" aria-label="Profil" onclick="xbnSetActive('profil')">
+      <div class="xbn-av" id="xbnAv"><i class="fas fa-user-circle"></i></div>
+      <span>Profil</span>
+    </a>
+  </div>
+</div>
+
+<script>
+// ── Auto-highlight active nav item based on current page ──
+(function() {
+  var page = location.pathname.split('/').pop() || 'index.html';
+  var map = {
+    'index.html':'home', '':'home',
+    'riwayat.html':'riwayat',
+    'deposit.html':'deposit',
+    'profil.html':'profil',
+    'checkout.html':'home',
+    'seller-dashboard.html':'home',
+    'cs-dashboard.html':'home',
+    'admin-panel.html':'home',
+    'deposit-admin.html':'home',
+    'info-admin.html':'home',
+  };
+  var active = map[page];
+  if (active) {
+    var el = document.getElementById('xbn-' + active);
+    if (el) el.classList.add('active');
+  }
+  // Set page title in mobile header
+  var titles = {
+    'riwayat.html':'Riwayat Transaksi',
+    'deposit.html':'Deposit Saldo',
+    'profil.html':'Profil',
+    'checkout.html':'Checkout',
+    'seller-dashboard.html':'Seller Dashboard',
+    'cs-dashboard.html':'CS Dashboard',
+    'admin-panel.html':'Admin Panel',
+    'deposit-admin.html':'Kelola Deposit',
+    'info-admin.html':'Kelola Info',
+  };
+  var titleEl = document.getElementById('mphTitle');
+  if (titleEl && titles[page]) titleEl.textContent = titles[page];
+  // Add bottom padding to content
+  document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth <= 900) {
+      var els = document.querySelectorAll('main, .main, .page, #main');
+      els.forEach(function(el) {
+        var pb = parseInt(getComputedStyle(el).paddingBottom) || 0;
+        if (pb < 70) el.style.paddingBottom = '80px';
+      });
+    }
+    // Load avatar from Supabase if logged in
+    if (typeof supabase !== 'undefined') {
+      try {
+        var sb2 = supabase.createClient(
+          'https://jydfjfjttpmropoczgop.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+        );
+        sb2.auth.getSession().then(function(r) {
+          var session = r.data && r.data.session;
+          if (!session) return;
+          sb2.from('profiles').select('avatar_url,username').eq('id', session.user.id).maybeSingle().then(function(pr) {
+            var p = pr.data;
+            if (!p) return;
+            var avEl = document.getElementById('xbnAv');
+            if (!avEl) return;
+            if (p.avatar_url) {
+              avEl.innerHTML = '<img src="https://res.cloudinary.com/drjmclzbi/image/upload/' + p.avatar_url + '" alt="av"/>';
+            } else {
+              var nm = p.username || session.user.email[0];
+              avEl.style.background = '#4a7dff';
+              avEl.style.color = '#fff';
+              avEl.innerHTML = '<span style="font-size:12px;font-weight:800">' + nm[0].toUpperCase() + '</span>';
+            }
+          });
+        });
+      } catch(e) {}
+    }
+  });
+})();
+
+function xbnSetActive(tab) {
+  document.querySelectorAll('.xbn-btn').forEach(function(b){ b.classList.remove('active'); });
+  var el = document.getElementById('xbn-' + tab);
+  if (el) el.classList.add('active');
+}
+function xbnFabAnim(el) {
+  el.classList.remove('pulse');
+  void el.offsetWidth;
+  el.classList.add('pulse');
+  setTimeout(function(){ el.classList.remove('pulse'); }, 500);
+}
+function xbnNavInfo(el) {
+  // On inner pages, just go to index with info hash
+  location.href = 'index.html#info';
+}
+function xbnRipple(btn) {
+  var r = document.createElement('span');
+  r.className = 'xbn-ripple';
+  r.style.cssText = 'width:40px;height:40px;margin:-20px 0 0 -20px;top:50%;left:50%;position:absolute';
+  btn.appendChild(r);
+  setTimeout(function(){ r.remove(); }, 600);
+}
+// Add ripple to all xbn-btn clicks
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.xbn-btn');
+  if (btn) xbnRipple(btn);
+});
+</script>
+
+</body>
+</html>
