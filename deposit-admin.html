@@ -243,7 +243,12 @@
 <body>
 
 <!-- ── Mobile Page Header ── -->
-  <div class="mph-logo">XREZZKY</div>
+<div id="mobilePageHeader">
+  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <div class="mph-title" id="mphTitle">Kelola Deposit</div>
+  <div class="mph-logo">ADMIN</div>
 </div>
 
 
@@ -257,6 +262,10 @@
   <div class="tb-right">
     <div class="live-badge"><div class="live-dot"></div><span id="pendingCountTop">0 pending</span></div>
     <div class="rt-badge" id="rtBadge"><i class="fas fa-circle-dot" style="font-size:9px"></i> Realtime</div>
+    <span style="font-size:12px;color:var(--txt2);display:flex;align-items:center;gap:5px">
+      <i class="fas fa-user-shield" style="color:var(--warn)"></i>
+      <span id="adminNameBadge" style="font-weight:600"></span>
+    </span>
     <button class="btn bg bsm" onclick="refreshAll()"><i class="fas fa-rotate-right"></i></button>
     <a href="admin-panel.html" class="btn bg bsm"><i class="fas fa-arrow-left"></i> Admin Panel</a>
     <button class="btn bd bsm" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>
@@ -298,13 +307,6 @@
   <button class="si" onclick="showPage('stats',this)">
     <i class="fas fa-chart-bar"></i> Laporan
   </button>
-
-  <div class="ss"></div>
-  <div class="sl">Navigasi</div>
-  <a class="si" href="admin-panel.html" style="text-decoration:none"><i class="fas fa-chart-pie"></i> Admin Panel</a>
-  <a class="si" href="info-admin.html"  style="text-decoration:none"><i class="fas fa-bell"></i> Kelola Info</a>
-  <a class="si" href="cs-dashboard.html" style="text-decoration:none"><i class="fas fa-headset"></i> CS Dashboard</a>
-  <a class="si" href="index.html"        style="text-decoration:none"><i class="fas fa-home"></i> Ke Toko</a>
 </div>
 
 <!-- ══ MAIN ══ -->
@@ -370,40 +372,59 @@
 
   <!-- ── QRIS SETTING ── -->
   <div class="pv" id="pv-qris-setting">
-    <div class="ph"><div><h1>Upload QRIS</h1><p>Gambar QRIS yang tampil di halaman deposit user</p></div></div>
+    <div class="ph">
+      <div>
+        <h1>Upload QRIS</h1>
+        <p>Gambar QRIS yang tampil di halaman deposit user. Wajib ada agar user bisa bayar!</p>
+      </div>
+      <div class="pha">
+        <button class="btn bg bsm" onclick="loadQrisSetting()"><i class="fas fa-rotate-right"></i> Cek Status</button>
+        <a href="deposit.html" target="_blank" class="btn bg bsm"><i class="fas fa-eye"></i> Preview User View</a>
+      </div>
+    </div>
 
     <div class="qris-setting-card">
-      <div style="display:flex; gap:24px; align-items:flex-start; flex-wrap:wrap">
+      <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
         <div>
-          <div style="font-size:12px; color:var(--txt2); margin-bottom:10px; font-weight:500">QRIS Aktif Saat Ini</div>
-          <div class="qris-preview" id="qrisPreview">
-            <div class="qris-placeholder"><i class="fas fa-qrcode"></i><p style="font-size:11px; color:#aaa">Belum ada QRIS</p></div>
+          <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;font-weight:500">
+            QRIS Aktif Saat Ini
           </div>
-          <div style="font-size:11px; color:var(--txt2); margin-top:6px" id="qrisUploadTime">—</div>
+          <div class="qris-preview" id="qrisPreview" style="border:2px solid var(--border)">
+            <div class="qris-placeholder">
+              <i class="fas fa-qrcode"></i>
+              <p style="font-size:11px;color:#aaa">Belum ada QRIS</p>
+            </div>
+          </div>
+          <div style="font-size:11px;margin-top:8px" id="qrisUploadTime">
+            <span style="color:var(--danger)"><i class="fas fa-triangle-exclamation"></i> Belum ada QRIS aktif</span>
+          </div>
         </div>
-        <div style="flex:1; min-width:260px">
-          <div style="font-size:14px; font-weight:600; margin-bottom:14px">Upload QRIS Baru</div>
+        <div style="flex:1;min-width:260px">
+          <div style="font-size:14px;font-weight:600;margin-bottom:14px">
+            <i class="fas fa-cloud-arrow-up" style="color:var(--accent);margin-right:6px"></i>Upload QRIS Baru
+          </div>
 
           <div class="upload-zone" id="qrisUploadZone"
-            ondragover="event.preventDefault(); this.style.borderColor='var(--accent)'"
+            ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
             ondragleave="this.style.borderColor='var(--border)'"
             ondrop="handleQrisDrop(event)">
             <input type="file" id="qrisFile" accept="image/*" onchange="handleQrisSelect(event)" />
             <div id="qrisUploadContent">
-              <div style="font-size:28px; color:var(--txt2); opacity:.4; margin-bottom:8px"><i class="fas fa-cloud-arrow-up"></i></div>
-              <div style="font-size:13px; font-weight:600; margin-bottom:4px">Klik atau drag gambar QRIS</div>
-              <div style="font-size:12px; color:var(--txt2)">JPG, PNG — maks 5MB</div>
+              <div style="font-size:28px;color:var(--txt2);opacity:.4;margin-bottom:8px"><i class="fas fa-cloud-arrow-up"></i></div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:4px">Klik atau drag gambar QRIS</div>
+              <div style="font-size:12px;color:var(--txt2)">JPG, PNG, WebP — maks 5MB</div>
             </div>
-            <img id="qrisNewPreview" style="width:100%; max-height:200px; object-fit:contain; border-radius:8px; display:none; margin-top:8px" alt="preview" />
+            <img id="qrisNewPreview" style="width:100%;max-height:220px;object-fit:contain;border-radius:8px;display:none;margin-top:8px" alt="preview" />
           </div>
           <div class="upload-bar" id="qrisUpBar"><div class="upload-fill" id="qrisUpFill" style="width:0%"></div></div>
-          <button class="btn bp" style="width:100%; justify-content:center; padding:12px; margin-top:12px; font-weight:700" id="qrisSaveBtn" onclick="saveQrisImage()" disabled>
+          <button class="btn bp" style="width:100%;justify-content:center;padding:13px;margin-top:12px;font-weight:700;font-size:14px"
+            id="qrisSaveBtn" onclick="saveQrisImage()" disabled>
             <i class="fas fa-save"></i> Simpan & Aktifkan QRIS
           </button>
 
-          <div style="background:rgba(74,125,255,.07); border:1px solid rgba(74,125,255,.2); border-radius:var(--rsm); padding:12px 14px; margin-top:12px; font-size:12px; color:var(--txt2); line-height:1.6">
+          <div style="background:rgba(74,125,255,.07);border:1px solid rgba(74,125,255,.2);border-radius:var(--rsm);padding:12px 14px;margin-top:12px;font-size:12px;color:var(--txt2);line-height:1.7">
             <strong style="color:var(--accent)">💡 Tips:</strong><br/>
-            Upload gambar QRIS tanpa tulisan apapun. Sistem akan otomatis menambahkan nominal, admin fee, dan total saat user download.
+            Upload gambar QRIS yang bersih tanpa tulisan nominal. Sistem akan otomatis menambahkan detail nominal + fee saat user mendownload card-nya.
           </div>
         </div>
       </div>
@@ -498,7 +519,35 @@
   </div>
 </div>
 
-<div id="tc"></div>
+<!-- Mobile Admin Nav (visible ≤768px, above bottom nav) -->
+<div id="mobileAdminNav" style="display:none;position:fixed;bottom:64px;left:0;right:0;z-index:400;
+  background:rgba(23,28,36,.97);border-top:1px solid var(--border);padding:8px 10px;
+  overflow-x:auto;white-space:nowrap;-webkit-backdrop-filter:blur(20px);scrollbar-width:none">
+  <style>#mobileAdminNav::-webkit-scrollbar{display:none}</style>
+  <button class="man-btn active" id="man-pending" onclick="showPage('pending',null);manSetActive('pending')">
+    <i class="fas fa-clock"></i> Pending <span id="man-badge" style="background:var(--warn);color:#000;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;margin-left:3px">0</span>
+  </button>
+  <button class="man-btn" id="man-all" onclick="showPage('all',null);manSetActive('all')"><i class="fas fa-list"></i> Semua</button>
+  <button class="man-btn" id="man-approved" onclick="showPage('approved',null);manSetActive('approved')"><i class="fas fa-check"></i> ACC</button>
+  <button class="man-btn" id="man-rejected" onclick="showPage('rejected',null);manSetActive('rejected')"><i class="fas fa-times"></i> Tolak</button>
+  <button class="man-btn" id="man-qris" onclick="showPage('qris-setting',null);manSetActive('qris')"><i class="fas fa-qrcode"></i> QRIS</button>
+  <button class="man-btn" id="man-stats" onclick="showPage('stats',null);manSetActive('stats')"><i class="fas fa-chart-bar"></i> Laporan</button>
+</div>
+
+<style>
+.man-btn {
+  display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:20px;
+  font-size:12px;font-weight:500;background:var(--surface);border:1px solid var(--border);
+  color:var(--txt2);cursor:pointer;transition:all .18s;font-family:'Poppins',sans-serif;
+  margin-right:6px;white-space:nowrap;
+}
+.man-btn:hover{border-color:var(--warn);color:var(--warn)}
+.man-btn.active{background:var(--warn);border-color:var(--warn);color:#000;font-weight:700}
+@media(max-width:768px){
+  #mobileAdminNav{display:block!important}
+  #main{padding-bottom:140px!important}
+}
+</style>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -534,44 +583,56 @@ const FEE_TIERS = [
 
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', async () => {
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity .22s ease';
+
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) { toast('Login dulu', 'e'); setTimeout(() => location.href='index.html', 1500); return; }
+  if (!session) {
+    toast('Login dulu', 'e');
+    setTimeout(() => location.href = 'index.html', 1200);
+    return;
+  }
   admin = session.user;
+
+  // ── ROLE GUARD: hanya admin ──
+  const { data: prof } = await sb.from('profiles').select('role, username').eq('id', admin.id).maybeSingle();
+  if (!prof || prof.role !== 'admin') {
+    document.body.style.opacity = '1';
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;
+        color:#f5f7fa;font-family:'Poppins',sans-serif;background:#0f1115;text-align:center;padding:20px">
+        <i class="fas fa-shield-halved" style="font-size:48px;color:#ef4444;opacity:.6"></i>
+        <h2 style="font-family:'Syne',sans-serif;font-size:22px">Akses Ditolak</h2>
+        <p style="color:#9ba6b2;font-size:14px">Halaman ini hanya untuk <strong style="color:#ef4444">Admin</strong>.</p>
+        <a href="index.html" style="margin-top:8px;background:#4a7dff;color:#fff;padding:10px 24px;border-radius:9px;
+          text-decoration:none;font-size:13px;font-weight:600"><i class="fas fa-home"></i> Kembali ke Beranda</a>
+      </div>`;
+    return;
+  }
+
+  // Show admin name in topbar
+  const adminName = prof.username || admin.email;
+  const el = document.getElementById('adminNameBadge');
+  if (el) el.textContent = adminName;
+
   await refreshAll();
   subscribeRealtime();
   buildFeeSettingTable();
   loadQrisSetting();
+
+  requestAnimationFrame(() => { document.body.style.opacity = '1'; });
 });
 
 // ══ REALTIME ══
 function subscribeRealtime() {
-  sb.channel('deposit-admin-' + Date.now())
+  sb.channel('deposit-admin')
     .on('postgres_changes', { event:'*', schema:'public', table:'deposit_requests' }, async (payload) => {
       await refreshAll();
       if (payload.eventType === 'INSERT') {
-        toast('💳 Deposit baru masuk! Segera periksa.', 'w');
-        // Flash tab title
-        let orig = document.title, blink = 0;
-        const iv = setInterval(() => {
-          document.title = blink++ % 2 === 0 ? '🔔 DEPOSIT BARU!' : orig;
-          if (blink > 8) { clearInterval(iv); document.title = orig; }
-        }, 600);
-        // Play beep if possible
-        try {
-          const ctx = new AudioContext();
-          const osc = ctx.createOscillator();
-          osc.connect(ctx.destination);
-          osc.frequency.value = 880;
-          osc.start(); osc.stop(ctx.currentTime + 0.15);
-        } catch(e){}
+        toast('💳 Deposit baru masuk!', 'w');
       }
     })
-    .subscribe((status) => {
-      const badge = document.getElementById('rtBadge');
-      if (badge) badge.style.background = status === 'SUBSCRIBED' ? 'rgba(34,197,94,.15)' : 'rgba(239,68,68,.15)';
-    });
-  // Auto-refresh every 30s as fallback
-  setInterval(refreshAll, 30000);
+    .subscribe();
 }
 
 // ══ REFRESH ══
@@ -605,6 +666,10 @@ function updateStats() {
   document.getElementById('sb-pending').textContent   = pending.length;
   document.getElementById('sb-all').textContent       = allDeposits.length;
   document.getElementById('pendingCountTop').textContent = `${pending.length} pending`;
+
+  // Update mobile nav badge
+  const manBadge = document.getElementById('man-badge');
+  if (manBadge) manBadge.textContent = pending.length;
 }
 
 // ══ RENDER PENDING ══
@@ -656,12 +721,15 @@ function renderDepCard(d, showActions) {
   const nm = p.username || 'User';
   const avHtml = p.avatar_url ? `<img src="${CLD_BASE}${p.avatar_url}" alt="av"/>` : nm[0].toUpperCase();
   const isUrgent = d.status === 'waiting_review' && d.expires_at && new Date(d.expires_at) - Date.now() < 3*60*1000;
+  const hasProof = !!d.proof_image;
 
-  const statusChip = d.status === 'completed'     ? '<span class="chip cg">Disetujui</span>'
-                   : d.status === 'rejected'       ? '<span class="chip cr">Ditolak</span>'
+  const statusChip = d.status === 'completed'     ? '<span class="chip cg">✓ Disetujui</span>'
+                   : d.status === 'rejected'       ? '<span class="chip cr">✗ Ditolak</span>'
                    : d.status === 'expired'        ? '<span class="chip cgr">Hangus</span>'
-                   : d.status === 'waiting_review' ? '<span class="chip cy">Menunggu Review</span>'
+                   : d.status === 'waiting_review' ? `<span class="chip cy">${hasProof?'📎 Ada Bukti':'⏳ Menunggu Bukti'}</span>`
                    : '<span class="chip cy">Pending</span>';
+
+  const proofUrl = hasProof ? `${CLD_BASE}${d.proof_image}` : null;
 
   return `<div class="dep-card ${isUrgent?'urgent':''}" id="dc-${d.id}">
     <div class="dep-main">
@@ -672,7 +740,7 @@ function renderDepCard(d, showActions) {
         <div class="dep-time">
           <i class="fas fa-clock"></i>
           ${fmtDateFull(d.created_at)}
-          ${d.status === 'waiting_review' ? `• <span class="dep-cd ${isUrgent?'urgent':''}" id="cd-${d.id}"><i class="fas fa-stopwatch"></i> —</span>` : ''}
+          ${d.status === 'waiting_review' ? `<span class="dep-cd ${isUrgent?'urgent':''}" id="cd-${d.id}"><i class="fas fa-stopwatch"></i> —</span>` : ''}
         </div>
       </div>
       <div class="dep-amounts">
@@ -680,46 +748,91 @@ function renderDepCard(d, showActions) {
           <div class="da-val">${fmtRp(d.amount)}</div>
           <div class="da-lbl">Nominal</div>
         </div>
-        <div style="color:var(--border); font-size:18px">+</div>
+        <div style="color:var(--border);font-size:18px">+</div>
         <div class="da-item">
           <div class="da-val" style="color:var(--warn)">${fmtRp(d.admin_fee||0)}</div>
           <div class="da-lbl">Fee</div>
         </div>
-        <div style="color:var(--border); font-size:18px">=</div>
+        <div style="color:var(--border);font-size:18px">=</div>
         <div class="da-item">
           <div class="da-val" style="color:var(--accent)">${fmtRp(d.total_paid)}</div>
-          <div class="da-lbl">Total</div>
+          <div class="da-lbl">Total Bayar</div>
         </div>
       </div>
       <div class="dep-right">
         ${statusChip}
-        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end">
-          <button class="btn bg bxs" onclick="toggleProof('${d.id}')"><i class="fas fa-eye"></i> Bukti</button>
-          ${showActions ? `
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn bg bxs" onclick="toggleProof('${d.id}')">
+            <i class="fas fa-${hasProof?'image':'eye'}"></i> ${hasProof?'Lihat Bukti':'Detail'}
+          </button>
+          ${showActions && hasProof ? `
             <button class="btn bs bxs" onclick="openAccModal('${d.id}')"><i class="fas fa-check"></i> ACC</button>
             <button class="btn bd bxs" onclick="openRejectModal('${d.id}')"><i class="fas fa-times"></i> Tolak</button>
+          ` : ''}
+          ${showActions && !hasProof ? `
+            <span style="font-size:11px;color:var(--txt2);padding:4px 8px;border-radius:var(--rsm);background:var(--surface)">
+              <i class="fas fa-clock"></i> Belum ada bukti
+            </span>
           ` : ''}
         </div>
       </div>
     </div>
+
+    <!-- PROOF PANEL -->
     <div class="dep-proof" id="proof-${d.id}">
-      ${d.proof_image
-        ? `<div class="proof-img-wrap"><img src="${CLD_BASE}${d.proof_image}" alt="Bukti Transfer" onclick="openLightbox('${CLD_BASE}${d.proof_image}')" /></div>`
-        : `<div class="proof-no-img"><i class="fas fa-image" style="font-size:28px; display:block; margin-bottom:8px; opacity:.3"></i>Bukti belum diupload user</div>`}
-      <div class="proof-detail-grid">
-        <div class="pdf"><div class="k">ID Deposit</div><div class="v" style="font-size:11px; color:var(--txt2)">${d.id}</div></div>
-        <div class="pdf"><div class="k">Saldo User Sekarang</div><div class="v" style="color:var(--success)">${fmtRp(p.balance||0)}</div></div>
-        <div class="pdf"><div class="k">Dikirim Pukul</div><div class="v">${d.submitted_at ? fmtDateFull(d.submitted_at) : '—'}</div></div>
-        <div class="pdf"><div class="k">Kedaluwarsa</div><div class="v" style="color:var(--warn)">${d.expires_at ? fmtDateFull(d.expires_at) : '—'}</div></div>
-        ${d.reject_reason ? `<div class="pdf" style="grid-column:1/-1"><div class="k">Alasan Tolak</div><div class="v" style="color:var(--danger)">${esc(d.reject_reason)}</div></div>` : ''}
-        ${d.approved_at ? `<div class="pdf"><div class="k">Disetujui Pukul</div><div class="v" style="color:var(--success)">${fmtDateFull(d.approved_at)}</div></div>` : ''}
+
+      ${hasProof ? `
+      <!-- Bukti Image -->
+      <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:16px">
+        <div class="proof-img-wrap" style="flex:1;min-width:200px;max-width:320px">
+          <img src="${proofUrl}" alt="Bukti Transfer"
+            onclick="openLightbox('${proofUrl}')"
+            style="width:100%;border-radius:var(--rsm);border:1px solid var(--border);cursor:zoom-in;display:block" />
+          <div style="margin-top:6px;display:flex;gap:6px">
+            <button class="btn bg bxs" style="flex:1;justify-content:center" onclick="openLightbox('${proofUrl}')">
+              <i class="fas fa-search-plus"></i> Zoom
+            </button>
+            <a href="${proofUrl}" download="bukti_${d.id}.jpg" target="_blank" class="btn bg bxs" style="flex:1;justify-content:center">
+              <i class="fas fa-download"></i> Download
+            </a>
+            <a href="${proofUrl}" target="_blank" class="btn bg bxs" style="flex:1;justify-content:center">
+              <i class="fas fa-external-link-alt"></i> Buka
+            </a>
+          </div>
+        </div>
+        <!-- Detail Info -->
+        <div style="flex:1;min-width:220px">
+          <div style="font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Detail Deposit</div>
+          <div class="proof-detail-grid">
+            <div class="pdf"><div class="k">User</div><div class="v">${esc(nm)}</div></div>
+            <div class="pdf"><div class="k">Saldo Saat Ini</div><div class="v" style="color:var(--success)">${fmtRp(p.balance||0)}</div></div>
+            <div class="pdf"><div class="k">Nominal Masuk</div><div class="v" style="color:var(--accent)">${fmtRp(d.amount)}</div></div>
+            <div class="pdf"><div class="k">Saldo Setelah ACC</div><div class="v" style="color:var(--warn)">${fmtRp((p.balance||0)+(d.amount||0))}</div></div>
+            <div class="pdf"><div class="k">Bukti Dikirim</div><div class="v" style="font-size:11px">${d.submitted_at?fmtDateFull(d.submitted_at):'—'}</div></div>
+            <div class="pdf"><div class="k">ID Deposit</div><div class="v" style="font-size:10px;color:var(--txt2);word-break:break-all">${d.id}</div></div>
+            ${d.reject_reason?`<div class="pdf" style="grid-column:1/-1"><div class="k">Alasan Tolak</div><div class="v" style="color:var(--danger)">${esc(d.reject_reason)}</div></div>`:''}
+            ${d.approved_at?`<div class="pdf" style="grid-column:1/-1"><div class="k">Disetujui</div><div class="v" style="color:var(--success)">${fmtDateFull(d.approved_at)}</div></div>`:''}
+          </div>
+        </div>
       </div>
-      ${showActions ? `
-        <div class="proof-actions">
-          <button class="btn bs" onclick="openAccModal('${d.id}')"><i class="fas fa-check"></i> ACC Deposit</button>
-          <button class="btn bd" onclick="openRejectModal('${d.id}')"><i class="fas fa-times"></i> Tolak Deposit</button>
-          ${d.proof_image ? `<a href="${CLD_BASE}${d.proof_image}" target="_blank" class="btn bg bsm"><i class="fas fa-external-link-alt"></i> Buka Bukti</a>` : ''}
-        </div>` : ''}
+      ` : `
+      <div class="proof-no-img">
+        <i class="fas fa-image" style="font-size:28px;display:block;margin-bottom:8px;opacity:.3"></i>
+        Bukti transfer belum diupload oleh user.<br/>
+        <span style="font-size:11px;color:var(--txt2)">Tunggu user mengupload atau hubungi via WhatsApp.</span>
+        ${p.whatsapp ? `<br/><a href="https://wa.me/${p.whatsapp.replace(/\D/g,'')}" target="_blank" class="btn bp bsm" style="margin-top:10px;display:inline-flex"><i class="fab fa-whatsapp"></i> Chat User</a>` : ''}
+      </div>
+      `}
+
+      ${showActions && hasProof ? `
+      <div class="proof-actions" style="padding-top:12px;border-top:1px solid var(--border)">
+        <button class="btn bs" onclick="openAccModal('${d.id}')">
+          <i class="fas fa-check-circle"></i> ACC & Kredit Saldo (+${fmtRp(d.amount)})
+        </button>
+        <button class="btn bd" onclick="openRejectModal('${d.id}')">
+          <i class="fas fa-times-circle"></i> Tolak Deposit
+        </button>
+      </div>` : ''}
     </div>
   </div>`;
 }
@@ -843,8 +956,15 @@ async function executeReject(id) {
 async function loadQrisSetting() {
   const { data } = await sb.from('app_settings').select('*').eq('key', 'qris_image').maybeSingle();
   if (data?.value) {
-    document.getElementById('qrisPreview').innerHTML = `<img src="${CLD_BASE}${data.value}" alt="QRIS" style="width:100%;height:100%;object-fit:contain"/>`;
-    document.getElementById('qrisUploadTime').textContent = `Diupload: ${fmtDate(data.updated_at || data.created_at)}`;
+    const previewEl = document.getElementById('qrisPreview');
+    previewEl.innerHTML = `<img src="${CLD_BASE}${data.value}" alt="QRIS" style="width:100%;height:100%;object-fit:contain;cursor:zoom-in"
+      onclick="openLightbox('${CLD_BASE}${data.value}')" />`;
+    previewEl.style.border = '2px solid rgba(34,197,94,.4)';
+    document.getElementById('qrisUploadTime').innerHTML =
+      `<span style="color:var(--success)"><i class="fas fa-circle-check"></i> Aktif</span> · Diupload: ${fmtDate(data.updated_at || data.created_at)}`;
+  } else {
+    document.getElementById('qrisUploadTime').innerHTML =
+      `<span style="color:var(--danger)"><i class="fas fa-triangle-exclamation"></i> QRIS belum diupload — user tidak bisa deposit!</span>`;
   }
 }
 
@@ -899,12 +1019,22 @@ async function saveQrisImage() {
     if (error) throw new Error(error.message);
 
     // Update preview
-    document.getElementById('qrisPreview').innerHTML = `<img src="${data.secure_url}" alt="QRIS" style="width:100%;height:100%;object-fit:contain"/>`;
-    document.getElementById('qrisUploadTime').textContent = `Diupload: ${fmtDate(new Date().toISOString())}`;
-    toast('QRIS berhasil diperbarui ✅', 's');
+    const previewEl = document.getElementById('qrisPreview');
+    previewEl.innerHTML = `<img src="${data.secure_url}" alt="QRIS" style="width:100%;height:100%;object-fit:contain"/>`;
+    previewEl.style.border = '2px solid var(--success)';
+    document.getElementById('qrisUploadTime').innerHTML =
+      `<span style="color:var(--success)"><i class="fas fa-circle-check"></i> Aktif</span> · Diupload: ${fmtDate(new Date().toISOString())}`;
+
+    // Reset upload zone
+    document.getElementById('qrisNewPreview').style.display = 'none';
+    document.getElementById('qrisUploadContent').style.display = 'block';
+    document.getElementById('qrisUploadZone').style.borderColor = 'var(--border)';
     qrisNewFile = null;
+    document.getElementById('qrisSaveBtn').disabled = true;
+
+    toast('✅ QRIS berhasil diperbarui dan sudah aktif di halaman deposit!', 's');
   } catch(err) {
-    toast('Gagal: ' + err.message, 'e');
+    toast('Gagal upload: ' + err.message, 'e');
   } finally {
     btn.disabled  = false;
     btn.innerHTML = '<i class="fas fa-save"></i> Simpan & Aktifkan QRIS';
@@ -978,6 +1108,14 @@ function showPage(page, el) {
   const pv = document.getElementById(`pv-${page}`);
   if (pv) pv.classList.add('active');
   if (el) el.classList.add('active');
+  // Scroll to top on mobile
+  if (window.innerWidth <= 768) window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function manSetActive(key) {
+  document.querySelectorAll('.man-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById(`man-${key}`);
+  if (el) el.classList.add('active');
 }
 
 // ══ MODAL ══
@@ -985,33 +1123,6 @@ function openMo(id)  { document.getElementById(id).classList.add('open'); }
 function closeMo(id) { document.getElementById(id).classList.remove('open'); }
 document.querySelectorAll('.mo').forEach(el => el.addEventListener('click', e => { if (e.target===el) closeMo(el.id); }));
 document.addEventListener('keydown', e => { if (e.key==='Escape') document.querySelectorAll('.mo.open').forEach(m => closeMo(m.id)); });
-
-async function checkExpiredDeposits() {
-  const now = new Date().toISOString();
-  const { data: expired } = await sbS.from('deposit_requests')
-    .select('id')
-    .eq('status','pending')
-    .lt('expires_at', now);
-  if (!expired || !expired.length) { toast('Tidak ada deposit kedaluwarsa', 's'); return; }
-  for (const d of expired) {
-    await sbS.from('deposit_requests').update({ status:'expired' }).eq('id', d.id);
-  }
-  toast(`${expired.length} deposit ditandai hangus`, 'w');
-  await refreshAll();
-}
-
-async function checkExpiredDeposits() {
-  const now = new Date().toISOString();
-  const { data: expired } = await sbS.from('deposit_requests')
-    .select('id').eq('status','pending').lt('expires_at', now);
-  if (!expired || !expired.length) { toast('Tidak ada deposit kedaluwarsa', 's'); return; }
-  for (const d of expired) {
-    await sbS.from('deposit_requests').update({ status:'expired' }).eq('id', d.id);
-  }
-  toast(expired.length + ' deposit ditandai hangus', 'w');
-  await refreshAll();
-}
-
 
 async function doLogout() { await sb.auth.signOut(); location.href = 'index.html'; }
 
@@ -1149,12 +1260,6 @@ function toast(msg, type='') {
 }
 </style>
 
-<!-- Mobile Page Header -->
-<div id="mobilePageHeader">
-  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
-    <i class="fas fa-arrow-left"></i>
-  </button>
-  <div class="mph-title" id="mphTitle">XREZZKY</div>
   <div class="mph-logo">XREZZKY</div>
 </div>
 

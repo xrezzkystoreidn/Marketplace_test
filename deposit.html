@@ -158,6 +158,11 @@
 <body>
 
 <!-- ── Mobile Page Header ── -->
+<div id="mobilePageHeader">
+  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <div class="mph-title" id="mphTitle">Deposit Saldo</div>
   <div class="mph-logo">XREZZKY</div>
 </div>
 
@@ -310,7 +315,36 @@
   <div class="expired-sub">Waktu 15 menit telah habis. Buat sesi deposit baru.</div>
   <button class="btn bp" onclick="location.reload()" style="margin-top:8px;padding:12px 28px;font-size:14px"><i class="fas fa-rotate-right"></i> Mulai Ulang</button>
 </div>
-<div id="tc"></div>
+<!-- DEPOSIT LOCKED WALL -->
+<div id="depositLocked" style="display:none">
+  <div class="card anim" style="text-align:center;padding:0">
+    <div style="padding:32px 24px">
+      <div style="width:72px;height:72px;border-radius:50%;background:rgba(245,158,11,.1);border:2px solid rgba(245,158,11,.3);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;color:var(--warn)">
+        <i class="fas fa-lock"></i>
+      </div>
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px">Deposit Sedang Diproses</div>
+      <div style="font-size:13px;color:var(--txt2);line-height:1.7;max-width:340px;margin:0 auto 20px">
+        Kamu masih punya deposit yang <strong style="color:var(--warn)">menunggu konfirmasi admin</strong>. Deposit baru bisa dilakukan setelah deposit sebelumnya <strong style="color:var(--success)">selesai / dikonfirmasi</strong>.
+      </div>
+      <div id="lockedDepositDetail" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:14px;text-align:left;margin-bottom:20px;display:flex;flex-direction:column;gap:8px"></div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn bg" onclick="location.reload()"><i class="fas fa-rotate-right"></i> Cek Status</button>
+        <a href="riwayat.html" class="btn bg"><i class="fas fa-receipt"></i> Lihat Riwayat</a>
+        <a href="index.html" class="btn bp bsm"><i class="fas fa-store"></i> Ke Toko</a>
+      </div>
+    </div>
+  </div>
+  <!-- Still show history -->
+  <div class="card anim3" style="margin-top:14px">
+    <div class="card-head"><div class="iw" style="background:rgba(168,85,247,.15);color:#a855f7"><i class="fas fa-clock-rotate-left"></i></div><h3>Riwayat Deposit</h3></div>
+    <div style="overflow-x:auto">
+      <table class="hist-table">
+        <thead><tr><th>Nominal</th><th>Fee</th><th>Total</th><th>Waktu</th><th>Status</th></tr></thead>
+        <tbody id="histBodyLocked"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--txt2);font-size:13px">Memuat...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPA_URL='https://jydfjfjttpmropoczgop.supabase.co';
@@ -331,8 +365,16 @@ let user=null,profile=null,nominal=0,adminFee=0,totalTransfer=0;
 let qrisImageUrl=null,buktiUploadUrl=null,countdownInterval=null,activeDepositId=null;
 
 document.addEventListener('DOMContentLoaded',async()=>{
+  document.body.style.opacity='0';
+  document.body.style.transition='opacity .2s ease';
+
   const{data:{session}}=await sb.auth.getSession();
-  if(!session){toast('Login dulu untuk deposit','e');setTimeout(()=>location.href='index.html',1500);return;}
+  if(!session){
+    // Hard redirect — must be logged in
+    toast('Login dulu untuk deposit','e');
+    setTimeout(()=>{ location.href='index.html'; },1200);
+    return;
+  }
   user=session.user;
   const{data:p}=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
   profile=p||{id:user.id,balance:0};
@@ -341,6 +383,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
   await loadQrisImage();
   await loadDepositHistory();
   await checkPendingDeposit();
+
+  requestAnimationFrame(()=>{ document.body.style.opacity='1'; });
 });
 
 async function loadQrisImage(){
@@ -552,6 +596,7 @@ async function submitDeposit(){
     }
     clearInterval(countdownInterval);
     toast('Bukti berhasil dikirim! Menunggu konfirmasi admin ✅','s');
+    // Show waiting status (deposit locked until admin confirms)
     showStatusSection('waiting_review',nominal,adminFee,totalTransfer);
     await loadDepositHistory();
   }catch(err){
@@ -586,20 +631,65 @@ function showStatusSection(status,nom,fee,total){
 }
 
 async function checkPendingDeposit(){
-  const{data}=await sb.from('deposit_requests').select('*').eq('user_id',user.id).in('status',['pending','waiting_review']).order('created_at',{ascending:false}).limit(1).maybeSingle();
-  if(!data)return;
-  activeDepositId=data.id;
-  if(data.status==='waiting_review'){showStatusSection('waiting_review',data.amount,data.admin_fee||0,data.total_paid);return;}
-  const expiry=new Date(data.expires_at);
-  if(expiry<new Date()){await sb.from('deposit_requests').update({status:'expired'}).eq('id',data.id);return;}
-  nominal=data.amount;adminFee=data.admin_fee||0;totalTransfer=data.total_paid;
-  toast('Sesi deposit aktif ditemukan, dilanjutkan','w');
-  goStep(2);showQrisSection();startCountdown(expiry);
+  // Get ALL non-terminal deposits for this user
+  const{data:deps}=await sb.from('deposit_requests')
+    .select('*').eq('user_id',user.id)
+    .in('status',['pending','waiting_review'])
+    .order('created_at',{ascending:false})
+    .limit(5);
+
+  if(!deps||!deps.length) return; // No active deposit — form is free
+
+  const data = deps[0];
+  activeDepositId = data.id;
+
+  // ── CASE 1: waiting_review (bukti sudah diupload) → LOCK new deposit ──
+  if(data.status==='waiting_review'){
+    showDepositLocked(data);
+    return;
+  }
+
+  // ── CASE 2: pending (belum upload bukti) → cek expiry ──
+  if(data.status==='pending'){
+    const expiry=new Date(data.expires_at);
+    if(expiry < new Date()){
+      // Expired — mark it and allow new deposit
+      await sb.from('deposit_requests').update({status:'expired'}).eq('id',data.id);
+      activeDepositId=null;
+      return;
+    }
+    // Still valid session — resume it
+    nominal=data.amount; adminFee=data.admin_fee||0; totalTransfer=data.total_paid;
+    toast('Sesi deposit aktif ditemukan, dilanjutkan','w');
+    goStep(2); showQrisSection(); startCountdown(expiry);
+  }
+}
+
+function showDepositLocked(dep){
+  // Hide form, show lock wall
+  document.getElementById('step1Section').style.display='none';
+  document.getElementById('qrisSection').classList.remove('show');
+  document.getElementById('statusSection').classList.remove('show');
+  document.getElementById('depositLocked').style.display='block';
+
+  document.getElementById('lockedDepositDetail').innerHTML=`
+    <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--txt2)">Nominal</span><span style="font-weight:600">${fmtRp(dep.amount)}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--txt2)">Total Transfer</span><span style="font-weight:700;color:var(--accent)">${fmtRp(dep.total_paid)}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--txt2)">Waktu Submit</span><span style="color:var(--txt2)">${fmtDate(dep.submitted_at||dep.created_at)}</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--txt2)">Status</span><span class="chip cy">Menunggu Konfirmasi Admin</span></div>`;
+
+  // Populate locked history table too
+  loadDepositHistoryToEl('histBodyLocked');
 }
 
 async function loadDepositHistory(){
+  await loadDepositHistoryToEl('histBody');
+}
+
+async function loadDepositHistoryToEl(elId){
   const{data}=await sb.from('deposit_requests').select('*').eq('user_id',user.id).order('created_at',{ascending:false}).limit(10);
-  const body=document.getElementById('histBody');
+  const body=document.getElementById(elId);
+  if(!body) return;
   if(!data||!data.length){body.innerHTML='<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--txt2);font-size:13px">Belum ada riwayat</td></tr>';return;}
   body.innerHTML=data.map(d=>{
     const chip=d.status==='completed'?'<span class="chip cg">Berhasil</span>':d.status==='rejected'?'<span class="chip cr">Ditolak</span>':d.status==='expired'?'<span class="chip" style="background:rgba(155,166,178,.1);color:var(--txt2)">Hangus</span>':'<span class="chip cy">Menunggu</span>';
@@ -613,6 +703,7 @@ function newDeposit(){
   activeDepositId=null;nominal=0;adminFee=0;totalTransfer=0;buktiUploadUrl=null;
   clearInterval(countdownInterval);
   document.getElementById('statusSection').classList.remove('show');
+  document.getElementById('depositLocked').style.display='none';
   document.getElementById('step1Section').style.display='block';
   document.getElementById('nomInput').value='';
   document.getElementById('feeBox').classList.remove('show');
@@ -620,6 +711,12 @@ function newDeposit(){
   document.getElementById('proceedBtn').disabled=true;
   document.querySelectorAll('.qn-chip').forEach(c=>c.classList.remove('active'));
   goStep(1);
+}
+
+function goNav(url){
+  document.body.style.opacity='0.6';
+  document.body.style.transition='opacity .18s ease';
+  setTimeout(()=>{ location.href=url; },180);
 }
 
 function fmtRp(v){if(!v&&v!==0)return'—';if(v===0)return'Rp 0';return'Rp '+Number(v).toLocaleString('id-ID');}
@@ -735,26 +832,15 @@ function toast(msg,type=''){const el=document.createElement('div');el.className=
   #xbn { display: flex !important; }
   #mobilePageHeader { display: flex !important; }
   nav:not(#xbn) { display: none !important; }
-  #topbar { display: none !important; }
-  #sidebar { display: none !important; }
-  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
-  body > .main, main, .page, #main { padding-bottom: 80px !important; padding-top: 0 !important; }
-  .page { min-height: calc(100vh - 52px); }
+  .page { padding-bottom: 90px !important; min-height: calc(100vh - 52px); }
+  #tc { bottom: 76px !important; right: 12px !important; }
+  .qr-img-wrap { width: 200px !important; height: 200px !important; }
 }
 @media (min-width: 901px) {
   #xbn { display: none !important; }
   #mobilePageHeader { display: none !important; }
 }
 </style>
-
-<!-- Mobile Page Header -->
-<div id="mobilePageHeader">
-  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
-    <i class="fas fa-arrow-left"></i>
-  </button>
-  <div class="mph-title" id="mphTitle">XREZZKY</div>
-  <div class="mph-logo">XREZZKY</div>
-</div>
 
 <!-- Bottom Nav -->
 <div id="xbn">

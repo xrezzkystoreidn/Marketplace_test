@@ -328,9 +328,6 @@
     }
     .clear-search:hover { text-decoration: underline; }
 
-    
-    }
-
     /* ── BADGE NOTIF ── */
     .badge {
       display: inline-block; background: var(--accent);
@@ -468,9 +465,6 @@
     .page-view { display: none; }
     .page-view.active { display: block; }
 
-    
-    }
-  
     /* ════════════════════════════════════════════
        BOTTOM NAV — PERSISTENT MOBILE NAVIGATION
        Dana/Shopee/Tokopedia style
@@ -631,24 +625,48 @@
       #mobileHeader { display: flex !important; }
       nav           { display: none !important; }
       aside         { display: none !important; }
-      main          { padding: 14px 14px 80px !important; }
-      .page         { min-height: calc(100vh - 60px); }
-      .hero         { padding: 18px 16px; margin-bottom: 14px; }
-      .hero h1      { font-size: 18px; }
-      .hero p       { font-size: 12px; }
-      .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      main          { padding: 14px 12px 90px !important; }
+      .page         { min-height: calc(100vh - 56px); }
+      .hero         { padding: 16px 14px; margin-bottom: 12px; border-radius: 10px; }
+      .hero h1      { font-size: 17px; }
+      .hero p       { font-size: 12px; max-width: 100%; }
+      .hero-stats   { gap: 16px; margin-top: 14px; }
+      .stat-val     { font-size: 18px; }
+      .product-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .modal-overlay{ padding: 0; align-items: flex-end; }
-      .auth-modal   { border-radius: 20px 20px 0 0; padding-bottom: 28px; max-width: 100%; }
-      .detail-modal { max-width: 100%; border-radius: 20px 20px 0 0; }
+      .auth-modal   { border-radius: 20px 20px 0 0; padding-bottom: calc(28px + env(safe-area-inset-bottom,0px)); max-width: 100%; }
+      .detail-modal { max-width: 100%; border-radius: 20px 20px 0 0; max-height: 92vh; }
+      .cat-tabs     { padding-bottom: 4px; gap: 6px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; -ms-overflow-style: none; }
+      .cat-tabs::-webkit-scrollbar { display: none; }
+      .cat-tab      { flex-shrink: 0; }
+      .sec-header   { margin-bottom: 12px; }
     }
-    @media (max-width: 480px) {
-      .product-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    /* Tablet */
+    @media (min-width: 601px) and (max-width: 900px) {
+      .product-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; }
+      main          { padding: 16px 16px 90px !important; }
     }
+
+    /* Small phone */
+    @media (max-width: 380px) {
+      .product-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .hero h1      { font-size: 16px; }
+      main          { padding: 10px 10px 90px !important; }
+    }
+
     @media (min-width: 901px) {
       #xbn          { display: none !important; }
       #mobileHeader { display: none !important; }
       nav           { display: flex !important; }
       aside         { display: flex !important; }
+      /* Desktop wide */
+      .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    }
+
+    @media (min-width: 1400px) {
+      .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+      main { padding: 28px 32px; }
     }
 
   </style>
@@ -657,7 +675,7 @@
 
 <!-- ══ MOBILE HEADER (shown ≤900px via CSS) ══ -->
 <div id="mobileHeader">
-  <a class="mob-brand" href="index.html">
+  <a class="mob-brand" href="index.html" onclick="_debugTap();return false" ondblclick="location.href='index.html'">
     <div class="dot"></div>
     XREZZKY<span>STORE</span>
   </a>
@@ -669,11 +687,18 @@
       <i class="fas fa-search"></i>
     </button>
   </div>
+  <!-- Mobile login button (guest only) -->
+  <button id="mobLoginBtn" onclick="openAuth('login')" style="
+    background: var(--accent); border: none; color: #fff;
+    padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
+    cursor: pointer; white-space: nowrap; flex-shrink: 0; display: none;
+    font-family: 'Poppins', sans-serif;
+  "><i class="fas fa-sign-in-alt"></i></button>
 </div>
 
 <!-- ══ DESKTOP NAVBAR (>900px) ══ -->
 <nav>
-  <a class="nav-brand" href="index.html">
+  <a class="nav-brand" href="index.html" onclick="_debugTap();return false" ondblclick="location.href='index.html'">
     <div class="dot"></div>
     <span class="brand-text">XREZZKY <span>STORE</span></span>
   </a>
@@ -797,27 +822,6 @@
         <div class="stat"><span class="stat-val" id="statTerjual">—</span><span class="stat-lab">Terjual</span></div>
         <div class="stat"><span class="stat-val" id="statUser">—</span><span class="stat-lab">Member</span></div>
       </div>
-    </div>
-
-    <!-- Seller Promo Banner (visible only to buyer role) -->
-    <div id="sellerPromoBanner" style="display:none;align-items:center;justify-content:space-between;
-      background:linear-gradient(135deg,rgba(74,125,255,.12),rgba(124,58,237,.12));
-      border:1px solid rgba(74,125,255,.3);border-radius:12px;
-      padding:14px 18px;margin-bottom:16px;gap:14px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:40px;height:40px;border-radius:10px;background:rgba(74,125,255,.2);
-          display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">🏪</div>
-        <div>
-          <div style="font-size:14px;font-weight:700">Jadi Seller XREZZKY</div>
-          <div style="font-size:12px;color:var(--txt2);margin-top:2px">Jual produkmu ke ribuan pembeli. Gratis!</div>
-        </div>
-      </div>
-      <button onclick="openSellerRegModal()" style="padding:8px 18px;background:var(--accent);color:#fff;
-        border:none;border-radius:8px;font-family:Poppins,sans-serif;font-size:13px;font-weight:600;
-        cursor:pointer;white-space:nowrap;flex-shrink:0;transition:background .18s"
-        onmouseover="this.style.background='var(--accent-h)'" onmouseout="this.style.background='var(--accent)'">
-        Daftar Seller →
-      </button>
     </div>
 
     <!-- Category Tabs (dynamic, loaded from Supabase) -->
@@ -956,16 +960,46 @@ let allProducts  = [];
 //  INIT
 // ══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
+  // Fade in
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity 0.22s ease';
+
+  // Step 1: session (non-critical if fails)
+  try { await checkSession(); } catch(e) { console.warn('[auth]', e); }
+
+  // Step 2: produk (CRITICAL — tampilkan error spesifik bukan generic)
   showSkeletons();
-  await checkSession();
-  await loadProducts();
-  await loadStats();
-  await loadCategories();
-  await checkInfoBadge();
-  bindSearch();
-  // Handle deep link hash (e.g. from inner pages clicking Info)
+  try {
+    await loadProducts();
+  } catch(e) {
+    console.error('[products]', e);
+    renderEmpty('Gagal memuat produk. Cek koneksi internet kamu.');
+  }
+
+  // Step 3: stats (non-critical)
+  try { await loadStats(); } catch(e) { console.warn('[stats]', e); }
+
+  // Step 4: categories (non-critical)
+  try { await loadCategories(); } catch(e) { console.warn('[cats]', e); }
+
+  // Step 5: info badge (non-critical)
+  try { if (typeof checkInfoBadge === 'function') await checkInfoBadge(); } catch(e) {}
+
+  // Step 6: bind search
+  try { bindSearch(); } catch(e) {}
+
+  // Step 7: realtime (non-critical)
+  try { subscribeRealtimeProducts(); } catch(e) { console.warn('[rt]', e); }
+
+  // Show page
+  requestAnimationFrame(() => { document.body.style.opacity = '1'; });
+
+  // Handle deep link hash
   if (location.hash === '#info') {
-    setTimeout(() => { openInfoSheet(); xbnSetActive('info'); }, 400);
+    setTimeout(() => {
+      if (typeof openInfoSheet === 'function') openInfoSheet();
+      xbnSetActive('info');
+    }, 400);
     history.replaceState(null, '', location.pathname);
   }
 });
@@ -985,87 +1019,24 @@ async function checkSession() {
 
 async function setUser(user) {
   currentUser = user;
+  // load profile
   const { data } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
   currentProfile = data;
   updateNavUser();
   xbnUpdateAvatar();
-  // Show seller promo banner if buyer
-  const role = data?.role || 'buyer';
-  if (role === 'buyer') showSellerBanner();
-  else hideSellerBanner();
-}
-
-function showSellerBanner() {
-  const el = document.getElementById('sellerPromoBanner');
-  if (el) el.style.display = 'flex';
-}
-function hideSellerBanner() {
-  const el = document.getElementById('sellerPromoBanner');
-  if (el) el.style.display = 'none';
-}
-function openSellerRegModal() {
-  // Show info about becoming seller
-  const msg = document.createElement('div');
-  msg.style.cssText = 'position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:20px';
-  msg.innerHTML = `
-    <div style="background:#171c24;border:1px solid #2a3442;border-radius:14px;max-width:400px;width:100%;overflow:hidden;animation:fup .3s ease">
-      <div style="background:linear-gradient(135deg,#1a2a4a,#1a2040);padding:28px 24px;text-align:center">
-        <div style="font-size:40px;margin-bottom:12px">🏪</div>
-        <div style="font-family:sans-serif;font-size:20px;font-weight:800;color:#f5f7fa;margin-bottom:8px">Jadi Seller XREZZKY</div>
-        <div style="font-size:13px;color:#9ba6b2;line-height:1.6">Jual produk digitalmu ke ribuan pembeli. Akun, item, joki, top up — semua bisa!</div>
-      </div>
-      <div style="padding:20px 24px">
-        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
-          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#f5f7fa">
-            <i class="fas fa-check-circle" style="color:#22c55e;font-size:15px"></i> Gratis daftar, tanpa biaya bulanan
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#f5f7fa">
-            <i class="fas fa-check-circle" style="color:#22c55e;font-size:15px"></i> Kelola produk & pesanan mudah
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#f5f7fa">
-            <i class="fas fa-check-circle" style="color:#22c55e;font-size:15px"></i> Dashboard seller lengkap
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#f5f7fa">
-            <i class="fas fa-check-circle" style="color:#22c55e;font-size:15px"></i> Penarikan saldo kapan saja
-          </div>
-        </div>
-        <button onclick="applyAsSeller(this)" style="width:100%;padding:13px;background:linear-gradient(135deg,#4a7dff,#7c3aed);color:#fff;border:none;border-radius:8px;font-family:Poppins,sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px">
-          <i class="fas fa-store"></i> Daftar Jadi Seller
-        </button>
-        <button onclick="this.closest('[style*=fixed]').remove()" style="width:100%;padding:11px;background:transparent;color:#9ba6b2;border:1px solid #2a3442;border-radius:8px;font-family:Poppins,sans-serif;font-size:13px;cursor:pointer">
-          Nanti Saja
-        </button>
-      </div>
-    </div>`;
-  msg.addEventListener('click', e => { if (e.target === msg) msg.remove(); });
-  document.body.appendChild(msg);
-}
-
-async function applyAsSeller(btn) {
-  if (!currentUser) return;
-  btn.textContent = 'Memproses...';
-  btn.disabled = true;
-  const { error } = await sb.from('profiles').update({ role: 'seller' }).eq('id', currentUser.id);
-  if (error) { btn.textContent = 'Gagal. Coba lagi'; btn.disabled=false; return; }
-  currentProfile.role = 'seller';
-  updateNavUser();
-  xbnUpdateAvatar();
-  btn.closest('[style*=fixed]').remove();
-  toast('Selamat! Akun seller aktif 🎉', 'success');
-  hideSellerBanner();
-  // Redirect to seller dashboard
-  setTimeout(() => location.href = 'seller-dashboard.html', 800);
 }
 
 function updateNavUser() {
   const guestEl = document.getElementById('navGuest');
   const userEl  = document.getElementById('navUser');
   const qnbEl   = document.getElementById('quickNavBar');
+  const mobBtn  = document.getElementById('mobLoginBtn');
 
   if (!currentUser) {
     guestEl.style.display = 'flex';
     userEl.style.display  = 'none';
     if (qnbEl) qnbEl.style.display = 'none';
+    if (mobBtn) mobBtn.style.display = 'flex';
     document.getElementById('sidebarRoleItems').innerHTML = '';
     return;
   }
@@ -1073,6 +1044,7 @@ function updateNavUser() {
   guestEl.style.display = 'none';
   userEl.style.display  = 'flex';
   if (qnbEl) qnbEl.style.display = 'flex';
+  if (mobBtn) mobBtn.style.display = 'none';
 
   const nm      = currentProfile?.username || currentUser.email.split('@')[0];
   const email   = currentProfile?.email    || currentUser.email;
@@ -1189,7 +1161,10 @@ document.addEventListener('click', e => {
 
 function goPage(url) {
   if (!currentUser) { openAuth('login'); toast('Login dulu ya', 'error'); return; }
-  location.href = url;
+  // Smooth page transition
+  document.body.style.opacity = '0.6';
+  document.body.style.transition = 'opacity 0.18s ease';
+  setTimeout(() => { location.href = url; }, 180);
 }
 
 async function doLogin() {
@@ -1243,8 +1218,6 @@ async function logout() {
   await sb.auth.signOut();
   currentUser = null; currentProfile = null;
   updateNavUser();
-  xbnUpdateAvatar();
-  hideSellerBanner();
   toast('Sampai jumpa! 👋');
 }
 
@@ -1258,31 +1231,52 @@ function requireAuth(page) {
 //  PRODUCTS
 // ══════════════════════════════════════════
 async function loadProducts() {
-  // Load products — neq false catches both true AND null values
-  let query = sb.from('products')
-    .select('*, profiles!products_seller_id_fkey(username, avatar_url)')
-    .neq('is_active', false)
-    .order('created_at', { ascending: false });
+  let query = sb.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
   if (activeCategory) query = query.eq('category', activeCategory);
   if (searchQuery)    query = query.ilike('name', `%${searchQuery}%`);
 
   const { data, error } = await query;
-  if (error) { console.error(error); return renderEmpty('Gagal memuat produk'); }
+
+  if (error) {
+    // Log full error untuk debug
+    console.error('[XREZZKY] Supabase products error:', JSON.stringify(error));
+
+    // Pesan berbeda tergantung jenis error
+    if (error.code === 'PGRST116' || error.message?.includes('does not exist')) {
+      renderEmpty('Tabel produk belum dibuat. Setup database Supabase dulu.');
+    } else if (error.code === '42501' || error.message?.includes('permission')) {
+      renderEmpty('Akses ditolak. Cek RLS policy di Supabase.');
+    } else {
+      renderEmpty(`Error: ${error.message || 'Gagal memuat produk'}`);
+    }
+    return;
+  }
 
   allProducts = data || [];
+
+  if (!allProducts.length) {
+    const msg = searchQuery
+      ? `Tidak ada produk untuk "${searchQuery}"`
+      : activeCategory
+        ? `Belum ada produk di kategori ini`
+        : 'Belum ada produk. Tambahkan produk melalui Seller Dashboard.';
+    renderEmpty(msg);
+    return;
+  }
+
   renderProducts(allProducts);
 }
 
 function renderProducts(products) {
   const grid = document.getElementById('productGrid');
-  if (!products.length) return renderEmpty('Produk tidak ditemukan');
+  if (!products || !products.length) return renderEmpty('Produk tidak ditemukan');
 
   grid.innerHTML = products.map(p => {
     const imgHtml = p.image_url
       ? `<img src="${CLOUDINARY_BASE}${p.image_url}" alt="${esc(p.name)}" loading="lazy" />`
       : `<i class="fas fa-box-open"></i>`;
+    const stars = p.avg_rating ? renderStars(p.avg_rating) : '';
     const badge = p.category ? `<div class="product-badge">${esc(p.category)}</div>` : '';
-    const sellerNm = p.profiles?.username || '—';
     return `
       <div class="product-card" onclick="openDetail('${p.id}')">
         <div class="product-img">${imgHtml}</div>
@@ -1294,12 +1288,62 @@ function renderProducts(products) {
             <div class="product-price">${formatPrice(p.price)}</div>
             ${p.avg_rating ? `<div class="product-rating"><i class="fas fa-star"></i> ${Number(p.avg_rating).toFixed(1)}</div>` : ''}
           </div>
-          <div style="font-size:11px;color:var(--txt2);margin-top:6px;display:flex;align-items:center;gap:4px">
-            <i class="fas fa-store" style="font-size:10px"></i> ${esc(sellerNm)}
-          </div>
         </div>
       </div>`;
   }).join('');
+}
+
+// ══════════════════════════════════════════
+//  REALTIME — Produk tampil otomatis saat ditambah/diubah/dihapus
+// ══════════════════════════════════════════
+let realtimeChannel = null;
+
+function subscribeRealtimeProducts() {
+  if (realtimeChannel) sb.removeChannel(realtimeChannel);
+
+  realtimeChannel = sb.channel('public:products')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'products'
+    }, payload => {
+      const { eventType, new: newRow, old: oldRow } = payload;
+
+      if (eventType === 'INSERT') {
+        // Hanya tampilkan jika aktif dan sesuai filter
+        if (!newRow.is_active) return;
+        if (activeCategory && newRow.category !== activeCategory) return;
+        if (searchQuery && !newRow.name?.toLowerCase().includes(searchQuery.toLowerCase())) return;
+        // Tambahkan ke depan array
+        allProducts = [newRow, ...allProducts];
+        renderProducts(allProducts);
+        // Update stat counter
+        const el = document.getElementById('statProduk');
+        if (el) el.textContent = (parseInt(el.textContent.replace(/\D/g,''))||0) + 1;
+        toast('Produk baru ditambahkan! 🆕', 'success');
+
+      } else if (eventType === 'UPDATE') {
+        const idx = allProducts.findIndex(p => p.id === newRow.id);
+        if (idx >= 0) {
+          if (!newRow.is_active) {
+            // Produk dinonaktifkan — hapus dari view
+            allProducts.splice(idx, 1);
+          } else {
+            allProducts[idx] = newRow;
+          }
+          renderProducts(allProducts);
+        } else if (newRow.is_active) {
+          // Produk baru diaktifkan
+          allProducts = [newRow, ...allProducts];
+          renderProducts(allProducts);
+        }
+
+      } else if (eventType === 'DELETE') {
+        allProducts = allProducts.filter(p => p.id !== oldRow.id);
+        renderProducts(allProducts);
+      }
+    })
+    .subscribe();
 }
 
 function renderEmpty(msg) {
@@ -1327,14 +1371,19 @@ function showSkeletons(n = 8) {
 //  STATS
 // ══════════════════════════════════════════
 async function loadStats() {
-  const [{ count: prodCount }, { count: soldCount }, { count: userCount }] = await Promise.all([
-    sb.from('products').select('*', { count: 'exact', head: true }).neq('is_active', false),
+  // Run all 3 independently — jika satu tabel belum ada, yang lain tetap jalan
+  const [r1, r2, r3] = await Promise.allSettled([
+    sb.from('products').select('*', { count: 'exact', head: true }).eq('is_active', true),
     sb.from('orders').select('*', { count: 'exact', head: true }),
     sb.from('profiles').select('*', { count: 'exact', head: true })
   ]);
-  animateCount('statProduk', prodCount || 0);
-  animateCount('statTerjual', soldCount || 0);
-  animateCount('statUser',   userCount || 0);
+  const prodCount = r1.status === 'fulfilled' ? (r1.value.count || 0) : 0;
+  const soldCount = r2.status === 'fulfilled' ? (r2.value.count || 0) : 0;
+  const userCount = r3.status === 'fulfilled' ? (r3.value.count || 0) : 0;
+
+  animateCount('statProduk',  prodCount);
+  animateCount('statTerjual', soldCount);
+  animateCount('statUser',    userCount);
 }
 
 function animateCount(id, target) {
@@ -1620,53 +1669,36 @@ function selectCatSheet(slug) {
 // ══════════════════════════════════════════
 
 function xbnGo(tab, el) {
-  // Ripple
+  // Ripple effect
   if (el) {
-    var r = document.createElement('span');
+    const r = document.createElement('span');
     r.className = 'xbn-ripple';
     r.style.cssText = 'width:40px;height:40px;margin:-20px 0 0 -20px;top:50%;left:50%;position:absolute';
     el.appendChild(r);
-    setTimeout(function(){ if(r.parentNode) r.remove(); }, 600);
+    setTimeout(function(){ r.remove(); }, 600);
   }
+  // Set active state
   document.querySelectorAll('.xbn-btn').forEach(function(b){ b.classList.remove('active'); });
   if (el) el.classList.add('active');
 
   if (tab === 'home') {
-    if (typeof closeInfoSheet   === 'function') closeInfoSheet();
-    if (typeof closeProfilSheet === 'function') closeProfilSheet();
+    closeInfoSheet(); closeProfilSheet();
     setCategory(null, null, document.querySelector('.cat-tab'));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   } else if (tab === 'info') {
-    if (typeof closeProfilSheet === 'function') closeProfilSheet();
-    if (typeof openInfoSheet    === 'function') openInfoSheet();
-    else { alert('Info sheet not loaded'); }
+    closeProfilSheet();
+    openInfoSheet();
   } else if (tab === 'profil') {
-    if (typeof closeInfoSheet === 'function') closeInfoSheet();
-    if (!currentUser) {
-      if (el) el.classList.remove('active');
-      openAuth('login'); return;
-    }
-    if (typeof openProfilSheet === 'function') openProfilSheet();
+    closeInfoSheet();
+    if (!currentUser) { if (el) el.classList.remove('active'); openAuth('login'); return; }
+    openProfilSheet();
   } else if (tab === 'riwayat') {
-    if (!currentUser) {
-      if (el) el.classList.remove('active');
-      openAuth('login'); return;
-    }
-    location.href = 'riwayat.html';
+    if (!currentUser) { if (el) el.classList.remove('active'); openAuth('login'); return; }
+    document.body.style.opacity = '0.6';
+    document.body.style.transition = 'opacity 0.18s ease';
+    setTimeout(function(){ location.href = 'riwayat.html'; }, 180);
   }
 }
-
-// Fast tap: trigger on touchstart for instant response
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('.xbn-btn, .xbn-fab').forEach(function(btn) {
-    btn.addEventListener('touchstart', function() {
-      this.style.transform = 'scale(.92)';
-    }, { passive: true });
-    btn.addEventListener('touchend', function() {
-      this.style.transform = '';
-    }, { passive: true });
-  });
-});
 
 function xbnFabClick() {
   const fab = document.getElementById('xbnFab');
@@ -1677,7 +1709,9 @@ function xbnFabClick() {
     setTimeout(function(){ fab.classList.remove('pulse'); }, 500);
   }
   if (!currentUser) { openAuth('login'); return; }
-  location.href = 'deposit.html';
+  document.body.style.opacity = '0.6';
+  document.body.style.transition = 'opacity 0.18s ease';
+  setTimeout(function(){ location.href = 'deposit.html'; }, 180);
 }
 
 function xbnSetActive(tab) {
@@ -1715,7 +1749,87 @@ window.addEventListener('scroll', function() {
 // ══════════════════════════════════════════
 //  TOAST (fix: use #tc instead of #toast-container)
 // ══════════════════════════════════════════
-function toast(msg, type = 'info') {
+// ══════════════════════════════════════════
+//  DEBUG — tap logo 5x untuk lihat status
+// ══════════════════════════════════════════
+let _dbgTap = 0;
+function _debugTap() {
+  _dbgTap++;
+  if (_dbgTap >= 5) {
+    _dbgTap = 0;
+    _showDebug();
+  }
+}
+
+async function _showDebug() {
+  const lines = [];
+  lines.push(`URL: ${SUPA_URL}`);
+  lines.push(`Time: ${new Date().toISOString()}`);
+
+  // Test connection
+  try {
+    const { data, error } = await sb.from('products').select('id').limit(1);
+    if (error) lines.push(`❌ products: ${error.message} (${error.code})`);
+    else lines.push(`✅ products: OK (got ${data?.length} row)`);
+  } catch(e) { lines.push(`❌ products: ${e.message}`); }
+
+  try {
+    const { data, error } = await sb.from('profiles').select('id').limit(1);
+    if (error) lines.push(`❌ profiles: ${error.message}`);
+    else lines.push(`✅ profiles: OK`);
+  } catch(e) { lines.push(`❌ profiles: ${e.message}`); }
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    lines.push(`Auth: ${session ? '✅ logged in as ' + session.user.email : '⚪ guest'}`);
+  } catch(e) { lines.push(`Auth: ❌ ${e.message}`); }
+
+  const panel = document.createElement('div');
+  panel.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.92);padding:20px;overflow:auto;font-family:monospace;font-size:13px;color:#0f0';
+  panel.innerHTML = `<div style="max-width:500px;margin:0 auto">
+    <div style="color:#ff0;font-weight:700;font-size:16px;margin-bottom:12px">🔧 XREZZKY DEBUG</div>
+    ${lines.map(l => `<div style="padding:4px 0;border-bottom:1px solid #222">${l}</div>`).join('')}
+    <button onclick="this.parentElement.parentElement.remove()" style="margin-top:16px;background:#ef4444;color:#fff;border:none;padding:8px 20px;border-radius:6px;cursor:pointer;font-size:13px">Tutup</button>
+  </div>`;
+  document.body.appendChild(panel);
+}
+
+
+// ══════════════════════════════════════════
+async function checkInfoBadge() {
+  // Cek apakah ada info/update baru dari tabel app_info atau info_posts
+  try {
+    const { data } = await sb.from('info_posts')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_published', true)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    // Badge dot on info button
+    const dot = document.getElementById('xdn-info');
+    if (dot) dot.style.display = data ? 'block' : 'none';
+  } catch(e) {
+    // Table might not exist yet — silently ignore
+  }
+}
+
+function openInfoSheet() {
+  // Arahkan ke info-admin halaman atau tampilkan sheet
+  // Cek apakah ada sheet element
+  const sheet = document.getElementById('infoSheet');
+  if (sheet) {
+    sheet.classList.add('open');
+  } else {
+    // Fallback: navigate to index with info hash
+    if (location.pathname.includes('index') || location.pathname === '/' || location.pathname.endsWith('/')) {
+      // Already on index, show toast
+      toast('Belum ada info terbaru', 'info');
+    } else {
+      location.href = 'index.html#info';
+    }
+  }
+}
+
+
   const el = document.createElement('div');
   el.className = `toast ${type}`;
   el.textContent = msg;
@@ -1820,194 +1934,6 @@ function toast(msg, type = 'info') {
 <!-- TOAST CONTAINER -->
 <div id="toast-container"></div>
 
-
-<!-- ══ INFO SHEET ══ -->
-<div id="infoSheet" style="position:fixed;inset:0;z-index:500;display:none;background:rgba(0,0,0,.65);backdrop-filter:blur(4px)" onclick="closeInfoSheet()">
-  <div id="infoSheetInner" style="position:absolute;bottom:0;left:0;right:0;background:#171c24;border-top:1px solid #2a3442;border-radius:20px 20px 0 0;max-height:85vh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,12px)" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:center;padding:10px 0 0;position:sticky;top:0;background:#171c24;z-index:1">
-      <div style="width:36px;height:4px;border-radius:2px;background:#2a3442"></div>
-    </div>
-    <div style="padding:12px 18px 10px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:16px;background:#171c24;z-index:1;border-bottom:1px solid #2a3442">
-      <div>
-        <div style="font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px"><i class="fas fa-bell" style="color:#4a7dff"></i> Info & Update</div>
-        <div style="font-size:11px;color:#9ba6b2;margin-top:2px">Update terbaru dari XREZZKY</div>
-      </div>
-      <button onclick="closeInfoSheet()" style="background:#1d2430;border:1px solid #2a3442;color:#9ba6b2;width:30px;height:30px;border-radius:50%;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center"><i class="fas fa-times"></i></button>
-    </div>
-    <div id="infoPostList" style="padding-bottom:12px"></div>
-  </div>
-</div>
-
-<!-- ══ PROFIL SHEET ══ -->
-<div id="profilSheet" style="position:fixed;inset:0;z-index:500;display:none;background:rgba(0,0,0,.65);backdrop-filter:blur(4px)" onclick="closeProfilSheet()">
-  <div id="profilSheetInner" style="position:absolute;bottom:0;left:0;right:0;background:#171c24;border-top:1px solid #2a3442;border-radius:20px 20px 0 0;padding-bottom:env(safe-area-inset-bottom,0)" onclick="event.stopPropagation()">
-    <div style="display:flex;justify-content:center;padding:10px 0 0"><div style="width:36px;height:4px;border-radius:2px;background:#2a3442"></div></div>
-    <div id="profilSheetContent" style="padding-bottom:8px"></div>
-  </div>
-</div>
-
-<style>
-@keyframes sheetUpAnim { from{transform:translateY(100%)} to{transform:translateY(0)} }
-.sheet-open-anim { animation: sheetUpAnim .32s cubic-bezier(.32,1.25,.55,1) both; }
-.bsi { display:flex;align-items:center;gap:14px;padding:13px 18px;cursor:pointer;transition:background .15s;text-decoration:none;color:#f5f7fa;border:none;background:none;width:100%;text-align:left;font-family:'Poppins',sans-serif;font-size:14px;-webkit-tap-highlight-color:transparent; }
-.bsi:active { background:#1d2430; }
-.bsi-icon { width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0; }
-.bsi-title { font-size:14px;font-weight:600; }
-.bsi-sub   { font-size:12px;color:#9ba6b2;margin-top:2px; }
-.bsi.danger .bsi-title { color:#ef4444; }
-.bsi.danger .bsi-icon  { background:rgba(239,68,68,.12);color:#ef4444; }
-</style>
-
-<script>
-// ══ INFO SHEET ══
-function openInfoSheet() {
-  const s = document.getElementById('infoSheet');
-  const i = document.getElementById('infoSheetInner');
-  if (!s) return;
-  s.style.display = 'block';
-  i.classList.remove('sheet-open-anim');
-  void i.offsetWidth;
-  i.classList.add('sheet-open-anim');
-  loadInfoPosts();
-  // Mark as seen
-  localStorage.setItem('xrz_info_seen', Date.now().toString());
-  const dot = document.getElementById('xdn-info');
-  if (dot) dot.style.display = 'none';
-}
-function closeInfoSheet() {
-  const s = document.getElementById('infoSheet');
-  if (s) s.style.display = 'none';
-  // reset active if on home
-  if (!activeCategory && !searchQuery) {
-    document.querySelectorAll('.xbn-btn').forEach(b => b.classList.remove('active'));
-    const h = document.getElementById('xbn-home');
-    if (h) h.classList.add('active');
-  }
-}
-
-async function loadInfoPosts() {
-  const list = document.getElementById('infoPostList');
-  if (!list) return;
-  list.innerHTML = '<div style="text-align:center;padding:30px;color:#9ba6b2"><div style="width:24px;height:24px;border:3px solid #2a3442;border-top-color:#4a7dff;border-radius:50%;animation:spn .7s linear infinite;margin:0 auto 10px"></div>Memuat...</div>';
-  const { data, error } = await sb.from('info_posts').select('*').eq('is_active', true).order('created_at', { ascending: false }).limit(20);
-  if (error || !data || !data.length) {
-    list.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#9ba6b2"><div style="font-size:32px;margin-bottom:12px;opacity:.3">📢</div><div style="font-size:14px;font-weight:600;margin-bottom:4px">Belum ada info</div><div style="font-size:12px">Admin belum posting update</div></div>';
-    return;
-  }
-  const typeIcon  = { update:'fas fa-rotate', promo:'fas fa-tag', maintenance:'fas fa-wrench', announcement:'fas fa-bullhorn' };
-  const typeColor = { update:'#4a7dff', promo:'#22c55e', maintenance:'#f59e0b', announcement:'#ef4444' };
-  list.innerHTML = data.map(p => {
-    const icon  = typeIcon[p.type]  || 'fas fa-info-circle';
-    const color = typeColor[p.type] || '#4a7dff';
-    const hasLink = p.link_url && p.link_label;
-    return '<div style="padding:16px 18px;border-bottom:1px solid #2a3442">' +
-      '<div style="display:flex;align-items:flex-start;gap:12px">' +
-        '<div style="width:38px;height:38px;border-radius:10px;background:' + color + '18;color:' + color + ';display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;margin-top:2px"><i class="' + icon + '"></i></div>' +
-        '<div style="flex:1;min-width:0">' +
-          '<div style="font-size:14px;font-weight:700;margin-bottom:4px">' + esc(p.title) + '</div>' +
-          '<div style="font-size:13px;color:#9ba6b2;line-height:1.6;margin-bottom:8px">' + esc(p.content) + '</div>' +
-          (p.image_url ? '<img src="' + CLOUDINARY_BASE + p.image_url + '" style="width:100%;border-radius:8px;margin-bottom:8px;border:1px solid #2a3442" loading="lazy"/>' : '') +
-          (hasLink ? '<a href="' + esc(p.link_url) + '" ' + (p.link_new_tab ? 'target="_blank" rel="noopener"' : '') + ' onclick="closeInfoSheet()" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;background:' + color + ';color:#fff;font-size:13px;font-weight:600;text-decoration:none;margin-bottom:4px"><i class="' + (p.link_icon || 'fas fa-arrow-right') + '"></i>' + esc(p.link_label) + '</a>' : '') +
-          '<div style="font-size:11px;color:#9ba6b2;margin-top:6px"><i class="fas fa-clock" style="font-size:10px;margin-right:3px"></i>' + timeAgo(p.created_at) + '</div>' +
-        '</div>' +
-      '</div></div>';
-  }).join('');
-}
-
-// ══ PROFIL SHEET ══
-function openProfilSheet() {
-  if (!currentUser) { openAuth('login'); return; }
-  buildProfilSheet();
-  const s = document.getElementById('profilSheet');
-  const i = document.getElementById('profilSheetInner');
-  if (!s) return;
-  s.style.display = 'block';
-  i.classList.remove('sheet-open-anim');
-  void i.offsetWidth;
-  i.classList.add('sheet-open-anim');
-}
-function closeProfilSheet() {
-  const s = document.getElementById('profilSheet');
-  if (s) s.style.display = 'none';
-  if (!activeCategory && !searchQuery) {
-    document.querySelectorAll('.xbn-btn').forEach(b => b.classList.remove('active'));
-    const h = document.getElementById('xbn-home');
-    if (h) h.classList.add('active');
-  }
-}
-function buildProfilSheet() {
-  const p     = currentProfile || {};
-  const user  = currentUser;
-  const nm    = p.username || user.email.split('@')[0];
-  const email = p.email || user.email;
-  const role  = p.role || 'buyer';
-  const bal   = p.balance || 0;
-  const avUrl = p.avatar_url;
-  const av    = avUrl ? '<img src="' + CLOUDINARY_BASE + avUrl + '" style="width:100%;height:100%;object-fit:cover"/>' : '<span style="font-size:18px;font-weight:800;color:#fff">' + nm[0].toUpperCase() + '</span>';
-  const roleColors = { admin:'#ef4444', seller:'#f59e0b', cs:'#06b6d4', buyer:'#4a7dff' };
-  const roleLabels = { admin:'Administrator', seller:'Verified Seller', cs:'Customer Service', buyer:'Member' };
-  const rc = roleColors[role] || '#4a7dff';
-  const rl = roleLabels[role] || role;
-
-  const isSeller = role === 'seller' || role === 'admin';
-  const isCs     = role === 'cs'     || role === 'admin';
-  const isAdmin  = role === 'admin';
-
-  let roleLinks = '';
-  if (isSeller) roleLinks += '<div style="height:1px;background:#2a3442;margin:4px 0"></div><div style="padding:5px 18px 2px;font-size:10px;font-weight:600;color:#9ba6b2;text-transform:uppercase;letter-spacing:.07em">Seller</div><a class="bsi" href="seller-dashboard.html"><div class="bsi-icon" style="background:rgba(245,158,11,.15);color:#f59e0b"><i class="fas fa-store"></i></div><div><div class="bsi-title">Seller Dashboard</div><div class="bsi-sub">Kelola produk & pesanan</div></div></a>';
-  if (isCs)     roleLinks += '<a class="bsi" href="cs-dashboard.html"><div class="bsi-icon" style="background:rgba(6,182,212,.15);color:#06b6d4"><i class="fas fa-headset"></i></div><div><div class="bsi-title">CS Dashboard</div><div class="bsi-sub">Customer service panel</div></div></a>';
-  if (isAdmin)  roleLinks += '<div style="height:1px;background:#2a3442;margin:4px 0"></div><div style="padding:5px 18px 2px;font-size:10px;font-weight:600;color:#9ba6b2;text-transform:uppercase;letter-spacing:.07em">Admin</div><a class="bsi" href="admin-panel.html"><div class="bsi-icon" style="background:rgba(239,68,68,.12);color:#ef4444"><i class="fas fa-chart-pie"></i></div><div><div class="bsi-title">Admin Panel</div><div class="bsi-sub">Kelola platform</div></div></a><a class="bsi" href="deposit-admin.html"><div class="bsi-icon" style="background:rgba(245,158,11,.12);color:#f59e0b"><i class="fas fa-qrcode"></i></div><div><div class="bsi-title">Kelola Deposit</div><div class="bsi-sub">ACC / tolak deposit QRIS</div></div></a><a class="bsi" href="info-admin.html"><div class="bsi-icon" style="background:rgba(74,125,255,.12);color:#4a7dff"><i class="fas fa-bell"></i></div><div><div class="bsi-title">Kelola Info</div><div class="bsi-sub">Post pengumuman & update</div></div></a>';
-
-  document.getElementById('profilSheetContent').innerHTML =
-    '<div style="display:flex;align-items:center;gap:14px;padding:14px 18px;border-bottom:1px solid #2a3442">' +
-      '<div style="width:52px;height:52px;border-radius:50%;background:#4a7dff;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0">' + av + '</div>' +
-      '<div style="flex:1;min-width:0">' +
-        '<div style="font-size:15px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(nm) + '</div>' +
-        '<div style="font-size:12px;color:#9ba6b2;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(email) + '</div>' +
-        '<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:' + rc + '22;color:' + rc + ';margin-top:4px;display:inline-block">' + rl + '</span>' +
-      '</div>' +
-      '<div style="text-align:right;flex-shrink:0">' +
-        '<div style="font-size:10px;color:#9ba6b2;text-transform:uppercase;letter-spacing:.05em">Saldo</div>' +
-        '<div style="font-size:16px;font-weight:800;color:#22c55e;font-family:Syne,sans-serif">Rp ' + (bal).toLocaleString('id-ID') + '</div>' +
-      '</div>' +
-    '</div>' +
-    '<a class="bsi" href="profil.html"><div class="bsi-icon" style="background:rgba(74,125,255,.15);color:#4a7dff"><i class="fas fa-user-circle"></i></div><div><div class="bsi-title">Profil Saya</div><div class="bsi-sub">Edit info & foto profil</div></div></a>' +
-    '<a class="bsi" href="riwayat.html"><div class="bsi-icon" style="background:rgba(168,85,247,.15);color:#a855f7"><i class="fas fa-receipt"></i></div><div><div class="bsi-title">Riwayat Transaksi</div><div class="bsi-sub">Order & pembelian</div></div></a>' +
-    '<a class="bsi" href="deposit.html"><div class="bsi-icon" style="background:rgba(34,197,94,.15);color:#22c55e"><i class="fas fa-wallet"></i></div><div><div class="bsi-title">Deposit Saldo</div><div class="bsi-sub">Top up via QRIS</div></div></a>' +
-    (role === 'buyer' ? '<div style="height:1px;background:#2a3442;margin:4px 0"></div><button class="bsi" onclick="closeProfilSheet();openSellerRegModal()"><div class="bsi-icon" style="background:rgba(74,125,255,.12);color:#4a7dff"><i class="fas fa-store"></i></div><div><div class="bsi-title" style="color:#4a7dff">Daftar Jadi Seller</div><div class="bsi-sub">Mulai jualan di XREZZKY</div></div></button>' : '') +
-    roleLinks +
-    '<div style="height:1px;background:#2a3442;margin:4px 0"></div>' +
-    '<button class="bsi danger" onclick="logout();closeProfilSheet()"><div class="bsi-icon"><i class="fas fa-sign-out-alt"></i></div><div><div class="bsi-title">Keluar</div></div></button>';
-}
-
-// ══ CHECK INFO BADGE ══
-async function checkInfoBadge() {
-  try {
-    const { count } = await sb.from('info_posts').select('*', { count:'exact', head:true }).eq('is_active', true);
-    const seen = parseInt(localStorage.getItem('xrz_info_seen') || '0');
-    const lastPost = count || 0;
-    // Simple check: if any posts exist and user hasn't seen recently (24h), show dot
-    const hoursSince = (Date.now() - seen) / (1000*3600);
-    if (lastPost > 0 && hoursSince > 24) {
-      const dot = document.getElementById('xdn-info');
-      if (dot) dot.style.display = 'block';
-    }
-  } catch(e) {}
-}
-
-// ══ FAST TAP (no 300ms delay) ══
-document.addEventListener('DOMContentLoaded', function() {
-  // touchstart for instant response
-  document.addEventListener('touchstart', function(e) {
-    var btn = e.target.closest('.xbn-btn, .xbn-fab');
-    if (btn) { btn.style.opacity = '.75'; }
-  }, { passive: true });
-  document.addEventListener('touchend', function(e) {
-    var btn = e.target.closest('.xbn-btn, .xbn-fab');
-    if (btn) { setTimeout(function(){ btn.style.opacity = ''; }, 150); }
-  }, { passive: true });
-});
-</script>
-
 </body>
 </html>
+

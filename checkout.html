@@ -41,6 +41,7 @@
 
     /* ── PAGE ── */
     .page { max-width: 860px; margin: 0 auto; padding: 0 20px 32px; }
+    @media(max-width:900px){ .page{ padding-bottom: 90px; } }
     .co-layout { display: grid; grid-template-columns: 1fr 310px; gap: 20px; align-items: start; }
 
     /* ── SECTION ── */
@@ -146,7 +147,7 @@
     .ss-acts { display: flex; flex-direction: column; gap: 8px; }
 
     /* Toast & spinner */
-    #tc { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    #tc { position: fixed; bottom: 80px; right: 16px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
     .toast { background: var(--nav); border: 1px solid var(--border); border-left: 3px solid var(--accent); color: var(--txt); font-size: 13px; padding: 10px 16px; border-radius: var(--rsm); min-width: 260px; animation: sli .3s ease; }
     .toast.s { border-left-color: var(--success); } .toast.e { border-left-color: var(--danger); } .toast.w { border-left-color: var(--warn); }
     @keyframes sli { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
@@ -159,14 +160,8 @@
 
     @media (max-width:700px) { .co-layout { grid-template-columns: 1fr; } .order-summary { position: static; } .guarantees { grid-template-columns: 1fr; } }
   </style>
-
 </head>
 <body>
-
-<!-- ── Mobile Page Header ── -->
-  <div class="mph-logo">XREZZKY</div>
-</div>
-
 
 <nav>
   <a class="nb" href="index.html"><div class="nb-dot"></div>XREZZKY</a>
@@ -340,6 +335,8 @@ let qty = 1, selectedPayMethod = null, voucher = null, discount = 0;
 const FEE = 500; // service fee
 
 document.addEventListener('DOMContentLoaded', async () => {
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity .22s ease';
   const params = new URLSearchParams(location.search);
   const productId = params.get('product');
 
@@ -363,6 +360,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   renderPayMethods();
   updateSummary();
+  requestAnimationFrame(() => { document.body.style.opacity = '1'; });
 });
 
 async function loadProduct(id) {
@@ -566,6 +564,11 @@ async function placeOrder() {
   const total    = Math.max(0, subtotal - discount + FEE);
   const notes    = document.getElementById('orderNotes').value.trim();
 
+  // Warn if no PIN
+  if (!profile.transaction_pin) {
+    toast('⚠️ Kamu belum punya PIN transaksi. Buat PIN di Profil → Keamanan.', 'w');
+    return;
+  }
   // Check balance if saldo
   if (selectedPayMethod === 'saldo' && (profile.balance||0) < total) {
     closeMo('confirmModal'); toast('Saldo tidak cukup. Silakan deposit dulu', 'e'); return;
@@ -640,263 +643,5 @@ function fmtRp(v) { if(!v&&v!==0) return '—'; if(v===0) return 'Gratis'; retur
 function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function toast(msg, type='') { const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=msg; document.getElementById('tc').appendChild(el); setTimeout(()=>el.remove(),3500); }
 </script>
-<!-- ══ XREZZKY BOTTOM NAV — persistent fixed ══ -->
-<style>
-/* ── XBN BASE ── */
-#xbn {
-  display: none;
-  position: fixed !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  z-index: 9999 !important;
-  background: rgba(23,28,36,.97);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(74,125,255,.18);
-  height: 64px;
-  padding: 0 8px;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  box-shadow: 0 -4px 24px rgba(0,0,0,.5);
-}
-#xbn .xbn-inner {
-  display: flex; align-items: center;
-  width: 100%; height: 100%;
-}
-.xbn-btn {
-  flex: 1; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 3px;
-  background: none; border: none; cursor: pointer;
-  color: #6b7a8d; font-family: 'Poppins', sans-serif;
-  padding: 4px 0; position: relative; overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
-  transition: color .2s; border-radius: 12px; min-height: 52px;
-  text-decoration: none;
-}
-.xbn-btn i {
-  font-size: 21px; line-height: 1;
-  transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .2s;
-  display: block;
-}
-.xbn-btn span { font-size: 10px; font-weight: 600; letter-spacing: .02em; line-height: 1; }
-.xbn-btn.active { color: #4a7dff; }
-.xbn-btn.active i { transform: translateY(-2px) scale(1.15); color: #4a7dff; }
-.xbn-btn::after {
-  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
-  width: 0; height: 3px; border-radius: 2px;
-  background: linear-gradient(90deg, #4a7dff, #7c3aed);
-  transition: width .25s cubic-bezier(.34,1.56,.64,1);
-  box-shadow: 0 0 8px rgba(74,125,255,.8);
-}
-.xbn-btn.active::after { width: 24px; }
-.xbn-btn:active { transform: scale(.88); }
-.xbn-ripple {
-  position: absolute; border-radius: 50%; pointer-events: none;
-  background: rgba(74,125,255,.25);
-  transform: scale(0); animation: xbnRipple .5s ease-out forwards;
-}
-@keyframes xbnRipple { to { transform: scale(4); opacity: 0; } }
-.xbn-fab-wrap {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding-bottom: 6px; gap: 2px;
-}
-.xbn-fab {
-  width: 52px; height: 52px; border-radius: 50%;
-  background: linear-gradient(135deg, #4a7dff 0%, #7c3aed 100%);
-  color: #fff; font-size: 22px; border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 20px rgba(74,125,255,.55);
-  margin-bottom: 2px;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
-  position: relative; overflow: hidden;
-}
-.xbn-fab:active { transform: scale(.85); box-shadow: 0 2px 10px rgba(74,125,255,.4); }
-.xbn-fab.pulse { animation: xbnFabPulse .5s cubic-bezier(.34,1.56,.64,1); }
-@keyframes xbnFabPulse {
-  0%{transform:scale(1)} 40%{transform:scale(.82)} 70%{transform:scale(1.15)} 100%{transform:scale(1)}
-}
-.xbn-fab-label { font-size: 10px; font-weight: 600; color: #9ba6b2; line-height: 1; }
-.xbn-av {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: #1d2430; border: 2px solid transparent;
-  overflow: hidden; display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; color: #6b7a8d;
-  transition: border-color .2s;
-}
-.xbn-av img { width:100%; height:100%; object-fit:cover; }
-.xbn-btn.active .xbn-av { border-color: #4a7dff; color: #4a7dff; }
-/* Page header on mobile */
-#mobilePageHeader {
-  display: none;
-  position: sticky; top: 0; z-index: 200;
-  background: #171c24; border-bottom: 1px solid #2a3442;
-  height: 52px; align-items: center; padding: 0 14px; gap: 12px;
-}
-#mobilePageHeader .mph-back {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: #1d2430; border: 1px solid #2a3442; color: #f5f7fa;
-  font-size: 14px; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
-}
-#mobilePageHeader .mph-back:active { transform: scale(.9); }
-#mobilePageHeader .mph-title { font-size: 15px; font-weight: 700; color: #f5f7fa; flex: 1; }
-#mobilePageHeader .mph-logo { font-size: 11px; font-weight: 700; color: #4a7dff; opacity: .7; }
-/* Hide top nav, show bottom nav on mobile */
-@media (max-width: 900px) {
-  #xbn { display: flex !important; }
-  #mobilePageHeader { display: flex !important; }
-  nav:not(#xbn) { display: none !important; }
-  #topbar { display: none !important; }
-  #sidebar { display: none !important; }
-  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
-  body > .main, main, .page, #main { padding-bottom: 80px !important; padding-top: 0 !important; }
-  .page { min-height: calc(100vh - 52px); }
-}
-@media (min-width: 901px) {
-  #xbn { display: none !important; }
-  #mobilePageHeader { display: none !important; }
-}
-</style>
-
-<!-- Mobile Page Header -->
-<div id="mobilePageHeader">
-  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
-    <i class="fas fa-arrow-left"></i>
-  </button>
-  <div class="mph-title" id="mphTitle">XREZZKY</div>
-  <div class="mph-logo">XREZZKY</div>
-</div>
-
-<!-- Bottom Nav -->
-<div id="xbn">
-  <div class="xbn-inner">
-    <a class="xbn-btn" href="index.html" id="xbn-home" aria-label="Beranda" onclick="xbnSetActive('home')">
-      <i class="fas fa-home"></i><span>Beranda</span>
-    </a>
-    <button class="xbn-btn" id="xbn-info" onclick="xbnNavInfo(this)" aria-label="Info">
-      <i class="fas fa-bell"></i><span>Info</span>
-    </button>
-    <div class="xbn-fab-wrap">
-      <a class="xbn-fab" href="deposit.html" onclick="xbnFabAnim(this)" aria-label="Deposit">
-        <i class="fas fa-wallet"></i>
-      </a>
-      <span class="xbn-fab-label">Deposit</span>
-    </div>
-    <a class="xbn-btn" href="riwayat.html" id="xbn-riwayat" aria-label="Riwayat" onclick="xbnSetActive('riwayat')">
-      <i class="fas fa-receipt"></i><span>Riwayat</span>
-    </a>
-    <a class="xbn-btn" href="profil.html" id="xbn-profil" aria-label="Profil" onclick="xbnSetActive('profil')">
-      <div class="xbn-av" id="xbnAv"><i class="fas fa-user-circle"></i></div>
-      <span>Profil</span>
-    </a>
-  </div>
-</div>
-
-<script>
-// ── Auto-highlight active nav item based on current page ──
-(function() {
-  var page = location.pathname.split('/').pop() || 'index.html';
-  var map = {
-    'index.html':'home', '':'home',
-    'riwayat.html':'riwayat',
-    'deposit.html':'deposit',
-    'profil.html':'profil',
-    'checkout.html':'home',
-    'seller-dashboard.html':'home',
-    'cs-dashboard.html':'home',
-    'admin-panel.html':'home',
-    'deposit-admin.html':'home',
-    'info-admin.html':'home',
-  };
-  var active = map[page];
-  if (active) {
-    var el = document.getElementById('xbn-' + active);
-    if (el) el.classList.add('active');
-  }
-  // Set page title in mobile header
-  var titles = {
-    'riwayat.html':'Riwayat Transaksi',
-    'deposit.html':'Deposit Saldo',
-    'profil.html':'Profil',
-    'checkout.html':'Checkout',
-    'seller-dashboard.html':'Seller Dashboard',
-    'cs-dashboard.html':'CS Dashboard',
-    'admin-panel.html':'Admin Panel',
-    'deposit-admin.html':'Kelola Deposit',
-    'info-admin.html':'Kelola Info',
-  };
-  var titleEl = document.getElementById('mphTitle');
-  if (titleEl && titles[page]) titleEl.textContent = titles[page];
-  // Add bottom padding to content
-  document.addEventListener('DOMContentLoaded', function() {
-    if (window.innerWidth <= 900) {
-      var els = document.querySelectorAll('main, .main, .page, #main');
-      els.forEach(function(el) {
-        var pb = parseInt(getComputedStyle(el).paddingBottom) || 0;
-        if (pb < 70) el.style.paddingBottom = '80px';
-      });
-    }
-    // Load avatar from Supabase if logged in
-    if (typeof supabase !== 'undefined') {
-      try {
-        var sb2 = supabase.createClient(
-          'https://jydfjfjttpmropoczgop.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
-        );
-        sb2.auth.getSession().then(function(r) {
-          var session = r.data && r.data.session;
-          if (!session) return;
-          sb2.from('profiles').select('avatar_url,username').eq('id', session.user.id).maybeSingle().then(function(pr) {
-            var p = pr.data;
-            if (!p) return;
-            var avEl = document.getElementById('xbnAv');
-            if (!avEl) return;
-            if (p.avatar_url) {
-              avEl.innerHTML = '<img src="https://res.cloudinary.com/drjmclzbi/image/upload/' + p.avatar_url + '" alt="av"/>';
-            } else {
-              var nm = p.username || session.user.email[0];
-              avEl.style.background = '#4a7dff';
-              avEl.style.color = '#fff';
-              avEl.innerHTML = '<span style="font-size:12px;font-weight:800">' + nm[0].toUpperCase() + '</span>';
-            }
-          });
-        });
-      } catch(e) {}
-    }
-  });
-})();
-
-function xbnSetActive(tab) {
-  document.querySelectorAll('.xbn-btn').forEach(function(b){ b.classList.remove('active'); });
-  var el = document.getElementById('xbn-' + tab);
-  if (el) el.classList.add('active');
-}
-function xbnFabAnim(el) {
-  el.classList.remove('pulse');
-  void el.offsetWidth;
-  el.classList.add('pulse');
-  setTimeout(function(){ el.classList.remove('pulse'); }, 500);
-}
-function xbnNavInfo(el) {
-  // On inner pages, just go to index with info hash
-  location.href = 'index.html#info';
-}
-function xbnRipple(btn) {
-  var r = document.createElement('span');
-  r.className = 'xbn-ripple';
-  r.style.cssText = 'width:40px;height:40px;margin:-20px 0 0 -20px;top:50%;left:50%;position:absolute';
-  btn.appendChild(r);
-  setTimeout(function(){ r.remove(); }, 600);
-}
-// Add ripple to all xbn-btn clicks
-document.addEventListener('click', function(e) {
-  var btn = e.target.closest('.xbn-btn');
-  if (btn) xbnRipple(btn);
-});
-</script>
-
 </body>
 </html>

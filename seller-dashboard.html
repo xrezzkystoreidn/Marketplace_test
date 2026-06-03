@@ -352,8 +352,6 @@
         <div class="role">● Verified Seller</div>
       </div>
     </div>
-    <a href="admin-panel.html" class="btn btn-g btn-sm" id="sellerAdminLink" style="display:none" title="Admin Panel"><i class="fas fa-chart-pie"></i></a>
-    <a href="admin-panel.html" class="btn btn-g btn-sm" id="sellerAdminLink" style="display:none" title="Admin Panel"><i class="fas fa-chart-pie"></i> Admin</a>
     <button class="btn btn-g btn-sm" onclick="doLogout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
   </div>
 </div>
@@ -768,37 +766,33 @@ let activePage  = 'overview';
 
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', async () => {
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity .22s ease';
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) { toast('Login dulu', 'e'); setTimeout(() => location.href='index.html', 1500); return; }
+  if (!session) { toast('Belum login', 'e'); setTimeout(() => location.href='index.html', 1500); return; }
   seller = session.user;
   await loadProfile();
-  // Check role — only seller/admin can access
-  const role = profile?.role || 'buyer';
-  if (!['seller','admin'].includes(role)) {
-    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;background:#0f1115;font-family:Poppins,sans-serif;color:#9ba6b2;text-align:center;padding:20px">'
-      + '<div style="font-size:48px">🔒</div>'
-      + '<div style="font-size:20px;font-weight:700;color:#f5f7fa">Akses Ditolak</div>'
-      + '<div style="font-size:14px;max-width:320px">Halaman ini hanya untuk Seller. Daftarkan dirimu sebagai seller terlebih dahulu.</div>'
-      + '<a href="index.html" style="margin-top:8px;padding:10px 24px;background:#4a7dff;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:13px">← Kembali ke Toko</a>'
-      + '<button onclick="becomeSeller()" style="padding:10px 24px;background:rgba(74,125,255,.12);color:#4a7dff;border:1px solid rgba(74,125,255,.3);border-radius:8px;font-family:Poppins,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Daftar Jadi Seller</button>'
-      + '</div>';
-    return;
-  }
   await refreshAll();
 });
-
-async function becomeSeller() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { location.href = 'index.html'; return; }
-  const { error } = await sb.from('profiles').update({ role: 'seller' }).eq('id', session.user.id);
-  if (error) { alert('Gagal: ' + error.message); return; }
-  toast('Akun seller aktif! Reload...', 's');
-  setTimeout(() => location.reload(), 1000);
-}
 
 async function loadProfile() {
   const { data } = await sb.from('profiles').select('*').eq('id', seller.id).maybeSingle();
   profile = data || { id: seller.id, email: seller.email };
+  
+  // ── ROLE GUARD: hanya seller dan admin ──
+  if (!profile || !['seller','admin'].includes(profile.role)) {
+    document.body.style.opacity = '1';
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;
+        color:#f5f7fa;font-family:'Poppins',sans-serif;background:#0f1115;text-align:center;padding:20px">
+        <i class="fas fa-store" style="font-size:48px;color:#f59e0b;opacity:.5"></i>
+        <h2 style="font-family:'Syne',sans-serif;font-size:22px">Bukan Seller</h2>
+        <p style="color:#9ba6b2;font-size:14px">Halaman ini hanya untuk <strong style="color:#f59e0b">Seller</strong> dan <strong style="color:#ef4444">Admin</strong>.</p>
+        <a href="index.html" style="margin-top:8px;background:#4a7dff;color:#fff;padding:10px 24px;border-radius:9px;
+          text-decoration:none;font-size:13px;font-weight:600"><i class="fas fa-home"></i> Kembali</a>
+      </div>`;
+    return;
+  }
   updateUI();
   fillProfileForm();
 }
@@ -815,11 +809,6 @@ function updateUI() {
   });
   document.getElementById('chipName').textContent = name;
   document.getElementById('smName').textContent   = name;
-  if (profile?.role === 'admin') { var al = document.getElementById('sellerAdminLink'); if(al) al.style.display='inline-flex'; }
-
-  // Show admin panel link if admin
-  const adminLink = document.getElementById('sellerAdminLink');
-  if (adminLink && (currentProfile?.role === 'admin')) adminLink.style.display = 'inline-flex';
   document.getElementById('smBalance').textContent = fmtRp(profile.balance || 0);
   document.getElementById('walletBalance').textContent = fmtRp(profile.balance || 0);
   document.getElementById('wdAvail').textContent  = fmtRp(profile.balance || 0);

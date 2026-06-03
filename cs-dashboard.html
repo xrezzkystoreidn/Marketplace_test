@@ -475,15 +475,6 @@
   <div class="ss"></div>
   <div class="sl">Akun</div>
   <button class="si" onclick="showPage('pengaturan',this)"><i class="fas fa-gear"></i> Pengaturan</button>
-  <div class="ss"></div>
-  <div class="sl">Navigasi</div>
-  <a class="si" href="admin-panel.html" id="csAdminLink" style="display:none;text-decoration:none"><i class="fas fa-chart-pie"></i> Admin Panel</a>
-  <a class="si" href="index.html" style="text-decoration:none"><i class="fas fa-home"></i> Ke Toko</a>
-
-  <div class="ss"></div>
-  <div class="sl">Navigasi</div>
-  <a class="si" href="admin-panel.html" id="csAdminLink" style="display:none;text-decoration:none"><i class="fas fa-chart-pie"></i> Admin Panel</a>
-  <a class="si" href="index.html" style="text-decoration:none"><i class="fas fa-home"></i> Ke Toko</a>
 
   <!-- Quick stats -->
   <div class="cs-quick">
@@ -939,24 +930,44 @@ let sessionStats = { chats: 0, tickets: 0, rt: '—', sat: '—' };
 
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', async () => {
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity .22s ease';
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) { toast('Login dulu', 'e'); setTimeout(() => location.href='index.html', 1500); return; }
+  if (!session) { toast('Belum login', 'e'); setTimeout(() => location.href='index.html', 1500); return; }
   csAgent = session.user;
-  // Verify role
-  const { data: pCheck } = await sb.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
-  if (!pCheck || !['cs','admin'].includes(pCheck.role)) {
-    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;background:#0f1115;font-family:Poppins,sans-serif;color:#9ba6b2;text-align:center;padding:20px"><div style="font-size:48px">🔒</div><div style="font-size:20px;font-weight:700;color:#f5f7fa">Akses Ditolak</div><div style="font-size:14px">Halaman ini hanya untuk CS & Admin.</div><a href="index.html" style="margin-top:8px;padding:10px 24px;background:#4a7dff;color:#fff;border-radius:8px;text-decoration:none;font-weight:600;font-size:13px">← Kembali</a></div>';
-    return;
+  try {
+    await loadCSProfile();
+    await Promise.all([loadOverview(), loadTickets(), loadComplains(), loadChats(), loadMacros()]);
+    subscribeRealtime();
+    startLiveClock();
+    requestAnimationFrame(() => { document.body.style.opacity = '1'; });
+  } catch(e) {
+    if (e.message !== 'Access denied') {
+      console.error('[CS] Init error:', e);
+      document.body.style.opacity = '1';
+    }
   }
-  await loadCSProfile();
-  await Promise.all([loadOverview(), loadTickets(), loadComplains(), loadChats(), loadMacros()]);
-  subscribeRealtime();
-  startLiveClock();
 });
 
 async function loadCSProfile() {
   const { data } = await sb.from('profiles').select('*').eq('id', csAgent.id).maybeSingle();
   csProfile = data || { id: csAgent.id, email: csAgent.email };
+
+  // ── ROLE GUARD: hanya cs dan admin ──
+  if (!['cs','admin'].includes(csProfile.role)) {
+    document.body.style.opacity = '1';
+    document.body.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;
+        color:#f5f7fa;font-family:'Poppins',sans-serif;background:#0f1115;text-align:center;padding:20px">
+        <i class="fas fa-headset" style="font-size:48px;color:#06b6d4;opacity:.5"></i>
+        <h2 style="font-family:'Syne',sans-serif;font-size:22px">Akses Ditolak</h2>
+        <p style="color:#9ba6b2;font-size:14px">Halaman ini hanya untuk <strong style="color:#06b6d4">Customer Service</strong> dan <strong style="color:#ef4444">Admin</strong>.</p>
+        <a href="index.html" style="margin-top:8px;background:#4a7dff;color:#fff;padding:10px 24px;border-radius:9px;
+          text-decoration:none;font-size:13px;font-weight:600"><i class="fas fa-home"></i> Kembali ke Beranda</a>
+      </div>`;
+    throw new Error('Access denied');
+  }
+
   const name = csProfile.username || csAgent.email.split('@')[0];
   const av = document.getElementById('csAv');
   if (csProfile.avatar_url) av.innerHTML = `<img src="${CLD_BASE}${csProfile.avatar_url}" />`;

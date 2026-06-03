@@ -1,1507 +1,1259 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>XREZZKY — Profil</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:       #0f1115;
-      --nav:      #171c24;
-      --surface:  #1d2430;
-      --border:   #2a3442;
-      --accent:   #4a7dff;
-      --ah:       #5d8fff;
-      --txt:      #f5f7fa;
-      --txt2:     #9ba6b2;
-      --success:  #22c55e;
-      --warn:     #f59e0b;
-      --danger:   #ef4444;
-      --purple:   #a855f7;
-      --cyan:     #06b6d4;
-      --radius:   14px;
-      --rsm:      9px;
-    }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; overflow-x: hidden; }
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>XREZZKY — Profil</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1115;--nav:#171c24;--surface:#1d2430;--border:#2a3442;
+  --accent:#4a7dff;--ah:#5d8fff;--txt:#f5f7fa;--txt2:#9ba6b2;
+  --success:#22c55e;--warn:#f59e0b;--danger:#ef4444;
+  --purple:#a855f7;--cyan:#06b6d4;
+  --r:14px;--rsm:9px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
-    /* ── NAVBAR ── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(23,28,36,.92); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      height: 56px; display: flex; align-items: center; padding: 0 20px; gap: 14px;
-    }
-    .nb-brand { display: flex; align-items: center; gap: 8px; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; text-decoration: none; color: var(--txt); }
-    .nb-dot   { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
-    .nb-sp    { flex: 1; }
-    .nb-acts  { display: flex; gap: 8px; align-items: center; }
-    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 15px; border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .18s; text-decoration: none; }
-    .bp { background: var(--accent); color: #fff; }
-    .bp:hover { background: var(--ah); }
-    .bg { background: transparent; color: var(--txt2); border: 1px solid var(--border); }
-    .bg:hover { color: var(--txt); border-color: var(--txt2); }
-    .bd { background: rgba(239,68,68,.1); color: var(--danger); border: 1px solid rgba(239,68,68,.2); }
-    .bsm { padding: 5px 11px; font-size: 12px; }
-    .bxs { padding: 4px 9px; font-size: 11px; }
+/* ── TOPBAR ── */
+.topbar{position:sticky;top:0;z-index:200;background:rgba(23,28,36,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 18px;gap:12px}
+.tb-brand{display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--txt);font-family:'Syne',sans-serif;font-size:15px;font-weight:800}
+.tb-dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.tb-brand span{color:var(--accent)}
+.tb-back{width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--txt2);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;flex-shrink:0}
+.tb-back:hover{border-color:var(--accent);color:var(--accent)}
+.tb-sp{flex:1}
+.tb-acts{display:flex;gap:8px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--rsm);font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .18s;text-decoration:none}
+.bp{background:var(--accent);color:#fff}.bp:hover{background:var(--ah)}
+.bg{background:transparent;color:var(--txt2);border:1px solid var(--border)}.bg:hover{color:var(--txt);border-color:var(--txt2)}
+.bd{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
+.bsm{padding:6px 12px;font-size:12px}
+.bxs{padding:4px 9px;font-size:11px}
 
-    /* ── BANNER HERO ── */
-    .profile-hero { position: relative; }
-    .banner-wrap {
-      width: 100%; height: 240px; overflow: hidden; position: relative;
-      background: linear-gradient(135deg, #0f1a2e 0%, #1a2540 50%, #0d1520 100%);
-    }
-    .banner-wrap img { width: 100%; height: 100%; object-fit: cover; }
-    .banner-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(180deg, transparent 40%, rgba(15,17,21,.95) 100%);
-    }
-    /* Geometric decoration on banner */
-    .banner-deco {
-      position: absolute; inset: 0; overflow: hidden; pointer-events: none;
-    }
-    .bd-circle {
-      position: absolute; border-radius: 50%; border: 1px solid rgba(74,125,255,.12);
-    }
-    .bdc1 { width: 300px; height: 300px; top: -80px; right: 80px; }
-    .bdc2 { width: 180px; height: 180px; top: 20px; right: 200px; border-color: rgba(168,85,247,.1); }
-    .bdc3 { width: 100px; height: 100px; bottom: 20px; left: 120px; border-color: rgba(6,182,212,.1); }
+/* ── PAGE WRAP ── */
+.page-wrap{max-width:1100px;margin:0 auto;padding:24px 20px 100px}
 
-    /* Edit banner btn */
-    .edit-banner-btn {
-      position: absolute; top: 12px; right: 14px;
-      background: rgba(15,17,21,.7); border: 1px solid rgba(255,255,255,.15);
-      color: var(--txt2); font-size: 12px; padding: 6px 12px;
-      border-radius: var(--rsm); cursor: pointer; font-family: 'Poppins',sans-serif;
-      display: none; align-items: center; gap: 6px; transition: all .18s;
-      backdrop-filter: blur(6px);
-    }
-    .edit-banner-btn:hover { color: var(--txt); border-color: var(--txt2); }
-    .is-own .edit-banner-btn { display: flex; }
+/* ── GUEST WALL ── */
+#guestWall{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:20px;text-align:center;padding:40px 20px}
+#guestWall .gw-icon{font-size:56px;opacity:.25}
+#guestWall h2{font-size:22px;font-weight:700;font-family:'Syne',sans-serif}
+#guestWall p{font-size:14px;color:var(--txt2);max-width:360px;line-height:1.6}
+.gw-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 
-    /* ── PROFILE IDENTITY STRIP ── */
-    .identity-strip {
-      position: relative; padding: 0 24px 0;
-      display: flex; align-items: flex-end; gap: 20px;
-      margin-top: -56px; z-index: 10;
-    }
+/* ── PROFILE HEADER ── */
+.prof-header{background:var(--nav);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:20px}
+.banner{height:160px;background:linear-gradient(135deg,#0f1a2e,#1a2540,#0d1520);position:relative;overflow:hidden}
+.banner img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.banner-overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 30%,rgba(23,28,36,.9) 100%)}
+.banner-deco{position:absolute;inset:0;pointer-events:none}
+.bd-c{position:absolute;border-radius:50%;border:1px solid rgba(74,125,255,.1)}
+.bdc1{width:260px;height:260px;top:-80px;right:60px}
+.bdc2{width:140px;height:140px;top:10px;right:180px;border-color:rgba(168,85,247,.08)}
+.bdc3{width:80px;height:80px;bottom:10px;left:100px;border-color:rgba(6,182,212,.08)}
+.banner-edit-btn{position:absolute;top:12px;right:12px;background:rgba(15,17,21,.7);border:1px solid rgba(255,255,255,.15);color:var(--txt2);font-size:12px;padding:6px 12px;border-radius:var(--rsm);cursor:pointer;font-family:'Poppins',sans-serif;display:none;align-items:center;gap:6px;backdrop-filter:blur(6px);transition:all .18s}
+.banner-edit-btn:hover{color:var(--txt)}
+.is-own .banner-edit-btn{display:flex}
 
-    /* Avatar */
-    .av-wrap { position: relative; flex-shrink: 0; }
-    .av-ring {
-      width: 108px; height: 108px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--purple));
-      padding: 3px; flex-shrink: 0;
-    }
-    .av-inner {
-      width: 100%; height: 100%; border-radius: 50%;
-      background: var(--bg); overflow: hidden;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--accent);
-    }
-    .av-inner img { width: 100%; height: 100%; object-fit: cover; }
-    .av-online {
-      position: absolute; bottom: 5px; right: 5px;
-      width: 18px; height: 18px; border-radius: 50%;
-      background: var(--success); border: 3px solid var(--bg);
-    }
-    .av-edit-btn {
-      position: absolute; bottom: 2px; right: 2px;
-      width: 26px; height: 26px; border-radius: 50%;
-      background: var(--accent); color: #fff;
-      display: none; align-items: center; justify-content: center;
-      font-size: 11px; cursor: pointer; border: 2px solid var(--bg);
-      transition: background .18s;
-    }
-    .av-edit-btn:hover { background: var(--ah); }
-    .is-own .av-edit-btn { display: flex; }
-    .is-own .av-online { display: none; }
-    #avatarUploadInput { display: none; }
+/* Identity strip */
+.identity{padding:0 22px 18px;margin-top:-50px;position:relative;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.av-ring{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--purple));padding:3px;flex-shrink:0;position:relative}
+.av-inner{width:100%;height:100%;border-radius:50%;background:var(--bg);overflow:hidden;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--accent)}
+.av-inner img{width:100%;height:100%;object-fit:cover}
+.av-edit{position:absolute;bottom:2px;right:2px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;display:none;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--bg);transition:background .18s}
+.av-edit:hover{background:var(--ah)}
+.is-own .av-edit{display:flex}
+.av-progress{position:absolute;bottom:-8px;left:0;right:0;height:3px;background:var(--border);border-radius:2px;overflow:hidden;display:none}
+.av-progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
 
-    /* Upload progress */
-    .av-upload-bar {
-      position: absolute; bottom: -8px; left: 0; right: 0;
-      height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; display: none;
-    }
-    .av-upload-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .3s; }
+.ident-info{flex:1;padding-bottom:10px;min-width:0}
+.ident-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.vi-icon{color:var(--accent);font-size:15px;display:none}
+.ident-handle{font-size:13px;color:var(--txt2);margin-top:2px}
+.ident-badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.ib{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.02em}
+.ib-admin{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
+.ib-seller{background:rgba(245,158,11,.12);color:var(--warn);border:1px solid rgba(245,158,11,.2)}
+.ib-cs{background:rgba(6,182,212,.12);color:var(--cyan);border:1px solid rgba(6,182,212,.2)}
+.ib-buyer{background:rgba(74,125,255,.12);color:var(--accent);border:1px solid rgba(74,125,255,.2)}
+.ib-verified{background:rgba(74,125,255,.1);color:var(--accent);border:1px solid rgba(74,125,255,.2)}
 
-    /* Name block */
-    .identity-info { flex: 1; padding-bottom: 14px; min-width: 0; }
-    .identity-name { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; line-height: 1.1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-    .verified-badge { color: var(--accent); font-size: 16px; }
-    .identity-handle { font-size: 13px; color: var(--txt2); margin-top: 3px; }
-    .identity-badges { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-    .ibadge {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
-      letter-spacing: .02em;
-    }
-    .ib-seller  { background: rgba(245,158,11,.15); color: var(--warn); border: 1px solid rgba(245,158,11,.2); }
-    .ib-verified{ background: rgba(74,125,255,.15); color: var(--accent); border: 1px solid rgba(74,125,255,.2); }
-    .ib-top     { background: rgba(239,68,68,.15); color: var(--danger); border: 1px solid rgba(239,68,68,.2); }
-    .ib-new     { background: rgba(34,197,94,.15); color: var(--success); border: 1px solid rgba(34,197,94,.2); }
-    .ib-admin   { background: rgba(239,68,68,.1); color: var(--danger); border: 1px solid rgba(239,68,68,.25); }
+.ident-acts{padding-bottom:10px;display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;flex-shrink:0}
 
-    /* Actions */
-    .identity-actions { padding-bottom: 14px; display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
-    .follow-btn {
-      padding: 9px 22px; border-radius: var(--rsm);
-      background: var(--accent); color: #fff; border: none;
-      font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 7px;
-    }
-    .follow-btn:hover { background: var(--ah); transform: translateY(-1px); }
-    .follow-btn.following { background: var(--surface); color: var(--txt2); border: 1px solid var(--border); }
-    .follow-btn.following:hover { border-color: var(--danger); color: var(--danger); }
-    .msg-btn {
-      padding: 9px 18px; border-radius: var(--rsm);
-      background: var(--surface); color: var(--txt); border: 1px solid var(--border);
-      font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 500;
-      cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: 7px;
-    }
-    .msg-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .share-btn {
-      width: 38px; height: 38px; border-radius: var(--rsm);
-      background: var(--surface); border: 1px solid var(--border); color: var(--txt2);
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      font-size: 14px; transition: all .18s;
-    }
-    .share-btn:hover { border-color: var(--txt2); color: var(--txt); }
+/* Stats bar */
+.stats-bar{display:flex;border-top:1px solid var(--border);overflow-x:auto}
+.stats-bar::-webkit-scrollbar{display:none}
+.sb-item{flex:1;min-width:80px;padding:14px 10px;text-align:center;cursor:pointer;border-bottom:2px solid transparent;transition:all .18s;flex-shrink:0}
+.sb-item:hover{background:var(--surface)}
+.sb-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;line-height:1}
+.sb-lab{font-size:10px;color:var(--txt2);font-weight:500;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
 
-    /* ── STATS BAR ── */
-    .stats-bar {
-      display: flex; gap: 0; padding: 0 24px;
-      border-bottom: 1px solid var(--border);
-      margin-top: 4px;
-      background: var(--nav); overflow-x: auto;
-    }
-    .stat-item {
-      padding: 14px 24px; display: flex; flex-direction: column; align-items: center;
-      cursor: pointer; border-bottom: 2px solid transparent; transition: all .18s;
-      flex-shrink: 0; min-width: 80px;
-    }
-    .stat-item:hover { background: var(--surface); }
-    .stat-item.clickable:hover .sv { color: var(--accent); }
-    .sv { font-size: 18px; font-weight: 700; font-family: 'Syne',sans-serif; line-height: 1; }
-    .sl2 { font-size: 10px; color: var(--txt2); font-weight: 500; text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; }
-    .stat-sep { width: 1px; background: var(--border); margin: 12px 0; }
+/* ── CONTENT GRID ── */
+.content-grid{display:grid;grid-template-columns:280px 1fr;gap:18px}
 
-    /* ── LAYOUT ── */
-    .profile-layout {
-      display: grid; grid-template-columns: 300px 1fr; gap: 20px;
-      padding: 20px 24px; max-width: 1200px; margin: 0 auto;
-    }
+/* ── PANEL CARD ── */
+.panel{background:var(--nav);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px;overflow:hidden}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-size:12px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em}
+.panel-body{padding:16px 18px}
 
-    /* ── LEFT COLUMN ── */
-    .left-col { display: flex; flex-direction: column; gap: 14px; }
+/* ── BALANCE CARD ── */
+.balance-card{background:linear-gradient(135deg,rgba(74,125,255,.15),rgba(124,58,237,.1));border:1px solid rgba(74,125,255,.2);border-radius:var(--r);padding:18px;margin-bottom:14px;position:relative;overflow:hidden}
+.balance-card::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(74,125,255,.12),transparent 70%);border-radius:50%;pointer-events:none}
+.bc-label{font-size:11px;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px}
+.bc-amount{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--txt);line-height:1.1}
+.bc-sub{font-size:11px;color:var(--txt2);margin-top:4px}
+.bc-actions{display:flex;gap:8px;margin-top:14px}
+.bc-btn{flex:1;padding:9px 0;border-radius:var(--rsm);font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:5px}
+.bc-dep{background:var(--accent);color:#fff}.bc-dep:hover{background:var(--ah)}
+.bc-his{background:var(--surface);color:var(--txt2);border:1px solid var(--border)}.bc-his:hover{color:var(--txt);border-color:var(--txt2)}
 
-    /* Bio card */
-    .bio-card { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
-    .bc-title { font-size: 12px; font-weight: 600; color: var(--txt2); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
-    .bio-text { font-size: 13px; color: var(--txt2); line-height: 1.65; }
-    .bio-empty { font-size: 12px; color: var(--txt2); opacity: .5; font-style: italic; }
-    .bio-edit-area { display: none; }
-    .bio-edit-area textarea { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 9px 11px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; resize: none; outline: none; min-height: 80px; }
-    .bio-edit-area textarea:focus { border-color: var(--accent); }
+/* Info list */
+.info-list{display:flex;flex-direction:column;gap:9px}
+.info-row{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--txt2)}
+.info-row i{width:14px;text-align:center;color:var(--accent);font-size:12px;flex-shrink:0}
+.info-row a{color:var(--accent);text-decoration:none}
+.info-row a:hover{text-decoration:underline}
 
-    /* Info list */
-    .info-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-    .info-row { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--txt2); }
-    .info-row i { width: 14px; text-align: center; color: var(--accent); font-size: 12px; }
-    .info-row a { color: var(--accent); text-decoration: none; }
-    .info-row a:hover { text-decoration: underline; }
+/* Quick links */
+.quick-links{display:flex;flex-direction:column;gap:6px}
+.ql-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--rsm);font-size:13px;font-weight:500;color:var(--txt2);cursor:pointer;transition:all .18s;text-decoration:none;border:none;background:none;width:100%;text-align:left}
+.ql-item:hover,.ql-item.active{background:var(--surface);color:var(--txt)}
+.ql-item i{width:16px;text-align:center;font-size:13px}
+.ql-sep{height:1px;background:var(--border);margin:6px 0}
+.ql-danger{color:var(--danger)!important}.ql-danger:hover{background:rgba(239,68,68,.08)!important}
 
-    /* Social links */
-    .social-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-    .social-btn {
-      width: 34px; height: 34px; border-radius: var(--rsm);
-      background: var(--surface); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; color: var(--txt2); cursor: pointer; transition: all .18s;
-      text-decoration: none;
-    }
-    .social-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
-    .sb-tg:hover  { border-color: #26a5e4; color: #26a5e4; }
-    .sb-wa:hover  { border-color: #25d366; color: #25d366; }
-    .sb-tw:hover  { border-color: #1d9bf0; color: #1d9bf0; }
-    .sb-ig:hover  { border-color: #e1306c; color: #e1306c; }
-    .sb-yt:hover  { border-color: #ff0000; color: #ff0000; }
+/* Role badge on quick link */
+.ql-rbadge{margin-left:auto;font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase}
 
-    /* Achievement badges */
-    .badges-card { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
-    .badges-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 10px; }
-    .ach-badge {
-      aspect-ratio: 1; border-radius: 10px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 3px; cursor: pointer;
-      transition: all .2s; border: 1px solid var(--border); background: var(--surface);
-      position: relative;
-    }
-    .ach-badge:hover { transform: translateY(-3px) scale(1.05); border-color: var(--accent); }
-    .ach-badge.locked { opacity: .35; filter: grayscale(.7); }
-    .ach-badge i { font-size: 20px; }
-    .ach-badge span { font-size: 8px; font-weight: 600; text-align: center; color: var(--txt2); line-height: 1.2; }
-    .ach-badge .ach-tooltip {
-      position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-      background: var(--nav); border: 1px solid var(--border); border-radius: var(--rsm);
-      padding: 6px 10px; font-size: 11px; white-space: nowrap; pointer-events: none;
-      opacity: 0; transition: opacity .18s; z-index: 20; color: var(--txt);
-    }
-    .ach-badge:hover .ach-tooltip { opacity: 1; }
+/* ── RIGHT COLUMN: TABS ── */
+.tab-bar{display:flex;background:var(--nav);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;overflow-x:auto}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{padding:11px 18px;font-size:12px;font-weight:500;color:var(--txt2);cursor:pointer;border:none;background:none;font-family:'Poppins',sans-serif;transition:all .18s;white-space:nowrap;flex-shrink:0;display:flex;align-items:center;gap:6px;border-bottom:2px solid transparent}
+.tab-btn:hover{background:var(--surface);color:var(--txt)}
+.tab-btn.active{background:var(--surface);color:var(--txt);border-bottom-color:var(--accent)}
+.tab-btn .tc{background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center}
+.tab-panel{display:none}.tab-panel.active{display:block}
 
-    /* Level / XP */
-    .level-card { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
-    .level-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .level-num { font-family: 'Syne',sans-serif; font-size: 28px; font-weight: 800; color: var(--accent); line-height: 1; }
-    .level-label { font-size: 11px; color: var(--txt2); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
-    .level-name { font-size: 14px; font-weight: 600; color: var(--warn); }
-    .xp-bar { height: 8px; background: var(--surface); border-radius: 4px; overflow: hidden; margin: 8px 0 4px; }
-    .xp-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent), var(--purple)); transition: width 1.2s ease; }
-    .xp-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--txt2); }
+/* Overview panel */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.ov-card{background:var(--nav);border:1px solid var(--border);border-radius:var(--rsm);padding:16px}
+.ov-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px}
+.ov-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1}
+.ov-lab{font-size:11px;color:var(--txt2);margin-top:3px}
 
-    /* ── RIGHT COLUMN (TABS) ── */
-    .right-col { min-width: 0; }
+/* Products grid */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.prod-card{background:var(--nav);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .22s}
+.prod-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.pc-img{width:100%;aspect-ratio:16/9;background:var(--surface);overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--txt2);font-size:22px}
+.pc-img img{width:100%;height:100%;object-fit:cover}
+.pc-body{padding:11px 13px}
+.pc-cat{font-size:10px;font-weight:600;color:var(--accent);background:rgba(74,125,255,.1);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:4px}
+.pc-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-price{font-size:14px;font-weight:700;color:var(--accent);margin-top:4px}
 
-    /* Tab bar */
-    .tab-bar {
-      display: flex; gap: 0; background: var(--nav);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      overflow: hidden; margin-bottom: 18px; overflow-x: auto;
-    }
-    .tab-btn {
-      padding: 11px 20px; font-size: 13px; font-weight: 500; color: var(--txt2);
-      cursor: pointer; border: none; background: none; font-family: 'Poppins',sans-serif;
-      transition: all .18s; white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 6px;
-    }
-    .tab-btn:hover { background: var(--surface); color: var(--txt); }
-    .tab-btn.active { background: var(--surface); color: var(--txt); border-bottom: 2px solid var(--accent); }
-    .tab-btn .tc { background: var(--accent); color: #fff; font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 8px; min-width: 16px; text-align: center; }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
+/* Activity */
+.act-list{display:flex;flex-direction:column;gap:0}
+.act-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.act-item:last-child{border-bottom:none}
+.act-icon{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+.act-txt{font-size:13px;line-height:1.5}
+.act-txt strong{color:var(--txt)}
+.act-time{font-size:11px;color:var(--txt2);margin-top:2px}
 
-    /* ── PRODUCTS TAB ── */
-    .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px,1fr)); gap: 14px; }
-    .prod-card {
-      background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius);
-      overflow: hidden; cursor: pointer; transition: all .22s;
-    }
-    .prod-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
-    .pc-img { width: 100%; aspect-ratio: 16/9; background: var(--surface); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--txt2); font-size: 24px; position: relative; }
-    .pc-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
-    .prod-card:hover .pc-img img { transform: scale(1.04); }
-    .pc-sold { position: absolute; top: 8px; left: 8px; background: rgba(15,17,21,.8); backdrop-filter: blur(4px); color: var(--txt2); font-size: 10px; padding: 2px 8px; border-radius: 20px; }
-    .pc-body { padding: 12px 14px; }
-    .pc-cat { font-size: 10px; font-weight: 600; color: var(--accent); background: rgba(74,125,255,.1); padding: 2px 7px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
-    .pc-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .pc-footer { display: flex; justify-content: space-between; align-items: center; }
-    .pc-price { font-size: 14px; font-weight: 700; color: var(--accent); }
-    .pc-rating { font-size: 11px; color: var(--warn); }
-    .prod-empty { text-align: center; padding: 60px 20px; color: var(--txt2); }
-    .prod-empty i { font-size: 36px; display: block; margin-bottom: 12px; opacity: .3; }
+/* Empty state */
+.empty{text-align:center;padding:48px 20px;color:var(--txt2)}
+.empty i{font-size:34px;display:block;margin-bottom:12px;opacity:.3}
+.empty p{font-size:13px}
 
-    /* ── REVIEWS TAB ── */
-    .review-summary {
-      background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 20px 22px; margin-bottom: 16px;
-      display: flex; align-items: center; gap: 28px; flex-wrap: wrap;
-    }
-    .rs-big { text-align: center; flex-shrink: 0; }
-    .rs-score { font-family: 'Syne',sans-serif; font-size: 52px; font-weight: 800; color: var(--warn); line-height: 1; }
-    .rs-stars { color: var(--warn); font-size: 18px; margin-top: 4px; letter-spacing: 2px; }
-    .rs-count { font-size: 12px; color: var(--txt2); margin-top: 4px; }
-    .rs-bars { flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 6px; }
-    .rb-row { display: flex; align-items: center; gap: 8px; }
-    .rb-label { font-size: 11px; color: var(--txt2); width: 12px; text-align: right; flex-shrink: 0; }
-    .rb-bar { flex: 1; height: 6px; background: var(--surface); border-radius: 3px; overflow: hidden; }
-    .rb-fill { height: 100%; border-radius: 3px; background: var(--warn); transition: width 1s ease; }
-    .rb-cnt { font-size: 11px; color: var(--txt2); width: 22px; text-align: right; flex-shrink: 0; }
+/* Security panel */
+.sec-section{padding:18px 0;border-bottom:1px solid var(--border)}
+.sec-section:last-child{border-bottom:none}
+.sec-section-title{font-size:13px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.fg{margin-bottom:13px}
+.fg label{display:block;font-size:12px;color:var(--txt2);margin-bottom:5px;font-weight:500}
+.fg input,.fg textarea,.fg select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:9px 12px;color:var(--txt);font-family:'Poppins',sans-serif;font-size:13px;outline:none;transition:border .18s}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--accent)}
+.fg input::placeholder{color:var(--txt2);opacity:.5}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fg-note{font-size:11px;color:var(--txt2);margin-top:4px}
 
-    .review-list { display: flex; flex-direction: column; gap: 12px; }
-    .review-item { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
-    .ri-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .ri-av { width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; color: var(--accent); overflow: hidden; flex-shrink: 0; }
-    .ri-av img { width: 100%; height: 100%; object-fit: cover; }
-    .ri-name { font-size: 13px; font-weight: 600; }
-    .ri-date { font-size: 11px; color: var(--txt2); margin-top: 2px; }
-    .ri-stars { margin-left: auto; color: var(--warn); font-size: 13px; letter-spacing: 1px; }
-    .ri-prod { font-size: 11px; color: var(--accent); background: rgba(74,125,255,.1); padding: 2px 8px; border-radius: 4px; margin-bottom: 8px; display: inline-block; }
-    .ri-text { font-size: 13px; color: var(--txt2); line-height: 1.6; }
-    .ri-imgs { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-    .ri-imgs img { width: 64px; height: 64px; border-radius: var(--rsm); object-fit: cover; border: 1px solid var(--border); cursor: pointer; transition: transform .18s; }
-    .ri-imgs img:hover { transform: scale(1.05); }
-    .ri-reply { background: rgba(74,125,255,.06); border-left: 3px solid var(--accent); padding: 10px 12px; border-radius: 0 var(--rsm) var(--rsm) 0; margin-top: 10px; }
-    .ri-reply .rr-label { font-size: 10px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
-    .ri-reply .rr-text { font-size: 12px; color: var(--txt2); line-height: 1.5; }
+/* Pin input */
+.pin-wrap{display:flex;gap:10px;justify-content:center}
+.pin-dig{width:48px;height:56px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);color:var(--txt);font-size:20px;font-weight:700;text-align:center;outline:none;transition:border .18s}
+.pin-dig:focus{border-color:var(--accent)}
 
-    /* ── ACTIVITY TAB ── */
-    .activity-feed { display: flex; flex-direction: column; gap: 0; }
-    .af-item { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
-    .af-item:last-child { border-bottom: none; }
-    .af-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-    .af-content .act { font-size: 13px; line-height: 1.5; }
-    .af-content .act strong { color: var(--txt); }
-    .af-content .t { font-size: 11px; color: var(--txt2); margin-top: 3px; }
+/* Danger zone */
+.danger-zone{background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:var(--rsm);padding:14px 16px;margin-top:14px}
+.dz-title{font-size:12px;font-weight:600;color:var(--danger);margin-bottom:10px}
 
-    /* ── ABOUT (STORE) TAB ── */
-    .store-hero { border-radius: var(--radius); overflow: hidden; margin-bottom: 16px; position: relative; height: 140px; background: var(--surface); display: flex; align-items: center; justify-content: center; }
-    .store-hero img { width: 100%; height: 100%; object-fit: cover; }
-    .store-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .sif { background: var(--nav); border: 1px solid var(--border); border-radius: var(--rsm); padding: 12px 14px; }
-    .sif .k { font-size: 10px; color: var(--txt2); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; margin-bottom: 4px; }
-    .sif .v { font-size: 14px; font-weight: 600; }
+/* ── ROLE-SPECIFIC DASHBOARDS ── */
+/* Seller stats */
+.seller-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.ss-card{background:var(--nav);border:1px solid var(--border);border-radius:var(--rsm);padding:16px;text-align:center}
+.ss-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1}
+.ss-lab{font-size:11px;color:var(--txt2);margin-top:4px}
 
-    /* ── FOLLOWING/FOLLOWERS TAB ── */
-    .follow-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 10px; }
-    .follow-card {
-      background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 14px; display: flex; align-items: center; gap: 12px; transition: border .18s;
-    }
-    .follow-card:hover { border-color: var(--accent); }
-    .fc-av { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: var(--accent); overflow: hidden; flex-shrink: 0; }
-    .fc-av img { width: 100%; height: 100%; object-fit: cover; }
-    .fc-name { font-size: 13px; font-weight: 600; }
-    .fc-role { font-size: 11px; color: var(--txt2); }
-    .fc-btn { margin-left: auto; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; background: var(--surface); border: 1px solid var(--border); color: var(--txt2); cursor: pointer; transition: all .18s; }
-    .fc-btn:hover { border-color: var(--accent); color: var(--accent); }
+/* CS card */
+.cs-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.cs-card{background:var(--nav);border:1px solid var(--border);border-radius:var(--rsm);padding:14px}
+.cs-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;line-height:1}
+.cs-lab{font-size:11px;color:var(--txt2);margin-top:3px}
 
-    /* ── EDIT PROFILE MODAL ── */
-    .mo { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.75); display: none; align-items: center; justify-content: center; padding: 20px; }
-    .mo.open { display: flex; }
-    .mb { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; animation: fup .3s ease; overflow: hidden; }
-    @keyframes fup { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
-    .mh { padding: 17px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .mh h3 { font-size: 16px; font-weight: 700; font-family: 'Syne',sans-serif; }
-    .mbody { padding: 22px; overflow-y: auto; max-height: 75vh; }
-    .mbody::-webkit-scrollbar { width: 4px; }
-    .mfoot { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
-    .mc { background: none; border: none; color: var(--txt2); font-size: 18px; cursor: pointer; }
-    .mc:hover { color: var(--txt); }
+/* Chip badge */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.chip-g{background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.2)}
+.chip-y{background:rgba(245,158,11,.12);color:var(--warn);border:1px solid rgba(245,158,11,.2)}
+.chip-r{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
 
-    /* Edit tabs inside modal */
-    .etabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; overflow-x: auto; }
-    .etab { padding: 8px 16px; font-size: 12px; font-weight: 500; color: var(--txt2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .18s; white-space: nowrap; background: none; border-top: none; border-left: none; border-right: none; font-family: 'Poppins',sans-serif; }
-    .etab.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .etab-panel { display: none; }
-    .etab-panel.active { display: block; }
+/* ── MODALS ── */
+.mo{position:fixed;inset:0;z-index:600;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;padding:20px}
+.mo.open{display:flex}
+.mb{background:var(--nav);border:1px solid var(--border);border-radius:var(--r);width:100%;animation:fup .3s ease;overflow:hidden}
+@keyframes fup{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.mh{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mh h3{font-size:16px;font-weight:700;font-family:'Syne',sans-serif}
+.mbody{padding:20px;overflow-y:auto;max-height:78vh}
+.mbody::-webkit-scrollbar{width:4px}
+.mfoot{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.mc{background:none;border:none;color:var(--txt2);font-size:18px;cursor:pointer}
+.mc:hover{color:var(--txt)}
 
-    .fg { margin-bottom: 14px; }
-    .fg label { display: block; font-size: 12px; color: var(--txt2); margin-bottom: 5px; font-weight: 500; }
-    .fg input, .fg textarea, .fg select { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 9px 12px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; outline: none; transition: border .18s; }
-    .fg input:focus, .fg textarea:focus, .fg select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(74,125,255,.1); }
-    .fg input::placeholder, .fg textarea::placeholder { color: var(--txt2); opacity: .5; }
-    .fg textarea { resize: vertical; min-height: 80px; }
-    .fg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .fg-note { font-size: 11px; color: var(--txt2); margin-top: 4px; }
+/* Upload bar */
+.upload-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;display:none;margin:8px 0}
+.upload-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
 
-    /* Avatar change section in modal */
-    .av-change-row { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); }
-    .ach-av { width: 60px; height: 60px; border-radius: 50%; background: var(--nav); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; color: var(--accent); overflow: hidden; flex-shrink: 0; }
-    .ach-av img { width: 100%; height: 100%; object-fit: cover; }
-    .ach-info .ach-title { font-size: 13px; font-weight: 600; }
-    .ach-info .ach-sub { font-size: 11px; color: var(--txt2); margin-top: 2px; }
-    .ach-btns { margin-left: auto; display: flex; gap: 6px; }
+/* Char count */
+.char-count{font-size:11px;color:var(--txt2);text-align:right;margin-top:3px}
 
-    /* Upload bar */
-    .upload-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; display: none; margin: 8px 0; }
-    .upload-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width .3s; }
+/* ── TOAST ── */
+#tc{position:fixed;bottom:80px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+@media(min-width:901px){#tc{bottom:20px;right:20px}}
+.toast{background:var(--nav);border:1px solid var(--border);border-left:3px solid var(--accent);color:var(--txt);font-size:13px;padding:10px 16px;border-radius:var(--rsm);min-width:240px;animation:sli .3s ease}
+.toast.s{border-left-color:var(--success)}.toast.e{border-left-color:var(--danger)}.toast.w{border-left-color:var(--warn)}
+@keyframes sli{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
 
-    /* Char count */
-    .char-count { font-size: 11px; color: var(--txt2); text-align: right; margin-top: 4px; }
+/* ── SPINNER ── */
+.sp{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spn .7s linear infinite;margin:0 auto}
+@keyframes spn{to{transform:rotate(360deg)}}
+.lc{display:flex;align-items:center;justify-content:center;padding:48px}
 
-    /* ── TOAST ── */
-    #tc { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
-    .toast { background: var(--nav); border: 1px solid var(--border); border-left: 3px solid var(--accent); color: var(--txt); font-size: 13px; padding: 10px 16px; border-radius: var(--rsm); min-width: 260px; animation: sli .3s ease; }
-    .toast.s { border-left-color: var(--success); }
-    .toast.e { border-left-color: var(--danger); }
-    .toast.w { border-left-color: var(--warn); }
-    @keyframes sli { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .content-grid{grid-template-columns:1fr}
+  .left-col-wrap{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  #topbar{display:none!important}
+  #mobileHdr{display:flex!important}
+  #xbn{display:flex!important}
+  .page-wrap{padding:14px 12px 90px}
+  .overview-grid{grid-template-columns:1fr 1fr}
+  .seller-stats{grid-template-columns:1fr 1fr}
+  .mo{padding:0;align-items:flex-end}
+  .mb{border-radius:20px 20px 0 0}
+  .mbody{max-height:75vh}
+}
+@media(max-width:600px){
+  .identity{flex-direction:column;align-items:flex-start;margin-top:-38px;gap:10px}
+  .ident-acts{width:100%}
+  .av-ring{width:80px;height:80px}
+  .av-inner{font-size:26px}
+  .ident-name{font-size:19px}
+  .left-col-wrap{grid-template-columns:1fr}
+  .overview-grid{grid-template-columns:1fr 1fr}
+  .seller-stats{grid-template-columns:1fr}
+  .fg2{grid-template-columns:1fr}
+  .banner{height:140px}
+}
+@media(max-width:380px){
+  .overview-grid{grid-template-columns:1fr}
+  .bc-actions{flex-direction:column}
+}
+@media(min-width:901px){
+  #xbn{display:none!important}
+  #mobileHdr{display:none!important}
+  #topbar{display:flex!important}
+}
 
-    /* ── SPINNER ── */
-    .sp { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spn .7s linear infinite; margin: 0 auto; }
-    @keyframes spn { to{transform:rotate(360deg)} }
-    .lc { display: flex; align-items: center; justify-content: center; padding: 48px; }
+/* Mobile header */
+#mobileHdr{display:none;position:sticky;top:0;z-index:300;background:var(--nav);border-bottom:1px solid var(--border);height:52px;align-items:center;padding:0 14px;gap:12px}
+.mhb{width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--txt2);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.mhb:active{transform:scale(.9)}
+.mh-title{font-size:15px;font-weight:700;flex:1}
+.mh-logo{font-size:11px;font-weight:700;color:var(--accent);opacity:.7;font-family:'Syne',sans-serif}
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 900px) { .profile-layout { grid-template-columns: 1fr; } .left-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; } }
-    @media (max-width: 640px) {
-      .identity-strip { flex-direction: column; align-items: flex-start; gap: 12px; margin-top: -40px; }
-      .identity-actions { width: 100%; }
-      .banner-wrap { height: 160px; }
-      .av-ring { width: 84px; height: 84px; }
-      .av-inner { font-size: 28px; }
-      .identity-name { font-size: 20px; }
-      .stats-bar { gap: 0; }
-      .stat-item { padding: 12px 14px; }
-      .sv { font-size: 16px; }
-      .left-col { grid-template-columns: 1fr; }
-      .prod-grid { grid-template-columns: 1fr 1fr; }
-      .profile-layout { padding: 14px; }
-      .fg2 { grid-template-columns: 1fr; }
-    }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeSlide { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:none} }
-    .anim-in { animation: fadeSlide .4s ease both; }
-    .anim-in:nth-child(1){animation-delay:.05s}
-    .anim-in:nth-child(2){animation-delay:.10s}
-    .anim-in:nth-child(3){animation-delay:.15s}
-    .anim-in:nth-child(4){animation-delay:.20s}
-    .anim-in:nth-child(5){animation-delay:.25s}
-    .anim-in:nth-child(6){animation-delay:.30s}
-
-    /* ── SHIMMER / SKELETON ── */
-    .sk { background: linear-gradient(90deg, var(--surface) 25%, var(--border) 50%, var(--surface) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
-    @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
-
-    /* ONLINE STATUS INDICATORS */
-    .status-online  { color: var(--success); }
-    .status-away    { color: var(--warn); }
-    .status-offline { color: var(--txt2); }
-
-    /* ── FLOATING SHARE MENU ── */
-    .share-menu {
-      position: absolute; top: calc(100% + 6px); right: 0;
-      background: var(--nav); border: 1px solid var(--border);
-      border-radius: var(--rsm); padding: 6px; min-width: 160px;
-      display: none; z-index: 50; animation: fup .2s ease;
-    }
-    .share-menu.open { display: block; }
-    .share-menu-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; color: var(--txt2); transition: all .15s; }
-    .share-menu-item:hover { background: var(--surface); color: var(--txt); }
-    .share-menu-wrap { position: relative; }
-  </style>
-
+/* Bottom Nav */
+#xbn{display:none;position:fixed;bottom:0;left:0;right:0;z-index:9999;background:rgba(23,28,36,.97);backdrop-filter:blur(20px);border-top:1px solid rgba(74,125,255,.18);height:64px;padding:0 8px;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -4px 24px rgba(0,0,0,.5)}
+.xbn-inner{display:flex;align-items:center;width:100%;height:100%}
+.xbn-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:#6b7a8d;font-family:'Poppins',sans-serif;padding:4px 0;position:relative;overflow:hidden;transition:color .2s;border-radius:12px;min-height:52px;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.xbn-btn i{font-size:20px;line-height:1;transition:transform .25s cubic-bezier(.34,1.56,.64,1),color .2s;display:block}
+.xbn-btn span{font-size:10px;font-weight:600;letter-spacing:.02em;line-height:1}
+.xbn-btn.active{color:var(--accent)}.xbn-btn.active i{transform:translateY(-2px) scale(1.15);color:var(--accent)}
+.xbn-btn::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:0;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--accent),#7c3aed);transition:width .25s cubic-bezier(.34,1.56,.64,1)}
+.xbn-btn.active::after{width:24px}
+.xbn-btn:active{transform:scale(.88)}
+.xbn-fab-wrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-bottom:6px;gap:2px}
+.xbn-fab{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#4a7dff,#7c3aed);color:#fff;font-size:22px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(74,125,255,.55);-webkit-tap-highlight-color:transparent;transition:transform .2s cubic-bezier(.34,1.56,.64,1)}
+.xbn-fab:active{transform:scale(.85)}
+.xbn-fab-label{font-size:10px;font-weight:600;color:var(--txt2)}
+.xbn-av{width:26px;height:26px;border-radius:50%;background:var(--surface);border:2px solid transparent;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#6b7a8d;transition:border-color .2s}
+.xbn-av img{width:100%;height:100%;object-fit:cover}
+.xbn-btn.active .xbn-av{border-color:var(--accent)}
+</style>
 </head>
 <body>
 
-<!-- ── Mobile Page Header ── -->
-  <div class="mph-logo">XREZZKY</div>
-</div>
-
-
-<!-- ══ NAVBAR ══ -->
-<nav>
-  <a class="nb-brand" href="index.html"><div class="nb-dot"></div>XREZZKY</a>
-  <div class="nb-sp"></div>
-  <div class="nb-acts">
-    <a href="index.html" class="btn bg bsm"><i class="fas fa-store"></i> Toko</a>
-    <button class="btn bp bsm" id="editProfileNavBtn" onclick="openEditModal()" style="display:none"><i class="fas fa-pen"></i> Edit Profil</button>
-    <div id="navAuthBtns">
-      <button class="btn bg bsm" onclick="openLogin()">Masuk</button>
-    </div>
-  </div>
+<!-- TOPBAR (desktop) -->
+<nav id="topbar" class="topbar" style="display:none">
+  <button class="tb-back" onclick="history.length>1?history.back():location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+  <a class="tb-brand" href="index.html"><div class="tb-dot"></div>XREZZKY<span>STORE</span></a>
+  <div class="tb-sp"></div>
+  <div class="tb-acts" id="tbActs"></div>
 </nav>
 
-<!-- ══ PROFILE HERO ══ -->
-<div class="profile-hero" id="profileHero">
-  <div class="banner-wrap" id="bannerWrap">
-    <div class="banner-deco">
-      <div class="bd-circle bdc1"></div>
-      <div class="bd-circle bdc2"></div>
-      <div class="bd-circle bdc3"></div>
-    </div>
-    <div class="banner-overlay"></div>
-    <button class="edit-banner-btn" onclick="triggerBannerUpload()">
-      <i class="fas fa-camera"></i> Ganti Banner
-    </button>
-    <input type="file" id="bannerUploadInput" accept="image/*" onchange="uploadBanner(event)" />
-  </div>
+<!-- MOBILE HEADER -->
+<div id="mobileHdr">
+  <button class="mhb" onclick="history.length>1?history.back():location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+  <div class="mh-title">Profil</div>
+  <div class="mh-logo">XREZZKY</div>
+</div>
 
-  <!-- Identity strip -->
-  <div class="identity-strip">
-    <div class="av-wrap">
-      <div class="av-ring" id="avRing">
-        <div class="av-inner" id="mainAvatar">?</div>
-      </div>
-      <div class="av-online" id="avOnlineDot"></div>
-      <div class="av-edit-btn" onclick="document.getElementById('avatarUploadInput').click()" title="Ganti foto">
-        <i class="fas fa-camera"></i>
-      </div>
-      <div class="av-upload-bar" id="avUpBar"><div class="av-upload-fill" id="avUpFill" style="width:0%"></div></div>
-      <input type="file" id="avatarUploadInput" accept="image/*" onchange="uploadAvatarQuick(event)" />
+<!-- BOTTOM NAV -->
+<div id="xbn">
+  <div class="xbn-inner">
+    <a class="xbn-btn" href="index.html"><i class="fas fa-home"></i><span>Beranda</span></a>
+    <button class="xbn-btn" onclick="location.href='index.html#info'"><i class="fas fa-bell"></i><span>Info</span></button>
+    <div class="xbn-fab-wrap">
+      <button class="xbn-fab" onclick="goDeposit()"><i class="fas fa-wallet"></i></button>
+      <span class="xbn-fab-label">Deposit</span>
     </div>
-
-    <div class="identity-info">
-      <div class="identity-name" id="profileDisplayName">
-        <span id="dName">—</span>
-        <i class="fas fa-circle-check verified-badge" id="verifiedIcon" style="display:none"></i>
-      </div>
-      <div class="identity-handle" id="profileHandle">@username</div>
-      <div class="identity-badges" id="profileBadges"></div>
-    </div>
-
-    <div class="identity-actions" id="profileActions"></div>
+    <a class="xbn-btn" href="riwayat.html"><i class="fas fa-receipt"></i><span>Riwayat</span></a>
+    <a class="xbn-btn active" href="profil.html"><div class="xbn-av" id="xbnAv"><i class="fas fa-user-circle"></i></div><span>Profil</span></a>
   </div>
 </div>
 
-<!-- ══ STATS BAR ══ -->
-<div class="stats-bar" id="statsBar">
-  <div class="stat-item clickable" onclick="switchTab('produk')">
-    <div class="sv" id="st-prods">—</div>
-    <div class="sl2">Produk</div>
-  </div>
-  <div class="stat-sep"></div>
-  <div class="stat-item clickable" onclick="switchTab('ulasan')">
-    <div class="sv" id="st-reviews">—</div>
-    <div class="sl2">Ulasan</div>
-  </div>
-  <div class="stat-sep"></div>
-  <div class="stat-item clickable" onclick="switchTab('pengikut')">
-    <div class="sv" id="st-followers">—</div>
-    <div class="sl2">Pengikut</div>
-  </div>
-  <div class="stat-sep"></div>
-  <div class="stat-item clickable" onclick="switchTab('mengikuti')">
-    <div class="sv" id="st-following">—</div>
-    <div class="sl2">Mengikuti</div>
-  </div>
-  <div class="stat-sep"></div>
-  <div class="stat-item">
-    <div class="sv" id="st-sold" style="color:var(--success)">—</div>
-    <div class="sl2">Terjual</div>
-  </div>
-  <div class="stat-sep"></div>
-  <div class="stat-item">
-    <div class="sv" id="st-rating" style="color:var(--warn)">—</div>
-    <div class="sl2">Rating</div>
-  </div>
-</div>
-
-<!-- ══ LAYOUT ══ -->
-<div class="profile-layout">
-
-  <!-- ── LEFT ── -->
-  <div class="left-col">
-
-    <!-- Bio -->
-    <div class="bio-card anim-in">
-      <div class="bc-title">Tentang</div>
-      <div class="bio-text" id="bioText"><span class="bio-empty">Belum ada bio.</span></div>
-      <div class="bio-edit-area" id="bioEditArea">
-        <textarea id="bioInput" maxlength="200" placeholder="Ceritakan tentang dirimu..." oninput="updateCharCount()"></textarea>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px">
-          <div class="char-count" id="bioCharCount">0/200</div>
-          <div style="display:flex; gap:6px">
-            <button class="btn bg bxs" onclick="cancelBioEdit()">Batal</button>
-            <button class="btn bp bxs" onclick="saveBio()"><i class="fas fa-save"></i> Simpan</button>
-          </div>
-        </div>
-      </div>
-      <div class="info-list" id="infoList"></div>
-      <div class="social-row" id="socialRow"></div>
-    </div>
-
-    <!-- Level / XP -->
-    <div class="level-card anim-in" id="levelCard">
-      <div class="level-header">
-        <div>
-          <div class="level-label">Level</div>
-          <div class="level-num" id="levelNum">1</div>
-          <div class="level-name" id="levelName">Newcomer</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:11px; color:var(--txt2)">XP</div>
-          <div style="font-size:18px; font-weight:700; color:var(--accent)" id="xpVal">0</div>
-        </div>
-      </div>
-      <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
-      <div class="xp-meta">
-        <span id="xpCurrent">0 XP</span>
-        <span id="xpNext">100 XP untuk Level 2</span>
-      </div>
-    </div>
-
-    <!-- Achievements -->
-    <div class="badges-card anim-in">
-      <div class="bc-title">Achievement</div>
-      <div class="badges-grid" id="badgesGrid"></div>
-    </div>
-
-  </div>
-
-  <!-- ── RIGHT ── -->
-  <div class="right-col">
-
-    <!-- Tabs -->
-    <div class="tab-bar">
-      <button class="tab-btn active" onclick="switchTab('produk',this)"><i class="fas fa-boxes-stacked"></i> Produk <span class="tc" id="tabProdCount">0</span></button>
-      <button class="tab-btn" onclick="switchTab('ulasan',this)"><i class="fas fa-star"></i> Ulasan <span class="tc" id="tabRevCount">0</span></button>
-      <button class="tab-btn" onclick="switchTab('aktivitas',this)"><i class="fas fa-bolt"></i> Aktivitas</button>
-      <button class="tab-btn" id="tabToko" onclick="switchTab('toko',this)" style="display:none"><i class="fas fa-store"></i> Info Toko</button>
-      <button class="tab-btn" onclick="switchTab('pengikut',this)"><i class="fas fa-users"></i> Pengikut</button>
-      <button class="tab-btn" onclick="switchTab('mengikuti',this)"><i class="fas fa-user-plus"></i> Mengikuti</button>
-    </div>
-
-    <!-- Products Panel -->
-    <div class="tab-panel active" id="tp-produk">
-      <div class="prod-grid" id="productGrid">
-        <!-- filled by JS -->
-      </div>
-    </div>
-
-    <!-- Reviews Panel -->
-    <div class="tab-panel" id="tp-ulasan">
-      <div class="review-summary" id="reviewSummary"></div>
-      <div class="review-list" id="reviewList"></div>
-    </div>
-
-    <!-- Activity Panel -->
-    <div class="tab-panel" id="tp-aktivitas">
-      <div class="activity-feed" id="activityFeed"></div>
-    </div>
-
-    <!-- Store Info Panel -->
-    <div class="tab-panel" id="tp-toko">
-      <div id="storeInfoPanel"></div>
-    </div>
-
-    <!-- Followers Panel -->
-    <div class="tab-panel" id="tp-pengikut">
-      <div class="follow-grid" id="followersGrid"></div>
-    </div>
-
-    <!-- Following Panel -->
-    <div class="tab-panel" id="tp-mengikuti">
-      <div class="follow-grid" id="followingGrid"></div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ══ EDIT PROFILE MODAL ══ -->
-<div class="mo" id="editModal">
-  <div class="mb" style="max-width:560px">
-    <div class="mh">
-      <h3>Edit Profil</h3>
-      <button class="mc" onclick="closeMo('editModal')"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="mbody">
-
-      <!-- Avatar row -->
-      <div class="av-change-row">
-        <div class="ach-av" id="editAv">?</div>
-        <div class="ach-info">
-          <div class="ach-title">Foto Profil</div>
-          <div class="ach-sub">JPG, PNG, WebP — maks 3MB</div>
-          <div class="upload-bar" id="editAvBar"><div class="upload-fill" id="editAvFill" style="width:0%"></div></div>
-        </div>
-        <div class="ach-btns">
-          <button class="btn bg bxs" onclick="document.getElementById('editAvFile').click()"><i class="fas fa-upload"></i> Upload</button>
-          <input type="file" id="editAvFile" accept="image/*" onchange="uploadAvatarModal(event)" style="display:none" />
-        </div>
-      </div>
-
-      <!-- Edit Tabs -->
-      <div class="etabs">
-        <button class="etab active" onclick="switchEtab('info',this)">Info Dasar</button>
-        <button class="etab" onclick="switchEtab('toko',this)">Info Toko</button>
-        <button class="etab" onclick="switchEtab('sosial',this)">Sosial</button>
-        <button class="etab" onclick="switchEtab('privasi',this)">Privasi</button>
-        <button class="etab" onclick="switchEtab('keamanan',this)">Keamanan</button>
-      </div>
-
-      <!-- Info Dasar -->
-      <div class="etab-panel active" id="etp-info">
-        <div class="fg2">
-          <div class="fg"><label>Username <span style="color:var(--danger)">*</span></label><input type="text" id="e-username" placeholder="username" /></div>
-          <div class="fg"><label>Nama Lengkap</label><input type="text" id="e-fullname" placeholder="Nama lengkap" /></div>
-        </div>
-        <div class="fg"><label>Bio <span style="font-size:11px; color:var(--txt2)">(maks 200 karakter)</span></label>
-          <textarea id="e-bio" maxlength="200" placeholder="Ceritakan tentang dirimu..." rows="3" oninput="this.nextElementSibling.textContent=this.value.length+'/200'"></textarea>
-          <div class="char-count">0/200</div>
-        </div>
-        <div class="fg2">
-          <div class="fg"><label>No. WhatsApp</label><input type="text" id="e-wa" placeholder="+62..." /></div>
-          <div class="fg"><label>Lokasi</label><input type="text" id="e-location" placeholder="Kota, Provinsi" /></div>
-        </div>
-        <div class="fg"><label>Website / Link</label><input type="url" id="e-website" placeholder="https://..." /></div>
-      </div>
-
-      <!-- Info Toko -->
-      <div class="etab-panel" id="etp-toko">
-        <div class="fg"><label>Nama Toko</label><input type="text" id="e-storename" placeholder="Nama toko kamu" /></div>
-        <div class="fg"><label>Deskripsi Toko</label><textarea id="e-storedesc" rows="3" placeholder="Tentang toko..."></textarea></div>
-        <div class="fg2">
-          <div class="fg"><label>Kategori Utama</label>
-            <select id="e-storecat">
-              <option value="">— pilih —</option>
-              <option value="akun">Akun Gaming</option>
-              <option value="joki">Joki & Layanan</option>
-              <option value="item">Item & Skin</option>
-              <option value="top-up">Top Up</option>
-              <option value="digital">Digital</option>
-            </select>
-          </div>
-          <div class="fg"><label>Jam Operasional</label><input type="text" id="e-hours" placeholder="mis: 08.00 – 22.00" /></div>
-        </div>
-        <div class="fg"><label>Banner Toko (Cloudinary path)</label><input type="text" id="e-storebanner" placeholder="banners/nama_file.jpg" /></div>
-      </div>
-
-      <!-- Sosial -->
-      <div class="etab-panel" id="etp-sosial">
-        <div class="fg"><label><i class="fab fa-telegram" style="color:#26a5e4; margin-right:6px"></i>Telegram</label><input type="text" id="e-telegram" placeholder="@username atau link" /></div>
-        <div class="fg"><label><i class="fab fa-instagram" style="color:#e1306c; margin-right:6px"></i>Instagram</label><input type="text" id="e-instagram" placeholder="@username" /></div>
-        <div class="fg"><label><i class="fab fa-twitter" style="color:#1d9bf0; margin-right:6px"></i>Twitter/X</label><input type="text" id="e-twitter" placeholder="@username" /></div>
-        <div class="fg"><label><i class="fab fa-youtube" style="color:#ff0000; margin-right:6px"></i>YouTube</label><input type="url" id="e-youtube" placeholder="https://youtube.com/..." /></div>
-        <div class="fg"><label><i class="fab fa-discord" style="color:#5865f2; margin-right:6px"></i>Discord</label><input type="text" id="e-discord" placeholder="username#0000 atau invite" /></div>
-      </div>
-
-      <!-- Privasi -->
-      <div class="etab-panel" id="etp-privasi">
-        <div style="display:flex; flex-direction:column; gap:0">
-          ${[
-            ['Tampilkan nomor WA',     'pv-wa',       true ],
-            ['Tampilkan email',        'pv-email',    false],
-            ['Tampilkan saldo',        'pv-balance',  false],
-            ['Tampilkan riwayat beli', 'pv-history',  true ],
-            ['Profil bisa diikuti',    'pv-follow',   true ],
-            ['Tampil di pencarian',    'pv-search',   true ],
-          ].map(([l,id,def]) => `
-          <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border)">
-            <span style="font-size:13px">${l}</span>
-            <label style="position:relative; display:inline-block; width:42px; height:24px">
-              <input type="checkbox" id="${id}" ${def?'checked':''} style="display:none" />
-              <span onclick="let c=this.previousElementSibling; c.checked=!c.checked; this.style.background=c.checked?'var(--accent)':'var(--border)'"
-                style="position:absolute;inset:0;border-radius:12px;background:${def?'var(--accent)':'var(--border)'};cursor:pointer;transition:background .2s">
-                <span style="position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:left .2s;${def?'left:21px':''}"></span>
-              </span>
-            </label>
-          </div>`).join('')}
-        </div>
-      </div>
-
-      <!-- Keamanan -->
-      <div class="etab-panel" id="etp-keamanan">
-        <div class="fg"><label>Email (tidak bisa diubah)</label><input type="email" id="e-email" disabled style="opacity:.5" /></div>
-        <div class="fg"><label>Password Baru</label><input type="password" id="e-pass1" placeholder="min. 6 karakter" /></div>
-        <div class="fg"><label>Konfirmasi Password</label><input type="password" id="e-pass2" placeholder="ulangi password" /></div>
-        <button class="btn bp bsm" onclick="changePass()"><i class="fas fa-key"></i> Update Password</button>
-        <div style="margin-top:16px; padding-top:14px; border-top:1px solid var(--border)">
-          <div style="font-size:12px; font-weight:600; color:var(--danger); margin-bottom:8px">Zona Berbahaya</div>
-          <button class="btn bd bsm" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
-        </div>
-      </div>
-
-    </div>
-    <div class="mfoot">
-      <button class="btn bg" onclick="closeMo('editModal')">Batal</button>
-      <button class="btn bp" onclick="saveEditProfile()"><i class="fas fa-save"></i> Simpan Semua</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ PRODUCT DETAIL MODAL ══ -->
-<div class="mo" id="prodDetailModal">
-  <div class="mb" style="max-width:600px">
-    <div class="mh"><h3>Detail Produk</h3><button class="mc" onclick="closeMo('prodDetailModal')"><i class="fas fa-times"></i></button></div>
-    <div class="mbody" id="prodDetailBody"></div>
-    <div class="mfoot" id="prodDetailFoot"></div>
-  </div>
-</div>
-
+<!-- TOAST -->
 <div id="tc"></div>
 
+<!-- GUEST WALL -->
+<div id="guestWall">
+  <i class="fas fa-user-lock gw-icon"></i>
+  <h2>Masuk untuk melihat profil</h2>
+  <p>Buat akun atau masuk untuk mengakses profil, deposit saldo, dan mulai belanja di XREZZKY.</p>
+  <div class="gw-btns">
+    <button class="btn bp" onclick="location.href='index.html?auth=login'"><i class="fas fa-sign-in-alt"></i> Masuk</button>
+    <button class="btn bg" onclick="location.href='index.html?auth=register'"><i class="fas fa-user-plus"></i> Daftar</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT (hidden until auth) -->
+<div id="mainContent" style="display:none">
+<div class="page-wrap">
+
+  <!-- PROFILE HEADER -->
+  <div class="prof-header" id="profHeader">
+    <div class="banner" id="bannerWrap">
+      <div class="banner-deco">
+        <div class="bd-c bdc1"></div>
+        <div class="bd-c bdc2"></div>
+        <div class="bd-c bdc3"></div>
+      </div>
+      <div class="banner-overlay"></div>
+      <button class="banner-edit-btn" onclick="triggerBannerUpload()"><i class="fas fa-camera"></i> Ganti Banner</button>
+      <input type="file" id="bannerFileInput" accept="image/*" style="display:none" onchange="uploadBanner(event)"/>
+    </div>
+    <div class="identity">
+      <div class="av-ring">
+        <div class="av-inner" id="mainAv">?</div>
+        <div class="av-edit" onclick="document.getElementById('avFileInput').click()"><i class="fas fa-camera"></i></div>
+        <div class="av-progress" id="avBar"><div class="av-progress-fill" id="avFill" style="width:0%"></div></div>
+      </div>
+      <input type="file" id="avFileInput" accept="image/*" style="display:none" onchange="uploadAvatar(event)"/>
+      <div class="ident-info">
+        <div class="ident-name">
+          <span id="dName">—</span>
+          <i class="fas fa-circle-check vi-icon" id="viIcon"></i>
+        </div>
+        <div class="ident-handle" id="dHandle">@—</div>
+        <div class="ident-badges" id="dBadges"></div>
+      </div>
+      <div class="ident-acts" id="dActs"></div>
+    </div>
+    <div class="stats-bar" id="statsBar">
+      <div class="sb-item"><div class="sb-val" id="st-orders">—</div><div class="sb-lab">Pesanan</div></div>
+      <div class="sb-item"><div class="sb-val" id="st-balance">—</div><div class="sb-lab">Saldo</div></div>
+      <div class="sb-item"><div class="sb-val" id="st-xp">—</div><div class="sb-lab">XP</div></div>
+      <div class="sb-item" id="st-seller-item" style="display:none"><div class="sb-val" id="st-sold">—</div><div class="sb-lab">Terjual</div></div>
+      <div class="sb-item" id="st-prod-item" style="display:none"><div class="sb-val" id="st-prods">—</div><div class="sb-lab">Produk</div></div>
+    </div>
+  </div>
+
+  <!-- CONTENT GRID -->
+  <div class="content-grid">
+
+    <!-- LEFT COLUMN -->
+    <div class="left-col-wrap">
+
+      <!-- Balance Card -->
+      <div class="balance-card">
+        <div class="bc-label"><i class="fas fa-wallet" style="margin-right:5px"></i>Saldo Saya</div>
+        <div class="bc-amount" id="bcAmount">Rp 0</div>
+        <div class="bc-sub" id="bcSub">Siap digunakan</div>
+        <div class="bc-actions">
+          <button class="bc-btn bc-dep" onclick="goDeposit()"><i class="fas fa-plus"></i> Deposit</button>
+          <button class="bc-btn bc-his" onclick="location.href='riwayat.html'"><i class="fas fa-receipt"></i> Riwayat</button>
+        </div>
+      </div>
+
+      <!-- Info Card -->
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Info</span></div>
+        <div class="panel-body">
+          <div class="info-list" id="infoList"></div>
+        </div>
+      </div>
+
+      <!-- Quick Nav (role-based) -->
+      <div class="panel">
+        <div class="panel-head"><span class="panel-title">Navigasi</span></div>
+        <div class="panel-body" style="padding:8px 10px">
+          <div class="quick-links" id="quickLinks"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="right-col">
+
+      <!-- TAB BAR (role-based) -->
+      <div class="tab-bar" id="tabBar"></div>
+
+      <!-- PANEL: OVERVIEW (all roles) -->
+      <div class="tab-panel active" id="tp-overview">
+        <div class="overview-grid" id="overviewGrid"></div>
+        <!-- Bio -->
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Bio</span>
+            <button class="btn bg bxs is-own-show" onclick="openBioEdit()"><i class="fas fa-pen"></i> Edit</button>
+          </div>
+          <div class="panel-body">
+            <div id="bioText" style="font-size:13px;color:var(--txt2);line-height:1.7"></div>
+            <div id="bioEditArea" style="display:none">
+              <textarea id="bioInp" rows="4" maxlength="200" placeholder="Ceritakan tentang dirimu..." oninput="document.getElementById('bioCc').textContent=this.value.length+'/200'" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:9px 12px;color:var(--txt);font-family:'Poppins',sans-serif;font-size:13px;resize:none;outline:none;min-height:80px"></textarea>
+              <div class="char-count" id="bioCc">0/200</div>
+              <div style="display:flex;gap:8px;margin-top:10px">
+                <button class="btn bg bsm" onclick="cancelBio()">Batal</button>
+                <button class="btn bp bsm" onclick="saveBio()"><i class="fas fa-check"></i> Simpan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Activity -->
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Aktivitas</span></div>
+          <div class="panel-body" style="padding:0 18px"><div class="act-list" id="actList"></div></div>
+        </div>
+      </div>
+
+      <!-- PANEL: BUYER ORDERS -->
+      <div class="tab-panel" id="tp-pesanan">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Riwayat Pesanan</span><a href="riwayat.html" class="btn bg bxs"><i class="fas fa-arrow-right"></i> Semua</a></div>
+          <div class="panel-body"><div id="buyerOrders"></div></div>
+        </div>
+      </div>
+
+      <!-- PANEL: SELLER DASHBOARD -->
+      <div class="tab-panel" id="tp-seller">
+        <div class="seller-stats" id="sellerStats"></div>
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Produk Saya</span>
+            <a href="seller-dashboard.html" class="btn bp bxs"><i class="fas fa-store"></i> Dashboard</a>
+          </div>
+          <div class="panel-body">
+            <div class="prod-grid" id="sellerProds"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: CS DASHBOARD -->
+      <div class="tab-panel" id="tp-cs">
+        <div class="cs-info-grid" id="csCards"></div>
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Customer Service</span>
+            <a href="cs-dashboard.html" class="btn bp bxs"><i class="fas fa-headset"></i> CS Dashboard</a>
+          </div>
+          <div class="panel-body">
+            <div style="text-align:center;padding:32px;color:var(--txt2)">
+              <i class="fas fa-headset" style="font-size:36px;display:block;margin-bottom:12px;opacity:.3"></i>
+              <p style="font-size:13px">Kelola tiket dan bantu pelanggan dari CS Dashboard.</p>
+              <a href="cs-dashboard.html" class="btn bp bsm" style="margin-top:16px;display:inline-flex"><i class="fas fa-arrow-right"></i> Buka CS Dashboard</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: ADMIN DASHBOARD -->
+      <div class="tab-panel" id="tp-admin">
+        <div class="overview-grid" id="adminCards"></div>
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title">Panel Admin</span><a href="admin-panel.html" class="btn bp bxs"><i class="fas fa-shield"></i> Admin Panel</a></div>
+          <div class="panel-body" style="display:flex;flex-wrap:wrap;gap:10px" id="adminLinks"></div>
+        </div>
+      </div>
+
+      <!-- PANEL: KEAMANAN -->
+      <div class="tab-panel" id="tp-keamanan">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title"><i class="fas fa-shield-halved" style="color:var(--accent);margin-right:6px"></i>Keamanan Akun</span></div>
+          <div class="panel-body">
+
+            <!-- Ganti Sandi -->
+            <div class="sec-section">
+              <div class="sec-section-title"><i class="fas fa-key" style="color:var(--warn)"></i>Ganti Password</div>
+              <div class="fg"><label>Password Baru</label><input type="password" id="p1" placeholder="min. 6 karakter"/></div>
+              <div class="fg"><label>Konfirmasi Password</label><input type="password" id="p2" placeholder="ulangi password"/></div>
+              <button class="btn bp bsm" onclick="changePass()"><i class="fas fa-lock"></i> Update Password</button>
+            </div>
+
+            <!-- PIN Transaksi -->
+            <div class="sec-section">
+              <div class="sec-section-title"><i class="fas fa-hashtag" style="color:var(--cyan)"></i>PIN Transaksi</div>
+              <p style="font-size:12px;color:var(--txt2);margin-bottom:14px;line-height:1.6">PIN 6 digit digunakan untuk konfirmasi setiap transaksi. <span id="pinStatus"></span></p>
+              <div style="margin-bottom:14px">
+                <label style="font-size:12px;color:var(--txt2);display:block;margin-bottom:10px;font-weight:500">PIN Baru (6 digit)</label>
+                <div class="pin-wrap" id="pinInputWrap">
+                  <input class="pin-dig" id="pin0" maxlength="1" type="password" inputmode="numeric" oninput="pinNext(0)" />
+                  <input class="pin-dig" id="pin1" maxlength="1" type="password" inputmode="numeric" oninput="pinNext(1)" onkeydown="pinBack(1,event)" />
+                  <input class="pin-dig" id="pin2" maxlength="1" type="password" inputmode="numeric" oninput="pinNext(2)" onkeydown="pinBack(2,event)" />
+                  <input class="pin-dig" id="pin3" maxlength="1" type="password" inputmode="numeric" oninput="pinNext(3)" onkeydown="pinBack(3,event)" />
+                  <input class="pin-dig" id="pin4" maxlength="1" type="password" inputmode="numeric" oninput="pinNext(4)" onkeydown="pinBack(4,event)" />
+                  <input class="pin-dig" id="pin5" maxlength="1" type="password" inputmode="numeric" oninput="pinNext(5)" onkeydown="pinBack(5,event)" />
+                </div>
+              </div>
+              <div style="margin-bottom:14px">
+                <label style="font-size:12px;color:var(--txt2);display:block;margin-bottom:10px;font-weight:500">Konfirmasi PIN</label>
+                <div class="pin-wrap">
+                  <input class="pin-dig" id="cpin0" maxlength="1" type="password" inputmode="numeric" oninput="cpinNext(0)" />
+                  <input class="pin-dig" id="cpin1" maxlength="1" type="password" inputmode="numeric" oninput="cpinNext(1)" onkeydown="cpinBack(1,event)" />
+                  <input class="pin-dig" id="cpin2" maxlength="1" type="password" inputmode="numeric" oninput="cpinNext(2)" onkeydown="cpinBack(2,event)" />
+                  <input class="pin-dig" id="cpin3" maxlength="1" type="password" inputmode="numeric" oninput="cpinNext(3)" onkeydown="cpinBack(3,event)" />
+                  <input class="pin-dig" id="cpin4" maxlength="1" type="password" inputmode="numeric" oninput="cpinNext(4)" onkeydown="cpinBack(4,event)" />
+                  <input class="pin-dig" id="cpin5" maxlength="1" type="password" inputmode="numeric" oninput="cpinNext(5)" onkeydown="cpinBack(5,event)" />
+                </div>
+              </div>
+              <button class="btn bp bsm" onclick="savePin()"><i class="fas fa-hashtag"></i> Simpan PIN</button>
+            </div>
+
+            <!-- Email -->
+            <div class="sec-section">
+              <div class="sec-section-title"><i class="fas fa-envelope" style="color:var(--accent)"></i>Email Akun</div>
+              <div class="fg"><label>Email (tidak dapat diubah)</label><input type="email" id="acEmail" disabled style="opacity:.5"/></div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="danger-zone">
+              <div class="dz-title"><i class="fas fa-triangle-exclamation"></i> Zona Berbahaya</div>
+              <button class="btn bd bsm" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Keluar dari Akun</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL: EDIT PROFIL -->
+      <div class="tab-panel" id="tp-editprofil">
+        <div class="panel">
+          <div class="panel-head"><span class="panel-title"><i class="fas fa-pen" style="color:var(--accent);margin-right:6px"></i>Edit Profil</span></div>
+          <div class="panel-body">
+            <!-- Avatar -->
+            <div style="display:flex;align-items:center;gap:16px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);margin-bottom:18px">
+              <div style="width:56px;height:56px;border-radius:50%;background:var(--nav);border:2px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--accent);flex-shrink:0" id="editAvPrev"></div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600">Foto Profil</div>
+                <div style="font-size:11px;color:var(--txt2);margin-top:2px">JPG, PNG, WebP — maks 3MB</div>
+              </div>
+              <button class="btn bg bxs" onclick="document.getElementById('avFileInput').click()"><i class="fas fa-upload"></i> Ganti</button>
+            </div>
+            <!-- Fields -->
+            <div class="fg2">
+              <div class="fg"><label>Username *</label><input type="text" id="eu" placeholder="username"/></div>
+              <div class="fg"><label>Nama Lengkap</label><input type="text" id="efn" placeholder="Nama lengkap"/></div>
+            </div>
+            <div class="fg2">
+              <div class="fg"><label>No. WhatsApp</label><input type="text" id="ewa" placeholder="+62..."/></div>
+              <div class="fg"><label>Lokasi</label><input type="text" id="eloc" placeholder="Kota, Provinsi"/></div>
+            </div>
+            <div class="fg"><label>Website</label><input type="url" id="eweb" placeholder="https://..."/></div>
+            <!-- Store info (seller/admin only) -->
+            <div id="storeFields" style="display:none">
+              <div style="height:1px;background:var(--border);margin:16px 0"></div>
+              <div style="font-size:12px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Info Toko</div>
+              <div class="fg"><label>Nama Toko</label><input type="text" id="esn" placeholder="Nama toko"/></div>
+              <div class="fg"><label>Deskripsi Toko</label><textarea id="esd" rows="3" placeholder="Tentang toko..."></textarea></div>
+              <div class="fg2">
+                <div class="fg"><label>Kategori</label>
+                  <select id="esc">
+                    <option value="">— pilih —</option>
+                    <option value="akun">Akun Gaming</option>
+                    <option value="joki">Joki & Layanan</option>
+                    <option value="item">Item & Skin</option>
+                    <option value="top-up">Top Up</option>
+                    <option value="digital">Digital</option>
+                  </select>
+                </div>
+                <div class="fg"><label>Jam Operasional</label><input type="text" id="ehs" placeholder="08.00 – 22.00"/></div>
+              </div>
+            </div>
+            <!-- Social -->
+            <div style="height:1px;background:var(--border);margin:16px 0"></div>
+            <div style="font-size:12px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">Sosial Media</div>
+            <div class="fg2">
+              <div class="fg"><label><i class="fab fa-telegram" style="color:#26a5e4"></i> Telegram</label><input type="text" id="etg" placeholder="@username"/></div>
+              <div class="fg"><label><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram</label><input type="text" id="eig" placeholder="@username"/></div>
+            </div>
+            <div class="fg2">
+              <div class="fg"><label><i class="fab fa-twitter" style="color:#1d9bf0"></i> Twitter/X</label><input type="text" id="etw" placeholder="@username"/></div>
+              <div class="fg"><label><i class="fab fa-discord" style="color:#5865f2"></i> Discord</label><input type="text" id="edi" placeholder="username#0000"/></div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn bg" onclick="switchTab('overview')">Batal</button>
+              <button class="btn bp" onclick="saveProfile()"><i class="fas fa-save"></i> Simpan Perubahan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- right-col -->
+  </div><!-- content-grid -->
+</div><!-- page-wrap -->
+</div><!-- mainContent -->
+
+<!-- ══════════════════════════ SCRIPT ══════════════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ══ CONFIG ══
+// ═══ CONFIG ═══
 const SUPA_URL  = 'https://jydfjfjttpmropoczgop.supabase.co';
 const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
 const CLD_CLOUD  = 'drjmclzbi';
 const CLD_PRESET = 'xrezzky_unsigned';
 const CLD_BASE   = `https://res.cloudinary.com/${CLD_CLOUD}/image/upload/`;
-const CLD_UPLOAD = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`;
+const CLD_UP     = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`;
 
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-// ══ STATE ══
-let currentUser   = null;
-let viewProfile   = null;  // profile being viewed
-let isOwnProfile  = false;
-let isFollowing   = false;
-let profileId     = null;
-let allProducts   = [];
-let allReviews    = [];
-let allFollowers  = [];
-let allFollowing  = [];
-let activeTab     = 'produk';
+// ═══ STATE ═══
+let cUser    = null;  // supabase auth user
+let cProfile = null;  // profiles row
+let myOrders = [];
+let myProds  = [];
+let activeTab = 'overview';
 
-// ══ INIT ══
+// ═══ INIT ═══
 document.addEventListener('DOMContentLoaded', async () => {
-  const params = new URLSearchParams(location.search);
-  profileId    = params.get('id') || null;
+  document.body.style.opacity = '0';
+  document.body.style.transition = 'opacity .22s ease';
 
   const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    currentUser = session.user;
-    // if no ?id, show own profile
-    if (!profileId) profileId = currentUser.id;
+
+  if (!session) {
+    // Show guest wall — must register/login to view profile
+    document.getElementById('guestWall').style.display = 'flex';
+    requestAnimationFrame(() => document.body.style.opacity = '1');
+    return;
   }
 
-  if (!profileId) { showErrorState(); return; }
-  isOwnProfile = currentUser && profileId === currentUser.id;
+  cUser = session.user;
+  await loadProfile();
+  await Promise.all([loadOrders(), loadProducts()]);
 
-  await loadProfileData();
-  await Promise.all([loadProducts(), loadReviews(), loadFollowers(), loadFollowing()]);
-  renderAll();
-  if (isOwnProfile) document.body.classList.add('is-own');
-  updateNavBtns();
+  buildPage();
+  document.getElementById('mainContent').style.display = 'block';
+  document.body.classList.add('is-own');
+  requestAnimationFrame(() => document.body.style.opacity = '1');
+
+  // Update XBN avatar
+  updateXbnAv();
 });
 
-function showErrorState() {
-  document.body.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;color:var(--txt2);font-family:'Poppins',sans-serif;background:var(--bg)"><i class="fas fa-user-slash" style="font-size:48px;opacity:.3"></i><p style="font-size:16px">Profil tidak ditemukan. <a href="index.html" style="color:var(--accent)">Kembali</a></p></div>`;
+// ═══ LOAD DATA ═══
+async function loadProfile() {
+  const { data } = await sb.from('profiles').select('*').eq('id', cUser.id).maybeSingle();
+  cProfile = data || { id: cUser.id, username: cUser.email.split('@')[0], email: cUser.email, role: 'buyer', balance: 0 };
 }
 
-// ══ LOAD DATA ══
-async function loadProfileData() {
-  const { data, error } = await sb.from('profiles').select('*').eq('id', profileId).maybeSingle();
-  if (error || !data) { showErrorState(); return; }
-  viewProfile = data;
+async function loadOrders() {
+  const { data } = await sb.from('orders').select('*, products(name, price, image_url, category)').eq('buyer_id', cUser.id).order('created_at', { ascending: false }).limit(20);
+  myOrders = data || [];
 }
 
 async function loadProducts() {
-  const { data } = await sb.from('products').select('*').eq('seller_id', profileId).eq('is_active', true).order('created_at', { ascending: false });
-  allProducts = data || [];
+  if (!cProfile || !['seller','admin'].includes(cProfile.role)) return;
+  const { data } = await sb.from('products').select('*').eq('seller_id', cUser.id).order('created_at', { ascending: false });
+  myProds = data || [];
 }
 
-async function loadReviews() {
-  const { data } = await sb.from('testimonials').select('*, profiles(username, avatar_url)').eq('seller_id', profileId).order('created_at', { ascending: false });
-  allReviews = data || [];
+// ═══ BUILD PAGE ═══
+function buildPage() {
+  buildHeader();
+  buildStats();
+  buildBalance();
+  buildInfoList();
+  buildQuickLinks();
+  buildTabs();
+  buildOverview();
+  buildOrders();
+  buildSellerPanel();
+  buildCsPanel();
+  buildAdminPanel();
+  fillEditForm();
+  showSecurityEmail();
+  updatePinStatus();
+  switchTab('overview');
 }
 
-async function loadFollowers() {
-  const { data } = await sb.from('follows').select('*, profiles!follows_follower_id_fkey(username, avatar_url, role)').eq('following_id', profileId);
-  allFollowers = data || [];
-}
-
-async function loadFollowing() {
-  const { data } = await sb.from('follows').select('*, profiles!follows_following_id_fkey(username, avatar_url, role)').eq('follower_id', profileId);
-  allFollowing = data || [];
-
-  if (currentUser && !isOwnProfile) {
-    isFollowing = allFollowers.some(f => f.follower_id === currentUser.id);
-  }
-}
-
-// ══ RENDER ALL ══
-function renderAll() {
-  renderHero();
-  renderStatsBar();
-  renderLeftCol();
-  renderProducts();
-  renderReviews();
-  renderActivity();
-  renderStoreInfo();
-  renderFollowers();
-  renderFollowing();
-}
-
-function renderHero() {
-  const p = viewProfile;
+// ── HEADER ──
+function buildHeader() {
+  const p = cProfile;
   const nm = p.username || 'User';
 
   // Avatar
-  const avEl = document.getElementById('mainAvatar');
-  if (p.avatar_url) avEl.innerHTML = `<img src="${CLD_BASE}${p.avatar_url}" alt="${esc(nm)}" />`;
-  else avEl.textContent = nm[0].toUpperCase();
+  const avEl = document.getElementById('mainAv');
+  avEl.innerHTML = p.avatar_url ? `<img src="${CLD_BASE}${p.avatar_url}" alt="${esc(nm)}"/>` : nm[0].toUpperCase();
+
+  // Update edit preview
+  const epEl = document.getElementById('editAvPrev');
+  if (epEl) epEl.innerHTML = avEl.innerHTML;
 
   // Banner
   if (p.store_banner) {
     const bw = document.getElementById('bannerWrap');
-    bw.insertAdjacentHTML('beforeend', `<img src="${CLD_BASE}${p.store_banner}" alt="banner" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0" />`);
+    const img = document.createElement('img');
+    img.src = CLD_BASE + p.store_banner;
+    img.style = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0';
+    bw.insertBefore(img, bw.firstChild);
   }
 
-  // Name
-  document.getElementById('dName').textContent = p.store_name || nm;
-  document.getElementById('profileHandle').textContent = `@${nm}`;
+  document.getElementById('dName').textContent    = p.store_name || nm;
+  document.getElementById('dHandle').textContent  = `@${nm}`;
   document.title = `${nm} — XREZZKY`;
+  document.getElementById('mh-title') && (document.getElementById('mh-title').textContent = nm);
 
   // Verified icon
-  if (p.role === 'seller' || p.role === 'admin') {
-    document.getElementById('verifiedIcon').style.display = 'inline';
-    const tokoTab = document.getElementById('tabToko');
-    if (tokoTab) tokoTab.style.display = '';
-  }
+  if (['seller','admin'].includes(p.role)) document.getElementById('viIcon').style.display = 'inline';
 
   // Badges
-  const badgeEl = document.getElementById('profileBadges');
-  const badges  = [];
-  if (p.role === 'admin')  badges.push(`<span class="ibadge ib-admin"><i class="fas fa-shield"></i> Admin</span>`);
-  if (p.role === 'seller') badges.push(`<span class="ibadge ib-seller"><i class="fas fa-store"></i> Seller</span>`);
-  if (p.is_verified)       badges.push(`<span class="ibadge ib-verified"><i class="fas fa-badge-check"></i> Verified</span>`);
-  if (p.is_top_seller)     badges.push(`<span class="ibadge ib-top"><i class="fas fa-fire"></i> Top Seller</span>`);
-  if (isNew(p.created_at)) badges.push(`<span class="ibadge ib-new"><i class="fas fa-leaf"></i> New</span>`);
-  badgeEl.innerHTML = badges.join('');
+  const roleColor = { admin:'ib-admin', seller:'ib-seller', cs:'ib-cs', buyer:'ib-buyer' };
+  const roleLabel = { admin:'<i class="fas fa-shield"></i> Admin', seller:'<i class="fas fa-store"></i> Seller', cs:'<i class="fas fa-headset"></i> CS', buyer:'<i class="fas fa-user"></i> Buyer' };
+  let badges = `<span class="ib ${roleColor[p.role]||'ib-buyer'}">${roleLabel[p.role]||'Buyer'}</span>`;
+  if (p.is_verified) badges += `<span class="ib ib-verified"><i class="fas fa-circle-check"></i> Verified</span>`;
+  document.getElementById('dBadges').innerHTML = badges;
 
-  // Actions
-  const actEl = document.getElementById('profileActions');
-  if (isOwnProfile) {
-    actEl.innerHTML = `
-      <button class="btn bp" onclick="openEditModal()"><i class="fas fa-pen"></i> Edit Profil</button>
-      <button class="msg-btn" onclick="editBio()"><i class="fas fa-align-left"></i> Bio</button>`;
-  } else {
-    actEl.innerHTML = `
-      <button class="follow-btn ${isFollowing?'following':''}" id="followBtn" onclick="toggleFollow()">
-        <i class="fas ${isFollowing?'fa-user-check':'fa-user-plus'}"></i> ${isFollowing?'Mengikuti':'Ikuti'}
-      </button>
-      <button class="msg-btn" onclick="startMessage()"><i class="fas fa-comment"></i> Pesan</button>
-      <div class="share-menu-wrap">
-        <button class="share-btn" onclick="toggleShareMenu()" title="Bagikan"><i class="fas fa-share-nodes"></i></button>
-        <div class="share-menu" id="shareMenu">
-          <div class="share-menu-item" onclick="copyLink()"><i class="fas fa-link" style="color:var(--accent)"></i> Salin Link</div>
-          <div class="share-menu-item" onclick="shareWa()"><i class="fab fa-whatsapp" style="color:#25d366"></i> WhatsApp</div>
-          <div class="share-menu-item" onclick="shareTg()"><i class="fab fa-telegram" style="color:#26a5e4"></i> Telegram</div>
-          <div class="share-menu-item" onclick="shareTw()"><i class="fab fa-twitter" style="color:#1d9bf0"></i> Twitter/X</div>
-        </div>
-      </div>`;
+  // Edit button
+  document.getElementById('dActs').innerHTML = `
+    <button class="btn bp" onclick="switchTab('editprofil')"><i class="fas fa-pen"></i> Edit Profil</button>
+    <button class="btn bg" onclick="switchTab('keamanan')"><i class="fas fa-shield-halved"></i></button>`;
+
+  // Topbar acts
+  document.getElementById('tbActs').innerHTML = `
+    <button class="btn bg bsm" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>`;
+}
+
+// ── STATS BAR ──
+function buildStats() {
+  const p = cProfile;
+  const totalSold = myProds.reduce((a,x)=>a+(x.sold_count||0),0);
+
+  animVal('st-orders',  myOrders.length);
+  animVal('st-balance', null, fmtRp(p.balance||0));
+  animVal('st-xp',      p.xp||0);
+
+  const isSeller = ['seller','admin'].includes(p.role);
+  document.getElementById('st-seller-item').style.display = isSeller ? 'block' : 'none';
+  document.getElementById('st-prod-item').style.display   = isSeller ? 'block' : 'none';
+  if (isSeller) {
+    animVal('st-sold',  totalSold);
+    animVal('st-prods', myProds.length);
   }
 }
 
-function renderStatsBar() {
-  const totalSold   = allProducts.reduce((a,p) => a+(p.sold_count||0), 0);
-  const avgRating   = allReviews.length ? (allReviews.reduce((a,r) => a+(r.rating||5),0)/allReviews.length).toFixed(1) : '—';
-
-  animVal('st-prods',     allProducts.length);
-  animVal('st-reviews',   allReviews.length);
-  animVal('st-followers', allFollowers.length);
-  animVal('st-following', allFollowing.length);
-  animVal('st-sold',      totalSold);
-  document.getElementById('st-rating').textContent = avgRating === '—' ? '—' : `${avgRating}★`;
-  document.getElementById('tabProdCount').textContent = allProducts.length;
-  document.getElementById('tabRevCount').textContent  = allReviews.length;
+// ── BALANCE CARD ──
+function buildBalance() {
+  const p = cProfile;
+  document.getElementById('bcAmount').textContent = fmtRp(p.balance||0);
+  const pin = p.transaction_pin ? 'PIN aktif ✓' : 'Belum ada PIN';
+  document.getElementById('bcSub').textContent = `Saldo tersedia · ${pin}`;
 }
 
-function renderLeftCol() {
-  const p = viewProfile;
+// ── INFO LIST ──
+function buildInfoList() {
+  const p = cProfile;
+  const rows = [];
+  if (p.location)   rows.push(`<div class="info-row"><i class="fas fa-location-dot"></i><span>${esc(p.location)}</span></div>`);
+  if (p.whatsapp)   rows.push(`<div class="info-row"><i class="fab fa-whatsapp" style="color:#25d366"></i><a href="https://wa.me/${(p.whatsapp||'').replace(/\D/g,'')}" target="_blank">${esc(p.whatsapp)}</a></div>`);
+  if (p.website)    rows.push(`<div class="info-row"><i class="fas fa-link"></i><a href="${esc(p.website)}" target="_blank">${esc(p.website.replace('https://',''))}</a></div>`);
+  if (p.telegram)   rows.push(`<div class="info-row"><i class="fab fa-telegram" style="color:#26a5e4"></i><a href="${p.telegram.startsWith('http')?p.telegram:'https://t.me/'+p.telegram.replace('@','')}" target="_blank">${esc(p.telegram)}</a></div>`);
+  if (p.created_at) rows.push(`<div class="info-row"><i class="fas fa-calendar"></i><span>Bergabung ${fmtDate(p.created_at)}</span></div>`);
+  document.getElementById('infoList').innerHTML = rows.join('') || `<div style="font-size:12px;color:var(--txt2);opacity:.5;font-style:italic">Belum ada info.</div>`;
+}
+
+// ── QUICK LINKS (role-based) ──
+function buildQuickLinks() {
+  const role = cProfile?.role || 'buyer';
+  let html = `
+    <a class="ql-item" href="index.html"><i class="fas fa-store"></i> Beranda</a>
+    <a class="ql-item" href="riwayat.html"><i class="fas fa-receipt"></i> Riwayat Pesanan</a>
+    <button class="ql-item" onclick="goDeposit()"><i class="fas fa-wallet"></i> Deposit Saldo</button>`;
+
+  if (['seller','admin'].includes(role)) {
+    html += `<div class="ql-sep"></div>
+    <div style="font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;padding:4px 12px">Seller</div>
+    <a class="ql-item" href="seller-dashboard.html"><i class="fas fa-store"></i> Dashboard Seller<span class="ql-rbadge" style="background:rgba(245,158,11,.15);color:var(--warn)">Seller</span></a>
+    <a class="ql-item" href="seller-dashboard.html?tab=produk"><i class="fas fa-boxes-stacked"></i> Produk Saya</a>
+    <a class="ql-item" href="seller-dashboard.html?tab=orders"><i class="fas fa-inbox"></i> Pesanan Masuk</a>`;
+  }
+
+  if (['cs','admin'].includes(role)) {
+    html += `<div class="ql-sep"></div>
+    <div style="font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;padding:4px 12px">CS</div>
+    <a class="ql-item" href="cs-dashboard.html"><i class="fas fa-headset"></i> CS Dashboard<span class="ql-rbadge" style="background:rgba(6,182,212,.12);color:var(--cyan)">CS</span></a>`;
+  }
+
+  if (role === 'admin') {
+    html += `<div class="ql-sep"></div>
+    <div style="font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;padding:4px 12px">Admin</div>
+    <a class="ql-item" href="admin-panel.html"><i class="fas fa-chart-pie"></i> Admin Panel<span class="ql-rbadge" style="background:rgba(239,68,68,.1);color:var(--danger)">Admin</span></a>
+    <a class="ql-item" href="deposit-admin.html"><i class="fas fa-qrcode"></i> Kelola Deposit</a>
+    <a class="ql-item" href="info-admin.html"><i class="fas fa-bell"></i> Kelola Info</a>`;
+  }
+
+  html += `<div class="ql-sep"></div>
+    <button class="ql-item ql-danger" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i> Keluar</button>`;
+
+  document.getElementById('quickLinks').innerHTML = html;
+}
+
+// ── TABS (role-based) ──
+function buildTabs() {
+  const role = cProfile?.role || 'buyer';
+  const tabs = [
+    { id:'overview',    label:'<i class="fas fa-home"></i> Overview', roles:['buyer','seller','cs','admin'] },
+    { id:'pesanan',     label:'<i class="fas fa-receipt"></i> Pesanan', roles:['buyer','seller','cs','admin'] },
+    { id:'seller',      label:'<i class="fas fa-store"></i> Seller',   roles:['seller','admin'] },
+    { id:'cs',          label:'<i class="fas fa-headset"></i> CS',     roles:['cs','admin'] },
+    { id:'admin',       label:'<i class="fas fa-shield"></i> Admin',   roles:['admin'] },
+    { id:'keamanan',    label:'<i class="fas fa-lock"></i> Keamanan',  roles:['buyer','seller','cs','admin'] },
+    { id:'editprofil',  label:'<i class="fas fa-pen"></i> Edit',       roles:['buyer','seller','cs','admin'] },
+  ];
+
+  const bar = document.getElementById('tabBar');
+  bar.innerHTML = tabs
+    .filter(t => t.roles.includes(role))
+    .map(t => `<button class="tab-btn" id="tab-${t.id}" onclick="switchTab('${t.id}')">${t.label}</button>`)
+    .join('');
+}
+
+function switchTab(id) {
+  activeTab = id;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById(`tp-${id}`);
+  if (panel) panel.classList.add('active');
+  const btn = document.getElementById(`tab-${id}`);
+  if (btn) btn.classList.add('active');
+  // Scroll to top on mobile
+  if (window.innerWidth <= 900) window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── OVERVIEW ──
+function buildOverview() {
+  const p = cProfile;
+  const role = p.role || 'buyer';
+  const totalSold = myProds.reduce((a,x)=>a+(x.sold_count||0),0);
+
+  const cards = [
+    { icon:'fas fa-receipt', bg:'rgba(74,125,255,.1)', col:'var(--accent)',  val:myOrders.length, lab:'Total Pesanan' },
+    { icon:'fas fa-wallet',  bg:'rgba(34,197,94,.1)',  col:'var(--success)', val:fmtRp(p.balance||0), lab:'Saldo' },
+  ];
+  if (['seller','admin'].includes(role)) {
+    cards.push({ icon:'fas fa-boxes-stacked', bg:'rgba(245,158,11,.1)', col:'var(--warn)', val:myProds.length, lab:'Produk Aktif' });
+    cards.push({ icon:'fas fa-fire',          bg:'rgba(239,68,68,.1)', col:'var(--danger)', val:totalSold, lab:'Total Terjual' });
+  } else {
+    cards.push({ icon:'fas fa-star', bg:'rgba(245,158,11,.1)', col:'var(--warn)', val:(p.xp||0)+' XP', lab:'Experience' });
+    cards.push({ icon:'fas fa-calendar', bg:'rgba(168,85,247,.1)', col:'var(--purple)', val:fmtDate(p.created_at), lab:'Bergabung' });
+  }
+
+  document.getElementById('overviewGrid').innerHTML = cards.map(c => `
+    <div class="ov-card">
+      <div class="ov-icon" style="background:${c.bg};color:${c.col}"><i class="${c.icon}"></i></div>
+      <div class="ov-val" style="color:${c.col}">${typeof c.val==='number'?c.val.toLocaleString('id-ID'):c.val}</div>
+      <div class="ov-lab">${c.lab}</div>
+    </div>`).join('');
 
   // Bio
   const bioEl = document.getElementById('bioText');
-  if (p.bio) bioEl.textContent = p.bio;
-  else bioEl.innerHTML = `<span class="bio-empty">Belum ada bio.</span>`;
+  bioEl.style.cssText = 'font-size:13px;color:var(--txt2);line-height:1.7';
+  bioEl.innerHTML = p.bio ? esc(p.bio) : '<span style="font-style:italic;opacity:.5">Belum ada bio. Klik Edit untuk menambahkan.</span>';
 
-  // Info list
-  const infos = [];
-  if (p.location) infos.push(`<div class="info-row"><i class="fas fa-location-dot"></i><span>${esc(p.location)}</span></div>`);
-  if (p.website)  infos.push(`<div class="info-row"><i class="fas fa-link"></i><a href="${esc(p.website)}" target="_blank">${esc(p.website.replace('https://',''))}</a></div>`);
-  if (p.store_hours) infos.push(`<div class="info-row"><i class="fas fa-clock"></i><span>${esc(p.store_hours)}</span></div>`);
-  if (p.created_at)  infos.push(`<div class="info-row"><i class="fas fa-calendar"></i><span>Bergabung ${fmtDate(p.created_at)}</span></div>`);
-  if (p.whatsapp && p.privacy_wa !== false) infos.push(`<div class="info-row"><i class="fab fa-whatsapp" style="color:#25d366"></i><a href="https://wa.me/${(p.whatsapp||'').replace(/\D/g,'')}" target="_blank">${esc(p.whatsapp)}</a></div>`);
-  document.getElementById('infoList').innerHTML = infos.join('');
-
-  // Social
-  const socials = [];
-  if (p.telegram)  socials.push(`<a class="social-btn sb-tg" href="${p.telegram.startsWith('http') ? p.telegram : 'https://t.me/'+p.telegram.replace('@','')}" target="_blank"><i class="fab fa-telegram"></i></a>`);
-  if (p.instagram) socials.push(`<a class="social-btn sb-ig" href="https://instagram.com/${p.instagram.replace('@','')}" target="_blank"><i class="fab fa-instagram"></i></a>`);
-  if (p.twitter)   socials.push(`<a class="social-btn sb-tw" href="https://twitter.com/${p.twitter.replace('@','')}" target="_blank"><i class="fab fa-twitter"></i></a>`);
-  if (p.youtube)   socials.push(`<a class="social-btn sb-yt" href="${p.youtube}" target="_blank"><i class="fab fa-youtube"></i></a>`);
-  if (p.discord)   socials.push(`<a class="social-btn" href="#" style="color:#5865f2" title="${esc(p.discord)}"><i class="fab fa-discord"></i></a>`);
-  document.getElementById('socialRow').innerHTML = socials.join('');
-
-  // Level / XP
-  const xp    = viewProfile.xp || 0;
-  const level = calcLevel(xp);
-  document.getElementById('levelNum').textContent  = level.level;
-  document.getElementById('levelName').textContent = level.name;
-  document.getElementById('xpVal').textContent     = xp;
-  document.getElementById('xpCurrent').textContent = `${xp} XP`;
-  document.getElementById('xpNext').textContent    = `${level.nextXP - xp} XP untuk Level ${level.level+1}`;
-  setTimeout(() => { document.getElementById('xpFill').style.width = level.pct + '%'; }, 200);
-
-  // Achievements
-  renderAchievements();
+  // Activity
+  const acts = [];
+  myOrders.slice(0,4).forEach(o => acts.push({
+    icon:'fas fa-shopping-cart', col:'var(--accent)',
+    txt:`Membeli <strong>${esc(o.products?.name||'Produk')}</strong>`, time: o.created_at
+  }));
+  const feed = document.getElementById('actList');
+  feed.innerHTML = acts.length ? acts.map(a=>`
+    <div class="act-item">
+      <div class="act-icon" style="background:rgba(74,125,255,.08);color:${a.col}"><i class="${a.icon}" style="font-size:13px"></i></div>
+      <div><div class="act-txt">${a.txt}</div><div class="act-time">${timeAgo(a.time)}</div></div>
+    </div>`).join('') : `<div class="empty"><i class="fas fa-bolt"></i><p>Belum ada aktivitas</p></div>`;
 }
 
-function calcLevel(xp) {
-  const levels = [
-    { level:1, name:'Newcomer',   min:0,    next:100  },
-    { level:2, name:'Explorer',   min:100,  next:300  },
-    { level:3, name:'Trader',     min:300,  next:700  },
-    { level:4, name:'Pro Seller', min:700,  next:1500 },
-    { level:5, name:'Elite',      min:1500, next:3000 },
-    { level:6, name:'Legend',     min:3000, next:6000 },
-    { level:7, name:'Master',     min:6000, next:9999 },
-  ];
-  let cur = levels[0];
-  for (const l of levels) { if (xp >= l.min) cur = l; }
-  const pct = Math.min(((xp - cur.min) / (cur.next - cur.min)) * 100, 100).toFixed(1);
-  return { ...cur, nextXP: cur.next, pct };
+// ── BUYER ORDERS ──
+function buildOrders() {
+  const el = document.getElementById('buyerOrders');
+  if (!myOrders.length) {
+    el.innerHTML = `<div class="empty"><i class="fas fa-receipt"></i><p>Belum ada pesanan.<br><a href="index.html" style="color:var(--accent)">Yuk mulai belanja!</a></p></div>`;
+    return;
+  }
+  const statusColor = { completed:'var(--success)', pending:'var(--warn)', cancelled:'var(--danger)', processing:'var(--accent)' };
+  const statusLabel = { completed:'Selesai', pending:'Menunggu', cancelled:'Dibatalkan', processing:'Diproses' };
+  el.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px">` + myOrders.map(o => `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:14px 16px;display:flex;align-items:center;gap:14px">
+      <div style="width:44px;height:44px;border-radius:8px;background:var(--nav);border:1px solid var(--border);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--txt2)">
+        ${o.products?.image_url ? `<img src="${CLD_BASE}${o.products.image_url}" style="width:100%;height:100%;object-fit:cover"/>` : '<i class="fas fa-box"></i>'}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(o.products?.name||'Produk')}</div>
+        <div style="font-size:11px;color:var(--txt2);margin-top:2px">${timeAgo(o.created_at)}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:13px;font-weight:700;color:var(--accent)">${fmtRp(o.total_price||o.amount||0)}</div>
+        <span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:${statusColor[o.status]||'var(--accent)'}22;color:${statusColor[o.status]||'var(--accent)'}">${statusLabel[o.status]||o.status||'Pending'}</span>
+      </div>
+    </div>`).join('') + `</div>`;
 }
 
-function renderAchievements() {
-  const p = viewProfile;
-  const totalSold = allProducts.reduce((a,x)=>a+(x.sold_count||0),0);
-  const achievements = [
-    { icon:'fas fa-star',         color:'var(--warn)',    name:'First Sale',   tip:'Penjualan pertama',     unlocked: totalSold >= 1 },
-    { icon:'fas fa-fire',         color:'var(--danger)',  name:'Top Seller',   tip:'50+ produk terjual',    unlocked: totalSold >= 50 },
-    { icon:'fas fa-shield',       color:'var(--accent)',  name:'Verified',     tip:'Akun terverifikasi',    unlocked: !!p.is_verified },
-    { icon:'fas fa-gem',          color:'var(--cyan)',    name:'Premium',      tip:'Member premium',        unlocked: p.role === 'seller' },
-    { icon:'fas fa-people-group', color:'var(--purple)',  name:'Social',       tip:'50+ pengikut',          unlocked: allFollowers.length >= 50 },
-    { icon:'fas fa-comment',      color:'var(--success)', name:'Responsive',   tip:'Balas chat < 1 jam',    unlocked: false },
-    { icon:'fas fa-box-open',     color:'var(--warn)',    name:'20 Produk',    tip:'20+ listing aktif',     unlocked: allProducts.length >= 20 },
-    { icon:'fas fa-crown',        color:'#ffd700',        name:'Legend',       tip:'Level 6 atau lebih',    unlocked: calcLevel(p.xp||0).level >= 6 },
-  ];
-  document.getElementById('badgesGrid').innerHTML = achievements.map(a => `
-    <div class="ach-badge ${a.unlocked?'':'locked'}" title="${a.tip}">
-      <i class="${a.icon}" style="color:${a.unlocked ? a.color : 'var(--txt2)'}"></i>
-      <span>${a.name}</span>
-      <div class="ach-tooltip">${a.tip}</div>
+// ── SELLER PANEL ──
+function buildSellerPanel() {
+  const role = cProfile?.role;
+  if (!['seller','admin'].includes(role)) return;
+
+  const totalSold    = myProds.reduce((a,x)=>a+(x.sold_count||0),0);
+  const totalRevenue = myProds.reduce((a,x)=>a+(x.sold_count||0)*(x.price||0),0);
+  const activeProds  = myProds.filter(x=>x.is_active).length;
+
+  document.getElementById('sellerStats').innerHTML = [
+    { val:myProds.length,                      lab:'Total Produk',   col:'var(--accent)' },
+    { val:totalSold,                            lab:'Total Terjual',  col:'var(--success)' },
+    { val:fmtRp(totalRevenue),                 lab:'Est. Omzet',     col:'var(--warn)' },
+  ].map(s=>`
+    <div class="ss-card">
+      <div class="ss-val" style="color:${s.col}">${typeof s.val==='number'?s.val.toLocaleString('id-ID'):s.val}</div>
+      <div class="ss-lab">${s.lab}</div>
+    </div>`).join('');
+
+  const grid = document.getElementById('sellerProds');
+  grid.innerHTML = myProds.length ? myProds.slice(0,6).map(p=>`
+    <div class="prod-card" onclick="location.href='seller-dashboard.html?tab=produk'">
+      <div class="pc-img">${p.image_url?`<img src="${CLD_BASE}${p.image_url}" alt="${esc(p.name)}"/>`:'<i class="fas fa-box-open"></i>'}</div>
+      <div class="pc-body">
+        <div class="pc-cat">${esc(p.category||'Produk')}</div>
+        <div class="pc-name">${esc(p.name)}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+          <div class="pc-price">${fmtRp(p.price)}</div>
+          <span class="chip ${p.is_active?'chip-g':'chip-r'}" style="font-size:9px;padding:2px 6px">${p.is_active?'Aktif':'Off'}</span>
+        </div>
+      </div>
+    </div>`).join('') + (myProds.length>6?`<div style="grid-column:1/-1;text-align:center;padding:12px"><a href="seller-dashboard.html" class="btn bg bsm">Lihat semua ${myProds.length} produk →</a></div>`:'')
+    : `<div class="empty" style="grid-column:1/-1"><i class="fas fa-box-open"></i><p>Belum ada produk.<br><a href="seller-dashboard.html" style="color:var(--accent)">Tambah produk sekarang</a></p></div>`;
+}
+
+// ── CS PANEL ──
+function buildCsPanel() {
+  const role = cProfile?.role;
+  if (!['cs','admin'].includes(role)) return;
+  document.getElementById('csCards').innerHTML = [
+    { val:'—', lab:'Tiket Aktif',    col:'var(--warn)',    icon:'fas fa-ticket' },
+    { val:'—', lab:'Diselesaikan',   col:'var(--success)', icon:'fas fa-circle-check' },
+    { val:'—', lab:'Rata-rata Resp', col:'var(--accent)',  icon:'fas fa-clock' },
+    { val:'—', lab:'Rating CS',      col:'var(--warn)',    icon:'fas fa-star' },
+  ].map(c=>`
+    <div class="cs-card">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <i class="${c.icon}" style="color:${c.col};font-size:14px"></i>
+        <span style="font-size:11px;color:var(--txt2)">${c.lab}</span>
+      </div>
+      <div class="cs-val" style="color:${c.col}">${c.val}</div>
     </div>`).join('');
 }
 
-// ══ PRODUCTS ══
-function renderProducts() {
-  const grid = document.getElementById('productGrid');
-  if (!allProducts.length) {
-    grid.innerHTML = `<div class="prod-empty" style="grid-column:1/-1">
-      <i class="fas fa-box-open"></i>
-      <p>${isOwnProfile ? 'Belum ada produk. <a href="seller-dashboard.html" style="color:var(--accent)">Tambah sekarang</a>' : 'Belum ada produk.'}</p>
-    </div>`;
-    return;
-  }
-  grid.innerHTML = allProducts.map(p => {
-    const img = p.image_url ? `<img src="${CLD_BASE}${p.image_url}" alt="${esc(p.name)}" loading="lazy" />` : `<i class="fas fa-box-open"></i>`;
-    return `<div class="prod-card anim-in" onclick="openProdDetail('${p.id}')">
-      <div class="pc-img">
-        ${img}
-        ${p.sold_count ? `<div class="pc-sold">${p.sold_count}x terjual</div>` : ''}
-      </div>
-      <div class="pc-body">
-        <div class="pc-cat">${esc(p.category||'—')}</div>
-        <div class="pc-name" title="${esc(p.name)}">${esc(p.name)}</div>
-        <div class="pc-footer">
-          <div class="pc-price">${fmtRp(p.price)}</div>
-          ${p.avg_rating ? `<div class="pc-rating">★ ${Number(p.avg_rating).toFixed(1)}</div>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+// ── ADMIN PANEL ──
+function buildAdminPanel() {
+  if (cProfile?.role !== 'admin') return;
+  document.getElementById('adminCards').innerHTML = [
+    { icon:'fas fa-users',           bg:'rgba(74,125,255,.1)', col:'var(--accent)',  lab:'Total User',    val:'—' },
+    { icon:'fas fa-boxes-stacked',   bg:'rgba(34,197,94,.1)',  col:'var(--success)', lab:'Produk Aktif',  val:'—' },
+    { icon:'fas fa-money-bill-wave', bg:'rgba(245,158,11,.1)', col:'var(--warn)',    lab:'Deposit Today', val:'—' },
+    { icon:'fas fa-receipt',         bg:'rgba(168,85,247,.1)', col:'var(--purple)',  lab:'Orders Total',  val:'—' },
+  ].map(c=>`
+    <div class="ov-card">
+      <div class="ov-icon" style="background:${c.bg};color:${c.col}"><i class="${c.icon}"></i></div>
+      <div class="ov-val" style="color:${c.col}">${c.val}</div>
+      <div class="ov-lab">${c.lab}</div>
+    </div>`).join('');
+
+  // Load admin stats async
+  loadAdminStats();
+
+  document.getElementById('adminLinks').innerHTML = [
+    { href:'admin-panel.html',    icon:'fas fa-chart-pie',   label:'Admin Panel',     col:'var(--accent)' },
+    { href:'deposit-admin.html',  icon:'fas fa-qrcode',      label:'Kelola Deposit',  col:'var(--warn)' },
+    { href:'info-admin.html',     icon:'fas fa-bell',        label:'Kelola Info',     col:'var(--purple)' },
+    { href:'seller-dashboard.html',icon:'fas fa-store',      label:'Seller View',     col:'var(--success)' },
+    { href:'cs-dashboard.html',   icon:'fas fa-headset',     label:'CS View',         col:'var(--cyan)' },
+  ].map(l=>`<a href="${l.href}" class="btn bg" style="flex:auto;justify-content:center"><i class="${l.icon}" style="color:${l.col}"></i> ${l.label}</a>`).join('');
 }
 
-async function openProdDetail(id) {
-  openMo('prodDetailModal');
-  const body = document.getElementById('prodDetailBody');
-  body.innerHTML = '<div class="lc"><div class="sp"></div></div>';
-
-  const p = allProducts.find(x=>x.id===id);
-  if (!p) { body.innerHTML = '<p style="color:var(--txt2);padding:20px">Produk tidak ditemukan</p>'; return; }
-
-  const { data: testis } = await sb.from('testimonials').select('*, profiles(username, avatar_url)').eq('product_id', id).limit(3);
-
-  const imgHtml = p.image_url ? `<img src="${CLD_BASE}${p.image_url}" alt="${esc(p.name)}" style="width:100%; border-radius:var(--rsm); margin-bottom:16px; object-fit:cover; max-height:220px" />` : '';
-  body.innerHTML = `
-    ${imgHtml}
-    <div style="font-size:11px; color:var(--accent); font-weight:600; letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px">${esc(p.category||'Produk')}</div>
-    <div style="font-size:18px; font-weight:700; margin-bottom:8px">${esc(p.name)}</div>
-    <div style="display:flex; gap:14px; align-items:center; margin-bottom:14px; flex-wrap:wrap">
-      <div style="font-size:22px; font-weight:800; color:var(--accent)">${fmtRp(p.price)}</div>
-      ${p.avg_rating ? `<div style="color:var(--warn); font-size:14px">★ ${Number(p.avg_rating).toFixed(1)}</div>` : ''}
-      ${p.sold_count ? `<div style="font-size:12px; color:var(--txt2)">${p.sold_count}x terjual</div>` : ''}
-    </div>
-    <div style="font-size:13px; color:var(--txt2); line-height:1.7; margin-bottom:16px">${esc(p.description||'Tidak ada deskripsi.')}</div>
-    ${testis && testis.length ? `
-      <div style="font-size:13px; font-weight:600; margin-bottom:10px"><i class="fas fa-star" style="color:var(--warn); margin-right:6px"></i>Testimoni</div>
-      <div style="display:flex; flex-direction:column; gap:8px">
-        ${testis.map(t => `
-          <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:10px 12px">
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px">
-              <div style="width:26px; height:26px; border-radius:50%; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:var(--accent); overflow:hidden">
-                ${t.profiles?.avatar_url ? `<img src="${CLD_BASE}${t.profiles.avatar_url}" style="width:100%;height:100%;object-fit:cover"/>` : (t.profiles?.username||'U')[0].toUpperCase()}
-              </div>
-              <div style="font-size:12px; font-weight:500">${esc(t.profiles?.username||'—')}</div>
-              <div style="margin-left:auto; color:var(--warn); font-size:12px">${'★'.repeat(t.rating||5)}</div>
-            </div>
-            <div style="font-size:12px; color:var(--txt2)">${esc(t.comment||'')}</div>
-          </div>`).join('')}
-      </div>` : ''}`;
-
-  document.getElementById('prodDetailFoot').innerHTML = `
-    <button class="btn bg" onclick="closeMo('prodDetailModal')">Tutup</button>
-    <button class="btn bp" onclick="buyProduct('${p.id}','${esc(p.name)}')" style="flex:1"><i class="fas fa-shopping-cart"></i> Beli Sekarang</button>`;
+async function loadAdminStats() {
+  try {
+    const [u, p, o] = await Promise.all([
+      sb.from('profiles').select('*',{count:'exact',head:true}),
+      sb.from('products').select('*',{count:'exact',head:true}).eq('is_active',true),
+      sb.from('orders').select('*',{count:'exact',head:true}),
+    ]);
+    const cards = document.querySelectorAll('#adminCards .ov-val');
+    if (cards[0]) cards[0].textContent = (u.count||0).toLocaleString('id-ID');
+    if (cards[1]) cards[1].textContent = (p.count||0).toLocaleString('id-ID');
+    if (cards[3]) cards[3].textContent = (o.count||0).toLocaleString('id-ID');
+  } catch(e) {}
 }
 
-function buyProduct(id, name) {
-  if (!currentUser) { toast('Login dulu untuk membeli', 'e'); closeMo('prodDetailModal'); return; }
-  toast(`Fitur pembelian "${name}" segera hadir 🛒`, 'w');
+// ── FILL EDIT FORM ──
+function fillEditForm() {
+  const p = cProfile;
+  const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.value=v||''; };
+  set('eu',  p.username);
+  set('efn', p.full_name);
+  set('ewa', p.whatsapp);
+  set('eloc',p.location);
+  set('eweb',p.website);
+  set('esn', p.store_name);
+  set('esd', p.store_description);
+  set('esc', p.store_category);
+  set('ehs', p.store_hours);
+  set('etg', p.telegram);
+  set('eig', p.instagram);
+  set('etw', p.twitter);
+  set('edi', p.discord);
+  // Show store fields for seller/admin
+  const sf = document.getElementById('storeFields');
+  if (sf) sf.style.display = ['seller','admin'].includes(p.role) ? 'block' : 'none';
 }
 
-// ══ REVIEWS ══
-function renderReviews() {
-  const total   = allReviews.length;
-  const avg     = total ? (allReviews.reduce((a,r)=>a+(r.rating||5),0)/total).toFixed(1) : 0;
-  const dist    = [5,4,3,2,1].map(n => ({ star:n, count: allReviews.filter(r=>(r.rating||5)===n).length }));
-
-  document.getElementById('reviewSummary').innerHTML = `
-    <div class="rs-big">
-      <div class="rs-score">${avg || '—'}</div>
-      <div class="rs-stars">${'★'.repeat(Math.round(avg||0))}${'☆'.repeat(5-Math.round(avg||0))}</div>
-      <div class="rs-count">${total} ulasan</div>
-    </div>
-    <div class="rs-bars">
-      ${dist.map(d => `
-        <div class="rb-row">
-          <div class="rb-label">${d.star}</div>
-          <div class="rb-bar"><div class="rb-fill" style="width:${total ? (d.count/total*100).toFixed(0) : 0}%"></div></div>
-          <div class="rb-cnt">${d.count}</div>
-        </div>`).join('')}
-    </div>`;
-
-  const list = document.getElementById('reviewList');
-  list.innerHTML = allReviews.length ? allReviews.map(r => {
-    const u = r.profiles || {};
-    const avHtml = u.avatar_url ? `<img src="${CLD_BASE}${u.avatar_url}" />` : (u.username||'U')[0].toUpperCase();
-    return `<div class="review-item anim-in">
-      <div class="ri-top">
-        <div class="ri-av">${avHtml}</div>
-        <div>
-          <div class="ri-name">${esc(u.username||'Anonymous')}</div>
-          <div class="ri-date">${fmtDate(r.created_at)}</div>
-        </div>
-        <div class="ri-stars">${'★'.repeat(r.rating||5)}${'☆'.repeat(5-(r.rating||5))}</div>
-      </div>
-      <div class="ri-text">${esc(r.comment||'')}</div>
-      ${isOwnProfile && r.reply ? `<div class="ri-reply"><div class="rr-label">Balasan Seller</div><div class="rr-text">${esc(r.reply)}</div></div>` : ''}
-    </div>`;
-  }).join('') : `<div style="text-align:center; padding:48px; color:var(--txt2)"><i class="fas fa-star" style="font-size:30px; display:block; margin-bottom:12px; opacity:.3"></i>Belum ada ulasan</div>`;
-}
-
-// ══ ACTIVITY ══
-function renderActivity() {
-  const feed = document.getElementById('activityFeed');
-  const acts = [];
-
-  // Products as activities
-  allProducts.slice(0,5).forEach(p => acts.push({
-    icon: 'fas fa-box', color: 'var(--accent)',
-    text: `Menambahkan produk <strong>${esc(p.name)}</strong>`,
-    time: p.created_at
-  }));
-  // Reviews received
-  allReviews.slice(0,3).forEach(r => acts.push({
-    icon: 'fas fa-star', color: 'var(--warn)',
-    text: `Mendapat ulasan ${'★'.repeat(r.rating||5)} dari <strong>${esc(r.profiles?.username||'—')}</strong>`,
-    time: r.created_at
-  }));
-  // Follower events
-  allFollowers.slice(0,3).forEach(f => acts.push({
-    icon: 'fas fa-user-plus', color: 'var(--success)',
-    text: `<strong>${esc(f.profiles?.username||'—')}</strong> mulai mengikuti`,
-    time: f.created_at
-  }));
-
-  acts.sort((a,b) => new Date(b.time) - new Date(a.time));
-
-  feed.innerHTML = acts.length ? acts.slice(0,12).map(a => `
-    <div class="af-item">
-      <div class="af-icon" style="background:rgba(74,125,255,.08)"><i class="${a.icon}" style="color:${a.color}; font-size:14px"></i></div>
-      <div class="af-content">
-        <div class="act">${a.text}</div>
-        <div class="t">${timeAgo(a.time)}</div>
-      </div>
-    </div>`).join('') :
-    `<div style="text-align:center; padding:48px; color:var(--txt2); font-size:13px"><i class="fas fa-bolt" style="font-size:28px; display:block; margin-bottom:10px; opacity:.3"></i>Belum ada aktivitas</div>`;
-}
-
-// ══ STORE INFO ══
-function renderStoreInfo() {
-  const p = viewProfile;
-  document.getElementById('storeInfoPanel').innerHTML = `
-    ${p.store_banner ? `<div class="store-hero"><img src="${CLD_BASE}${p.store_banner}" alt="store banner" /></div>` : ''}
-    <div class="store-info-grid">
-      <div class="sif"><div class="k">Nama Toko</div><div class="v">${esc(p.store_name||p.username||'—')}</div></div>
-      <div class="sif"><div class="k">Kategori</div><div class="v">${esc(p.store_category||'—')}</div></div>
-      <div class="sif"><div class="k">Total Produk</div><div class="v">${allProducts.length}</div></div>
-      <div class="sif"><div class="k">Total Terjual</div><div class="v" style="color:var(--success)">${allProducts.reduce((a,x)=>a+(x.sold_count||0),0)}</div></div>
-      <div class="sif"><div class="k">Rating Toko</div><div class="v" style="color:var(--warn)">${allReviews.length ? (allReviews.reduce((a,r)=>a+(r.rating||5),0)/allReviews.length).toFixed(1)+'★' : '—'}</div></div>
-      <div class="sif"><div class="k">Bergabung</div><div class="v">${fmtDate(p.created_at)}</div></div>
-      ${p.store_hours ? `<div class="sif" style="grid-column:1/-1"><div class="k">Jam Operasional</div><div class="v">${esc(p.store_hours)}</div></div>` : ''}
-    </div>
-    ${p.store_description ? `<div style="background:var(--nav); border:1px solid var(--border); border-radius:var(--rsm); padding:14px 16px; font-size:13px; color:var(--txt2); line-height:1.7">${esc(p.store_description)}</div>` : ''}
-    ${p.store_link ? `<div style="margin-top:12px"><a href="${esc(p.store_link)}" target="_blank" class="btn bp bsm"><i class="fas fa-link"></i> Kunjungi Link Toko</a></div>` : ''}`;
-}
-
-// ══ FOLLOW/FOLLOWING ══
-function renderFollowers() {
-  const grid = document.getElementById('followersGrid');
-  grid.innerHTML = allFollowers.length ? allFollowers.map(f => {
-    const u = f.profiles || {};
-    const nm = u.username || 'User';
-    return `<div class="follow-card">
-      <div class="fc-av">${u.avatar_url ? `<img src="${CLD_BASE}${u.avatar_url}" />` : nm[0].toUpperCase()}</div>
-      <div><div class="fc-name">${esc(nm)}</div><div class="fc-role">${u.role||'buyer'}</div></div>
-      ${currentUser && f.follower_id !== currentUser.id ? `<button class="fc-btn" onclick="quickFollow('${f.follower_id}',this)">Ikuti</button>` : ''}
-    </div>`;
-  }).join('') : `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--txt2)"><i class="fas fa-users" style="font-size:30px; display:block; margin-bottom:10px; opacity:.3"></i>Belum ada pengikut</div>`;
-}
-
-function renderFollowing() {
-  const grid = document.getElementById('followingGrid');
-  grid.innerHTML = allFollowing.length ? allFollowing.map(f => {
-    const u = f.profiles || {};
-    const nm = u.username || 'User';
-    return `<div class="follow-card">
-      <div class="fc-av">${u.avatar_url ? `<img src="${CLD_BASE}${u.avatar_url}" />` : nm[0].toUpperCase()}</div>
-      <div><div class="fc-name">${esc(nm)}</div><div class="fc-role">${u.role||'buyer'}</div></div>
-      <a href="profil.html?id=${f.following_id}" class="fc-btn">Lihat</a>
-    </div>`;
-  }).join('') : `<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--txt2)"><i class="fas fa-user-plus" style="font-size:30px; display:block; margin-bottom:10px; opacity:.3"></i>Belum mengikuti siapapun</div>`;
-}
-
-// ══ FOLLOW ACTION ══
-async function toggleFollow() {
-  if (!currentUser) { toast('Login dulu untuk mengikuti', 'e'); return; }
-  const btn = document.getElementById('followBtn');
-  if (isFollowing) {
-    await sb.from('follows').delete().eq('follower_id', currentUser.id).eq('following_id', profileId);
-    isFollowing = false;
-    btn.innerHTML = `<i class="fas fa-user-plus"></i> Ikuti`;
-    btn.classList.remove('following');
-    toast('Berhenti mengikuti');
-  } else {
-    await sb.from('follows').insert([{ follower_id: currentUser.id, following_id: profileId, created_at: new Date().toISOString() }]);
-    isFollowing = true;
-    btn.innerHTML = `<i class="fas fa-user-check"></i> Mengikuti`;
-    btn.classList.add('following');
-    toast('Berhasil mengikuti ✅', 's');
-  }
-  await loadFollowers();
-  document.getElementById('st-followers').textContent = allFollowers.length;
-}
-
-async function quickFollow(uid, btn) {
-  if (!currentUser) { toast('Login dulu', 'e'); return; }
-  await sb.from('follows').insert([{ follower_id: currentUser.id, following_id: uid, created_at: new Date().toISOString() }]);
-  btn.textContent = 'Mengikuti';
-  btn.style.color = 'var(--success)';
-  btn.style.borderColor = 'var(--success)';
-  toast('Berhasil mengikuti ✅', 's');
-}
-
-function startMessage() {
-  if (!currentUser) { toast('Login dulu untuk mengirim pesan', 'e'); return; }
-  toast('Fitur pesan segera hadir 💬', 'w');
-}
-
-// ══ SHARE ══
-function toggleShareMenu() {
-  document.getElementById('shareMenu').classList.toggle('open');
-}
-function copyLink() {
-  navigator.clipboard.writeText(location.href);
-  toast('Link disalin ✅', 's');
-  document.getElementById('shareMenu').classList.remove('open');
-}
-function shareWa() { window.open(`https://wa.me/?text=${encodeURIComponent('Lihat profil ini di XREZZKY: '+location.href)}`,'_blank'); }
-function shareTg() { window.open(`https://t.me/share/url?url=${encodeURIComponent(location.href)}&text=${encodeURIComponent('Profil XREZZKY')}`,'_blank'); }
-function shareTw() { window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(location.href)}&text=${encodeURIComponent('Lihat profil di XREZZKY!')}`,'_blank'); }
-document.addEventListener('click', e => { if (!e.target.closest('.share-menu-wrap')) document.getElementById('shareMenu')?.classList.remove('open'); });
-
-// ══ BIO EDIT (inline) ══
-function editBio() {
-  const bioEl   = document.getElementById('bioText');
-  const editEl  = document.getElementById('bioEditArea');
-  const inpEl   = document.getElementById('bioInput');
-  bioEl.style.display  = 'none';
-  editEl.style.display = 'block';
-  inpEl.value = viewProfile.bio || '';
-  updateCharCount();
-  inpEl.focus();
-}
-function cancelBioEdit() {
-  document.getElementById('bioText').style.display  = '';
-  document.getElementById('bioEditArea').style.display = 'none';
-}
-async function saveBio() {
-  const bio = document.getElementById('bioInput').value.trim();
-  const { error } = await sb.from('profiles').update({ bio }).eq('id', currentUser.id);
-  if (error) return toast('Gagal: ' + error.message, 'e');
-  viewProfile.bio = bio;
-  const bioEl = document.getElementById('bioText');
-  bioEl.textContent = bio || ''; if (!bio) bioEl.innerHTML = '<span class="bio-empty">Belum ada bio.</span>';
-  cancelBioEdit();
-  toast('Bio diperbarui ✅', 's');
-}
-function updateCharCount() {
-  const v = document.getElementById('bioInput').value.length;
-  document.getElementById('bioCharCount').textContent = `${v}/200`;
-}
-
-// ══ EDIT MODAL ══
-function openEditModal() {
-  if (!currentUser) return;
-  const p = viewProfile;
-  const set = (id, val) => { const el=document.getElementById(id); if(el) el.value=val||''; };
-  set('e-username',   p.username);
-  set('e-fullname',   p.full_name);
-  set('e-bio',        p.bio);
-  set('e-wa',         p.whatsapp);
-  set('e-location',   p.location);
-  set('e-website',    p.website);
-  set('e-storename',  p.store_name);
-  set('e-storedesc',  p.store_description);
-  set('e-storecat',   p.store_category);
-  set('e-hours',      p.store_hours);
-  set('e-storebanner',p.store_banner);
-  set('e-telegram',   p.telegram);
-  set('e-instagram',  p.instagram);
-  set('e-twitter',    p.twitter);
-  set('e-youtube',    p.youtube);
-  set('e-discord',    p.discord);
-  set('e-email',      p.email || currentUser.email);
-  if (document.getElementById('e-bio')) {
-    const ta = document.getElementById('e-bio');
-    ta.nextElementSibling.textContent = (ta.value.length)+'/200';
-  }
-
-  // Edit avatar preview
-  const editAv = document.getElementById('editAv');
-  if (p.avatar_url) editAv.innerHTML = `<img src="${CLD_BASE}${p.avatar_url}" />`;
-  else editAv.textContent = (p.username||'U')[0].toUpperCase();
-
-  openMo('editModal');
-}
-
-async function saveEditProfile() {
+async function saveProfile() {
   const payload = {
-    username:          document.getElementById('e-username').value.trim(),
-    full_name:         document.getElementById('e-fullname').value.trim(),
-    bio:               document.getElementById('e-bio').value.trim(),
-    whatsapp:          document.getElementById('e-wa').value.trim(),
-    location:          document.getElementById('e-location').value.trim(),
-    website:           document.getElementById('e-website').value.trim(),
-    store_name:        document.getElementById('e-storename').value.trim(),
-    store_description: document.getElementById('e-storedesc').value.trim(),
-    store_category:    document.getElementById('e-storecat').value,
-    store_hours:       document.getElementById('e-hours').value.trim(),
-    store_banner:      document.getElementById('e-storebanner').value.trim() || null,
-    telegram:          document.getElementById('e-telegram').value.trim(),
-    instagram:         document.getElementById('e-instagram').value.trim(),
-    twitter:           document.getElementById('e-twitter').value.trim(),
-    youtube:           document.getElementById('e-youtube').value.trim(),
-    discord:           document.getElementById('e-discord').value.trim(),
+    username:          document.getElementById('eu')?.value.trim(),
+    full_name:         document.getElementById('efn')?.value.trim(),
+    whatsapp:          document.getElementById('ewa')?.value.trim(),
+    location:          document.getElementById('eloc')?.value.trim(),
+    website:           document.getElementById('eweb')?.value.trim(),
+    store_name:        document.getElementById('esn')?.value.trim(),
+    store_description: document.getElementById('esd')?.value.trim(),
+    store_category:    document.getElementById('esc')?.value,
+    store_hours:       document.getElementById('ehs')?.value.trim(),
+    telegram:          document.getElementById('etg')?.value.trim(),
+    instagram:         document.getElementById('eig')?.value.trim(),
+    twitter:           document.getElementById('etw')?.value.trim(),
+    discord:           document.getElementById('edi')?.value.trim(),
   };
   if (!payload.username) return toast('Username wajib diisi', 'e');
-
-  const { error } = await sb.from('profiles').update(payload).eq('id', currentUser.id);
-  if (error) return toast('Gagal: ' + error.message, 'e');
-
-  Object.assign(viewProfile, payload);
-  closeMo('editModal');
-  renderHero();
-  renderLeftCol();
-  renderStoreInfo();
-  toast('Profil disimpan ✅', 's');
+  const { error } = await sb.from('profiles').update(payload).eq('id', cUser.id);
+  if (error) return toast('Gagal: '+error.message, 'e');
+  Object.assign(cProfile, payload);
+  buildHeader();
+  buildInfoList();
+  buildQuickLinks();
+  toast('Profil diperbarui ✅', 's');
+  switchTab('overview');
 }
 
-// ══ AVATAR UPLOADS ══
-async function uploadAvatarQuick(event) { await doAvatarUpload(event, 'avUpBar', 'avUpFill', 'mainAvatar'); }
-async function uploadAvatarModal(event) { await doAvatarUpload(event, 'editAvBar', 'editAvFill', 'editAv'); }
-
-async function doAvatarUpload(event, barId, fillId, previewId) {
-  const file = event.target.files[0];
-  if (!file) return;
-  if (file.size > 3*1024*1024) return toast('Maks 3MB', 'e');
-  const bar = document.getElementById(barId), fill = document.getElementById(fillId);
-  bar.style.display='block'; fill.style.width='20%';
-  try {
-    const fd = new FormData(); fd.append('file',file); fd.append('upload_preset',CLD_PRESET); fd.append('folder','avatars');
-    fill.style.width='60%';
-    const res  = await fetch(CLD_UPLOAD, { method:'POST', body:fd });
-    const data = await res.json();
-    fill.style.width='100%';
-    if (data.error) throw new Error(data.error.message);
-    const rel = data.public_id+'.'+data.format;
-    await sb.from('profiles').update({ avatar_url: rel }).eq('id', currentUser.id);
-    viewProfile.avatar_url = rel;
-    const prev = document.getElementById(previewId);
-    prev.innerHTML = `<img src="${data.secure_url}" alt="av" />`;
-    // Update all avatars
-    document.getElementById('mainAvatar').innerHTML = `<img src="${data.secure_url}" alt="av" />`;
-    document.getElementById('editAv').innerHTML = `<img src="${data.secure_url}" alt="av" />`;
-    toast('Foto profil diperbarui ✅', 's');
-  } catch(err) { toast('Upload gagal: '+err.message, 'e'); }
-  finally { setTimeout(()=>{ bar.style.display='none'; fill.style.width='0%'; }, 800); event.target.value=''; }
+// ── SECURITY ──
+function showSecurityEmail() {
+  const el = document.getElementById('acEmail');
+  if (el) el.value = cUser.email;
 }
 
-function triggerBannerUpload() { document.getElementById('bannerUploadInput').click(); }
-async function uploadBanner(event) {
-  const file = event.target.files[0]; if (!file) return;
-  if (file.size > 5*1024*1024) return toast('Maks 5MB untuk banner', 'e');
-  try {
-    const fd = new FormData(); fd.append('file',file); fd.append('upload_preset',CLD_PRESET); fd.append('folder','banners');
-    toast('Mengupload banner...', 'w');
-    const res  = await fetch(CLD_UPLOAD, { method:'POST', body:fd });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    const rel = data.public_id+'.'+data.format;
-    await sb.from('profiles').update({ store_banner: rel }).eq('id', currentUser.id);
-    viewProfile.store_banner = rel;
-    const bw = document.getElementById('bannerWrap');
-    const existing = bw.querySelector('img:not(.banner-overlay)');
-    if (existing) existing.src = data.secure_url;
-    else bw.insertAdjacentHTML('afterbegin', `<img src="${data.secure_url}" alt="banner" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0" />`);
-    toast('Banner diperbarui ✅', 's');
-  } catch(err) { toast('Gagal: '+err.message, 'e'); }
-  event.target.value = '';
-}
-
-// ══ CHANGE PASS ══
 async function changePass() {
-  const p1=document.getElementById('e-pass1').value, p2=document.getElementById('e-pass2').value;
+  const p1 = document.getElementById('p1')?.value;
+  const p2 = document.getElementById('p2')?.value;
   if (!p1||!p2) return toast('Isi kedua field', 'e');
   if (p1!==p2)  return toast('Password tidak cocok', 'e');
   if (p1.length<6) return toast('Min. 6 karakter', 'e');
   const { error } = await sb.auth.updateUser({ password: p1 });
   if (error) return toast('Gagal: '+error.message, 'e');
-  toast('Password diperbarui ✅', 's');
-  document.getElementById('e-pass1').value=''; document.getElementById('e-pass2').value='';
+  toast('Password berhasil diperbarui ✅', 's');
+  document.getElementById('p1').value='';
+  document.getElementById('p2').value='';
 }
 
-async function doLogout() { await sb.auth.signOut(); location.href='index.html'; }
+// ── PIN TRANSAKSI ──
+function updatePinStatus() {
+  const el = document.getElementById('pinStatus');
+  if (!el) return;
+  const hasPin = cProfile?.transaction_pin;
+  el.innerHTML = hasPin
+    ? `<span style="color:var(--success);font-weight:600"><i class="fas fa-circle-check"></i> PIN aktif</span>`
+    : `<span style="color:var(--warn);font-weight:600"><i class="fas fa-triangle-exclamation"></i> Belum ada PIN — wajib dibuat sebelum transaksi</span>`;
+}
 
-// ══ NAV BTNS ══
-function updateNavBtns() {
-  if (isOwnProfile) {
-    document.getElementById('editProfileNavBtn').style.display = 'flex';
-    document.getElementById('navAuthBtns').innerHTML = `<button class="btn bg bsm" onclick="doLogout()"><i class="fas fa-sign-out-alt"></i></button>`;
-  } else if (currentUser) {
-    document.getElementById('navAuthBtns').innerHTML = `<a href="profil.html" class="btn bg bsm"><i class="fas fa-user"></i> Profil Saya</a>`;
+function pinNext(i) {
+  const v = document.getElementById(`pin${i}`).value;
+  if (v && i < 5) document.getElementById(`pin${i+1}`).focus();
+}
+function pinBack(i, e) {
+  if (e.key==='Backspace' && !document.getElementById(`pin${i}`).value && i>0) {
+    document.getElementById(`pin${i-1}`).focus();
+  }
+}
+function cpinNext(i) {
+  const v = document.getElementById(`cpin${i}`).value;
+  if (v && i < 5) document.getElementById(`cpin${i+1}`).focus();
+}
+function cpinBack(i, e) {
+  if (e.key==='Backspace' && !document.getElementById(`cpin${i}`).value && i>0) {
+    document.getElementById(`cpin${i-1}`).focus();
   }
 }
 
-// ══ TABS ══
-function switchTab(tab, btn) {
-  activeTab = tab;
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  const panel = document.getElementById(`tp-${tab}`);
-  if (panel) panel.classList.add('active');
-  if (btn) btn.classList.add('active');
-  else {
-    const match = document.querySelector(`.tab-btn[onclick*="${tab}"]`);
-    if (match) match.classList.add('active');
+async function savePin() {
+  const pin  = [0,1,2,3,4,5].map(i=>document.getElementById(`pin${i}`)?.value||'').join('');
+  const cpin = [0,1,2,3,4,5].map(i=>document.getElementById(`cpin${i}`)?.value||'').join('');
+  if (pin.length!==6 || !/^\d{6}$/.test(pin)) return toast('PIN harus 6 digit angka', 'e');
+  if (pin!==cpin) return toast('PIN tidak cocok', 'e');
+  // Store as hash (simple base64 for demo; in prod use bcrypt via edge function)
+  const pinHash = btoa(pin);
+  const { error } = await sb.from('profiles').update({ transaction_pin: pinHash }).eq('id', cUser.id);
+  if (error) return toast('Gagal: '+error.message, 'e');
+  cProfile.transaction_pin = pinHash;
+  // Clear inputs
+  for (let i=0;i<6;i++) { document.getElementById(`pin${i}`).value=''; document.getElementById(`cpin${i}`).value=''; }
+  updatePinStatus();
+  buildBalance();
+  toast('PIN transaksi disimpan ✅', 's');
+}
+
+// ── BIO ──
+function openBioEdit() {
+  document.getElementById('bioText').style.display = 'none';
+  const ea = document.getElementById('bioEditArea');
+  ea.style.display = 'block';
+  const inp = document.getElementById('bioInp');
+  inp.value = cProfile.bio || '';
+  document.getElementById('bioCc').textContent = inp.value.length+'/200';
+  inp.focus();
+}
+function cancelBio() {
+  document.getElementById('bioText').style.display = 'block';
+  document.getElementById('bioEditArea').style.display = 'none';
+}
+async function saveBio() {
+  const bio = document.getElementById('bioInp').value.trim();
+  const { error } = await sb.from('profiles').update({ bio }).eq('id', cUser.id);
+  if (error) return toast('Gagal: '+error.message, 'e');
+  cProfile.bio = bio;
+  const el = document.getElementById('bioText');
+  el.innerHTML = bio ? esc(bio) : '<span style="font-style:italic;opacity:.5">Belum ada bio.</span>';
+  cancelBio();
+  toast('Bio diperbarui ✅', 's');
+}
+
+// ── AVATAR UPLOAD ──
+async function uploadAvatar(event) {
+  const file = event.target.files[0]; if (!file) return;
+  if (file.size > 3*1024*1024) return toast('Maks 3MB', 'e');
+  const bar = document.getElementById('avBar'), fill = document.getElementById('avFill');
+  bar.style.display='block'; fill.style.width='20%';
+  try {
+    const fd = new FormData(); fd.append('file',file); fd.append('upload_preset',CLD_PRESET); fd.append('folder','avatars');
+    fill.style.width='60%';
+    const res  = await fetch(CLD_UP, { method:'POST', body:fd });
+    const data = await res.json();
+    fill.style.width='100%';
+    if (data.error) throw new Error(data.error.message);
+    const rel = data.public_id+'.'+data.format;
+    await sb.from('profiles').update({ avatar_url: rel }).eq('id', cUser.id);
+    cProfile.avatar_url = rel;
+    const img = `<img src="${data.secure_url}" alt="av"/>`;
+    document.getElementById('mainAv').innerHTML = img;
+    const ep = document.getElementById('editAvPrev');
+    if (ep) ep.innerHTML = img;
+    updateXbnAv();
+    toast('Foto profil diperbarui ✅', 's');
+  } catch(err) { toast('Upload gagal: '+err.message, 'e'); }
+  finally { setTimeout(()=>{ bar.style.display='none'; fill.style.width='0%'; },800); event.target.value=''; }
+}
+
+function triggerBannerUpload() { document.getElementById('bannerFileInput').click(); }
+async function uploadBanner(event) {
+  const file = event.target.files[0]; if (!file) return;
+  if (file.size > 5*1024*1024) return toast('Maks 5MB', 'e');
+  try {
+    const fd = new FormData(); fd.append('file',file); fd.append('upload_preset',CLD_PRESET); fd.append('folder','banners');
+    toast('Mengupload banner...', 'w');
+    const res  = await fetch(CLD_UP, { method:'POST', body:fd });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const rel = data.public_id+'.'+data.format;
+    await sb.from('profiles').update({ store_banner: rel }).eq('id', cUser.id);
+    cProfile.store_banner = rel;
+    const bw = document.getElementById('bannerWrap');
+    let img = bw.querySelector('img:not([alt="banner-overlay"])');
+    if (!img) { img = document.createElement('img'); img.style='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0'; bw.insertBefore(img,bw.firstChild); }
+    img.src = data.secure_url;
+    toast('Banner diperbarui ✅', 's');
+  } catch(err) { toast('Gagal: '+err.message, 'e'); }
+  event.target.value = '';
+}
+
+// ── DEPOSIT GUARD ──
+function goDeposit() {
+  // cUser is guaranteed here (page requires auth), but double-check
+  if (!cUser) { location.href='index.html'; return; }
+  document.body.style.opacity = '0.6';
+  document.body.style.transition = 'opacity .18s ease';
+  setTimeout(()=>{ location.href = 'deposit.html'; }, 180);
+}
+
+// ── LOGOUT ──
+async function doLogout() {
+  await sb.auth.signOut();
+  location.href = 'index.html';
+}
+
+// ── XBN AVATAR ──
+function updateXbnAv() {
+  const el = document.getElementById('xbnAv');
+  if (!el) return;
+  if (cProfile?.avatar_url) {
+    el.innerHTML = `<img src="${CLD_BASE}${cProfile.avatar_url}" alt="av"/>`;
+  } else if (cProfile?.username) {
+    el.style.background='var(--accent)'; el.style.color='#fff';
+    el.innerHTML = `<span style="font-size:11px;font-weight:800">${cProfile.username[0].toUpperCase()}</span>`;
   }
 }
 
-function switchEtab(tab, btn) {
-  document.querySelectorAll('.etab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.etab-panel').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(`etp-${tab}`).classList.add('active');
-}
-
-// ══ MODAL ══
-function openMo(id)  { document.getElementById(id).classList.add('open'); }
-function closeMo(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.mo').forEach(el => el.addEventListener('click', e => { if(e.target===el) closeMo(el.id); }));
-document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.mo.open').forEach(m=>closeMo(m.id)); });
-
-// ══ UTILS ══
-function fmtRp(v) { if (!v&&v!==0) return '—'; if (v===0) return 'Gratis'; return 'Rp '+Number(v).toLocaleString('id-ID'); }
+// ── UTILS ──
+function fmtRp(v) { if (!v&&v!==0) return 'Rp 0'; return 'Rp '+Number(v).toLocaleString('id-ID'); }
 function fmtDate(d) { if (!d) return '—'; return new Date(d).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}); }
 function timeAgo(d) {
   if (!d) return '—';
@@ -1512,276 +1264,21 @@ function timeAgo(d) {
   if (s<2592000) return Math.floor(s/86400)+' hari lalu';
   return fmtDate(d);
 }
-function isNew(d) { return d && (Date.now()-new Date(d)) < 30*24*3600*1000; }
-function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function animVal(id, target) {
-  const el=document.getElementById(id); if(!el) return;
+function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function animVal(id, num, str) {
+  const el = document.getElementById(id); if (!el) return;
+  if (str !== undefined) { el.textContent = str; return; }
   const steps=20; let i=0;
-  const iv=setInterval(()=>{ i++; el.textContent=Math.round(target*(i/steps)).toLocaleString('id-ID'); if(i>=steps){clearInterval(iv);el.textContent=target.toLocaleString('id-ID');}},600/steps);
+  const iv=setInterval(()=>{ i++; el.textContent=Math.round(num*(i/steps)).toLocaleString('id-ID'); if(i>=steps){clearInterval(iv);el.textContent=num.toLocaleString('id-ID');}},500/steps);
 }
 function toast(msg, type='') {
   const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=msg;
   document.getElementById('tc').appendChild(el);
   setTimeout(()=>el.remove(), 3500);
 }
+
+// ── is-own-show: hide elements meant only for own profile if guest ──
+// (already all in own-profile context so no-op here, kept for future multi-profile)
 </script>
-<!-- ══ XREZZKY BOTTOM NAV — persistent fixed ══ -->
-<style>
-/* ── XBN BASE ── */
-#xbn {
-  display: none;
-  position: fixed !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  width: 100% !important;
-  z-index: 9999 !important;
-  background: rgba(23,28,36,.97);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(74,125,255,.18);
-  height: 64px;
-  padding: 0 8px;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  box-shadow: 0 -4px 24px rgba(0,0,0,.5);
-}
-#xbn .xbn-inner {
-  display: flex; align-items: center;
-  width: 100%; height: 100%;
-}
-.xbn-btn {
-  flex: 1; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 3px;
-  background: none; border: none; cursor: pointer;
-  color: #6b7a8d; font-family: 'Poppins', sans-serif;
-  padding: 4px 0; position: relative; overflow: hidden;
-  -webkit-tap-highlight-color: transparent;
-  transition: color .2s; border-radius: 12px; min-height: 52px;
-  text-decoration: none;
-}
-.xbn-btn i {
-  font-size: 21px; line-height: 1;
-  transition: transform .25s cubic-bezier(.34,1.56,.64,1), color .2s;
-  display: block;
-}
-.xbn-btn span { font-size: 10px; font-weight: 600; letter-spacing: .02em; line-height: 1; }
-.xbn-btn.active { color: #4a7dff; }
-.xbn-btn.active i { transform: translateY(-2px) scale(1.15); color: #4a7dff; }
-.xbn-btn::after {
-  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
-  width: 0; height: 3px; border-radius: 2px;
-  background: linear-gradient(90deg, #4a7dff, #7c3aed);
-  transition: width .25s cubic-bezier(.34,1.56,.64,1);
-  box-shadow: 0 0 8px rgba(74,125,255,.8);
-}
-.xbn-btn.active::after { width: 24px; }
-.xbn-btn:active { transform: scale(.88); }
-.xbn-ripple {
-  position: absolute; border-radius: 50%; pointer-events: none;
-  background: rgba(74,125,255,.25);
-  transform: scale(0); animation: xbnRipple .5s ease-out forwards;
-}
-@keyframes xbnRipple { to { transform: scale(4); opacity: 0; } }
-.xbn-fab-wrap {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding-bottom: 6px; gap: 2px;
-}
-.xbn-fab {
-  width: 52px; height: 52px; border-radius: 50%;
-  background: linear-gradient(135deg, #4a7dff 0%, #7c3aed 100%);
-  color: #fff; font-size: 22px; border: none; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 20px rgba(74,125,255,.55);
-  margin-bottom: 2px;
-  -webkit-tap-highlight-color: transparent;
-  transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
-  position: relative; overflow: hidden;
-}
-.xbn-fab:active { transform: scale(.85); box-shadow: 0 2px 10px rgba(74,125,255,.4); }
-.xbn-fab.pulse { animation: xbnFabPulse .5s cubic-bezier(.34,1.56,.64,1); }
-@keyframes xbnFabPulse {
-  0%{transform:scale(1)} 40%{transform:scale(.82)} 70%{transform:scale(1.15)} 100%{transform:scale(1)}
-}
-.xbn-fab-label { font-size: 10px; font-weight: 600; color: #9ba6b2; line-height: 1; }
-.xbn-av {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: #1d2430; border: 2px solid transparent;
-  overflow: hidden; display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; color: #6b7a8d;
-  transition: border-color .2s;
-}
-.xbn-av img { width:100%; height:100%; object-fit:cover; }
-.xbn-btn.active .xbn-av { border-color: #4a7dff; color: #4a7dff; }
-/* Page header on mobile */
-#mobilePageHeader {
-  display: none;
-  position: sticky; top: 0; z-index: 200;
-  background: #171c24; border-bottom: 1px solid #2a3442;
-  height: 52px; align-items: center; padding: 0 14px; gap: 12px;
-}
-#mobilePageHeader .mph-back {
-  width: 34px; height: 34px; border-radius: 50%;
-  background: #1d2430; border: 1px solid #2a3442; color: #f5f7fa;
-  font-size: 14px; display: flex; align-items: center; justify-content: center;
-  cursor: pointer; flex-shrink: 0; -webkit-tap-highlight-color: transparent;
-}
-#mobilePageHeader .mph-back:active { transform: scale(.9); }
-#mobilePageHeader .mph-title { font-size: 15px; font-weight: 700; color: #f5f7fa; flex: 1; }
-#mobilePageHeader .mph-logo { font-size: 11px; font-weight: 700; color: #4a7dff; opacity: .7; }
-/* Hide top nav, show bottom nav on mobile */
-@media (max-width: 900px) {
-  #xbn { display: flex !important; }
-  #mobilePageHeader { display: flex !important; }
-  nav:not(#xbn) { display: none !important; }
-  #topbar { display: none !important; }
-  #sidebar { display: none !important; }
-  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
-  body > .main, main, .page, #main { padding-bottom: 80px !important; padding-top: 0 !important; }
-  .page { min-height: calc(100vh - 52px); }
-}
-@media (min-width: 901px) {
-  #xbn { display: none !important; }
-  #mobilePageHeader { display: none !important; }
-}
-</style>
-
-<!-- Mobile Page Header -->
-<div id="mobilePageHeader">
-  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
-    <i class="fas fa-arrow-left"></i>
-  </button>
-  <div class="mph-title" id="mphTitle">XREZZKY</div>
-  <div class="mph-logo">XREZZKY</div>
-</div>
-
-<!-- Bottom Nav -->
-<div id="xbn">
-  <div class="xbn-inner">
-    <a class="xbn-btn" href="index.html" id="xbn-home" aria-label="Beranda" onclick="xbnSetActive('home')">
-      <i class="fas fa-home"></i><span>Beranda</span>
-    </a>
-    <button class="xbn-btn" id="xbn-info" onclick="xbnNavInfo(this)" aria-label="Info">
-      <i class="fas fa-bell"></i><span>Info</span>
-    </button>
-    <div class="xbn-fab-wrap">
-      <a class="xbn-fab" href="deposit.html" onclick="xbnFabAnim(this)" aria-label="Deposit">
-        <i class="fas fa-wallet"></i>
-      </a>
-      <span class="xbn-fab-label">Deposit</span>
-    </div>
-    <a class="xbn-btn" href="riwayat.html" id="xbn-riwayat" aria-label="Riwayat" onclick="xbnSetActive('riwayat')">
-      <i class="fas fa-receipt"></i><span>Riwayat</span>
-    </a>
-    <a class="xbn-btn" href="profil.html" id="xbn-profil" aria-label="Profil" onclick="xbnSetActive('profil')">
-      <div class="xbn-av" id="xbnAv"><i class="fas fa-user-circle"></i></div>
-      <span>Profil</span>
-    </a>
-  </div>
-</div>
-
-<script>
-// ── Auto-highlight active nav item based on current page ──
-(function() {
-  var page = location.pathname.split('/').pop() || 'index.html';
-  var map = {
-    'index.html':'home', '':'home',
-    'riwayat.html':'riwayat',
-    'deposit.html':'deposit',
-    'profil.html':'profil',
-    'checkout.html':'home',
-    'seller-dashboard.html':'home',
-    'cs-dashboard.html':'home',
-    'admin-panel.html':'home',
-    'deposit-admin.html':'home',
-    'info-admin.html':'home',
-  };
-  var active = map[page];
-  if (active) {
-    var el = document.getElementById('xbn-' + active);
-    if (el) el.classList.add('active');
-  }
-  // Set page title in mobile header
-  var titles = {
-    'riwayat.html':'Riwayat Transaksi',
-    'deposit.html':'Deposit Saldo',
-    'profil.html':'Profil',
-    'checkout.html':'Checkout',
-    'seller-dashboard.html':'Seller Dashboard',
-    'cs-dashboard.html':'CS Dashboard',
-    'admin-panel.html':'Admin Panel',
-    'deposit-admin.html':'Kelola Deposit',
-    'info-admin.html':'Kelola Info',
-  };
-  var titleEl = document.getElementById('mphTitle');
-  if (titleEl && titles[page]) titleEl.textContent = titles[page];
-  // Add bottom padding to content
-  document.addEventListener('DOMContentLoaded', function() {
-    if (window.innerWidth <= 900) {
-      var els = document.querySelectorAll('main, .main, .page, #main');
-      els.forEach(function(el) {
-        var pb = parseInt(getComputedStyle(el).paddingBottom) || 0;
-        if (pb < 70) el.style.paddingBottom = '80px';
-      });
-    }
-    // Load avatar from Supabase if logged in
-    if (typeof supabase !== 'undefined') {
-      try {
-        var sb2 = supabase.createClient(
-          'https://jydfjfjttpmropoczgop.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
-        );
-        sb2.auth.getSession().then(function(r) {
-          var session = r.data && r.data.session;
-          if (!session) return;
-          sb2.from('profiles').select('avatar_url,username').eq('id', session.user.id).maybeSingle().then(function(pr) {
-            var p = pr.data;
-            if (!p) return;
-            var avEl = document.getElementById('xbnAv');
-            if (!avEl) return;
-            if (p.avatar_url) {
-              avEl.innerHTML = '<img src="https://res.cloudinary.com/drjmclzbi/image/upload/' + p.avatar_url + '" alt="av"/>';
-            } else {
-              var nm = p.username || session.user.email[0];
-              avEl.style.background = '#4a7dff';
-              avEl.style.color = '#fff';
-              avEl.innerHTML = '<span style="font-size:12px;font-weight:800">' + nm[0].toUpperCase() + '</span>';
-            }
-          });
-        });
-      } catch(e) {}
-    }
-  });
-})();
-
-function xbnSetActive(tab) {
-  document.querySelectorAll('.xbn-btn').forEach(function(b){ b.classList.remove('active'); });
-  var el = document.getElementById('xbn-' + tab);
-  if (el) el.classList.add('active');
-}
-function xbnFabAnim(el) {
-  el.classList.remove('pulse');
-  void el.offsetWidth;
-  el.classList.add('pulse');
-  setTimeout(function(){ el.classList.remove('pulse'); }, 500);
-}
-function xbnNavInfo(el) {
-  // On inner pages, just go to index with info hash
-  location.href = 'index.html#info';
-}
-function xbnRipple(btn) {
-  var r = document.createElement('span');
-  r.className = 'xbn-ripple';
-  r.style.cssText = 'width:40px;height:40px;margin:-20px 0 0 -20px;top:50%;left:50%;position:absolute';
-  btn.appendChild(r);
-  setTimeout(function(){ r.remove(); }, 600);
-}
-// Add ripple to all xbn-btn clicks
-document.addEventListener('click', function(e) {
-  var btn = e.target.closest('.xbn-btn');
-  if (btn) xbnRipple(btn);
-});
-</script>
-
 </body>
 </html>
