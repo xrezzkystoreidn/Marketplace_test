@@ -646,7 +646,7 @@ function subscribeRealtime() {
 // ══ REFRESH ══
 async function refreshAll() {
   const { data, error } = await sb.from('deposit_requests')
-    .select('*, profiles(username, email, avatar_url, balance, whatsapp)')
+    .select('*, user:user_id(username, email, avatar_url, balance, whatsapp)')
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -708,7 +708,7 @@ function renderAllDeposits() {
   const sort = document.getElementById('allSort').value;
   let data   = allDeposits.filter(d => {
     const matchStatus = !allStatusFilter || d.status === allStatusFilter;
-    const matchQ = !q || (d.profiles?.username||'').toLowerCase().includes(q) || (d.profiles?.email||'').toLowerCase().includes(q);
+    const matchQ = !q || (d.user?.username||'').toLowerCase().includes(q) || (d.user?.email||'').toLowerCase().includes(q);
     return matchStatus && matchQ;
   });
   if (sort === 'newest')  data.sort((a,b) => new Date(b.created_at)-new Date(a.created_at));
@@ -734,7 +734,7 @@ function renderFilteredList(status, elementId) {
 
 // ══ RENDER CARD ══
 function renderDepCard(d, showActions) {
-  const p = d.profiles || {};
+  const p = d.user || {};
   const nm = p.username || 'User';
   const avHtml = p.avatar_url ? `<img src="${CLD_BASE}${p.avatar_url}" alt="av"/>` : nm[0].toUpperCase();
   const isUrgent = d.status === 'waiting_review' && d.expires_at && new Date(d.expires_at) - Date.now() < 3*60*1000;
@@ -882,7 +882,7 @@ function openAccModal(id) {
   const d = allDeposits.find(x => x.id === id);
   if (!d) return;
   pendingAcc = d;
-  const p = d.profiles || {};
+  const p = d.user || {};
   document.getElementById('accModalBody').innerHTML = `
     <div style="background:rgba(34,197,94,.07); border:1px solid rgba(34,197,94,.2); border-radius:var(--rsm); padding:14px 16px; margin-bottom:14px">
       <div style="font-size:12px; color:var(--txt2); margin-bottom:4px">Saldo akan ditambahkan ke akun:</div>
@@ -918,7 +918,7 @@ async function executeAcc(id) {
   btn.innerHTML = '<div class="sp" style="width:16px;height:16px;border-width:2px;margin:0"></div>';
   btn.disabled  = true;
 
-  const p = d.profiles || {};
+  const p = d.user || {};
   const newBalance = (p.balance || 0) + (d.amount || 0);
 
   // Update deposit status
@@ -1100,7 +1100,7 @@ async function loadStats() {
   const tbody = document.getElementById('statsTableBody');
   if (!tbody) return;
   tbody.innerHTML = approved.slice(0,20).map(d => {
-    const p = d.profiles || {};
+    const p = d.user || {};
     return `<tr>
       <td style="padding:10px 14px; border-bottom:1px solid var(--border)">
         <div style="font-size:13px; font-weight:500">${esc(p.username||'—')}</div>

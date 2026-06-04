@@ -253,6 +253,12 @@
           <div class="qcd-row"><span class="k">Nominal Deposit</span><span class="v" id="qd-nom">—</span></div>
           <div class="qcd-row"><span class="k">Admin Fee</span><span class="v" id="qd-fee" style="color:var(--warn)">—</span></div>
           <div class="qcd-row total-row"><span class="k">TRANSFER TEPAT</span><span class="v" id="qd-total">—</span></div>
+          <!-- Nominal exact warning box -->
+          <div id="exactWarnBox" style="margin-top:10px;background:rgba(239,68,68,.08);border:2px solid rgba(239,68,68,.3);border-radius:10px;padding:12px 14px;display:none">
+            <div style="font-size:11px;font-weight:700;color:var(--danger);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">⚠️ Transfer HARUS Persis:</div>
+            <div style="font-size:22px;font-weight:800;color:var(--danger);font-family:'Syne',sans-serif;letter-spacing:1px" id="exactAmountDisplay">—</div>
+            <div style="font-size:11px;color:var(--txt2);margin-top:4px">Lebih atau kurang 1 rupiah pun = <strong style="color:var(--danger)">TIDAK TERDETEKSI</strong></div>
+          </div>
         </div>
         <div class="qc-warning">
           <strong>⚠️ PENTING — Baca sebelum transfer!</strong>
@@ -450,14 +456,23 @@ async function proceedToQris(){
 function showQrisSection(){
   document.getElementById('step1Section').style.display='none';
   document.getElementById('qrisSection').classList.add('show');
-  document.getElementById('qd-nom').textContent=fmtRp(nominal);
-  document.getElementById('qd-fee').textContent='+'+fmtRp(adminFee);
-  document.getElementById('qd-total').textContent=fmtRp(totalTransfer);
-  const wrap=document.getElementById('qrImgWrap');
+  document.getElementById('qd-nom').textContent   = fmtRp(nominal);
+  document.getElementById('qd-fee').textContent   = adminFee > 0 ? '+'+fmtRp(adminFee) : 'Gratis';
+  document.getElementById('qd-total').textContent = fmtRp(totalTransfer);
+
+  // Show exact amount warning box
+  const wb  = document.getElementById('exactWarnBox');
+  const wad = document.getElementById('exactAmountDisplay');
+  if(wb && wad){
+    wad.textContent = fmtRp(totalTransfer);
+    wb.style.display = 'block';
+  }
+
+  const wrap = document.getElementById('qrImgWrap');
   if(qrisImageUrl){
-    wrap.innerHTML=`<img src="${CLD_BASE}${qrisImageUrl}" alt="QRIS" style="width:100%;height:100%;object-fit:contain"/>`;
+    wrap.innerHTML = `<img src="${CLD_BASE}${qrisImageUrl}" alt="QRIS" style="width:100%;height:100%;object-fit:contain"/>`;
   } else {
-    wrap.innerHTML=`<div class="qr-placeholder"><i class="fas fa-qrcode"></i><p style="font-size:11px;color:#888">QRIS belum diupload.<br/>Hubungi admin.</p></div>`;
+    wrap.innerHTML = `<div class="qr-placeholder"><i class="fas fa-qrcode"></i><p style="font-size:11px;color:#888;margin-top:8px">QRIS belum diupload.<br/>Hubungi admin.</p></div>`;
   }
 }
 
@@ -627,54 +642,74 @@ function showStatusSection(status,nom,fee,total){
 }
 
 async function checkPendingDeposit(){
-  // Get ALL non-terminal deposits for this user
-  const{data:deps}=await sb.from('deposit_requests')
+  const{data:deps,error}=await sb.from('deposit_requests')
     .select('*').eq('user_id',user.id)
     .in('status',['pending','waiting_review'])
     .order('created_at',{ascending:false})
     .limit(5);
 
-  if(!deps||!deps.length) return; // No active deposit — form is free
+  if(error){ console.error('[deposit] checkPending error:',error); return; }
+  if(!deps||!deps.length) return; // bebas buat deposit baru
 
-  const data = deps[0];
-  activeDepositId = data.id;
+  const dep = deps[0];
+  activeDepositId = dep.id;
 
-  // ── CASE 1: waiting_review (bukti sudah diupload) → LOCK new deposit ──
-  if(data.status==='waiting_review'){
-    showDepositLocked(data);
+  // Cek expired dulu
+  if(dep.status==='pending' && dep.expires_at){
+    const expiry = new Date(dep.expires_at);
+    if(expiry < new Date()){
+      await sb.from('deposit_requests').update({status:'expired'}).eq('id',dep.id);
+      activeDepositId = null;
+      return; // boleh buat baru
+    }
+    // Pending tapi belum expired → resume sesi
+    nominal=dep.amount; adminFee=dep.admin_fee||0; totalTransfer=dep.total_paid;
+    toast('Sesi deposit sebelumnya dilanjutkan','w');
+    goStep(2); showQrisSection(); startCountdown(expiry);
     return;
   }
 
-  // ── CASE 2: pending (belum upload bukti) → cek expiry ──
-  if(data.status==='pending'){
-    const expiry=new Date(data.expires_at);
-    if(expiry < new Date()){
-      // Expired — mark it and allow new deposit
-      await sb.from('deposit_requests').update({status:'expired'}).eq('id',data.id);
-      activeDepositId=null;
-      return;
-    }
-    // Still valid session — resume it
-    nominal=data.amount; adminFee=data.admin_fee||0; totalTransfer=data.total_paid;
-    toast('Sesi deposit aktif ditemukan, dilanjutkan','w');
-    goStep(2); showQrisSection(); startCountdown(expiry);
+  // waiting_review → LOCK TOTAL
+  if(dep.status==='waiting_review'){
+    showDepositLocked(dep);
   }
 }
 
 function showDepositLocked(dep){
-  // Hide form, show lock wall
-  document.getElementById('step1Section').style.display='none';
-  document.getElementById('qrisSection').classList.remove('show');
-  document.getElementById('statusSection').classList.remove('show');
-  document.getElementById('depositLocked').style.display='block';
+  // Sembunyikan semua section form
+  const s1=document.getElementById('step1Section');
+  const qs=document.getElementById('qrisSection');
+  const ss=document.getElementById('statusSection');
+  const lk=document.getElementById('depositLocked');
+  if(s1) s1.style.display='none';
+  if(qs) qs.classList.remove('show');
+  if(ss) ss.classList.remove('show');
+  if(!lk) return;
+  lk.style.display='block';
 
-  document.getElementById('lockedDepositDetail').innerHTML=`
-    <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--txt2)">Nominal</span><span style="font-weight:600">${fmtRp(dep.amount)}</span></div>
-    <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--txt2)">Total Transfer</span><span style="font-weight:700;color:var(--accent)">${fmtRp(dep.total_paid)}</span></div>
-    <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--txt2)">Waktu Submit</span><span style="color:var(--txt2)">${fmtDate(dep.submitted_at||dep.created_at)}</span></div>
-    <div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--txt2)">Status</span><span class="chip cy">Menunggu Konfirmasi Admin</span></div>`;
+  const detail = document.getElementById('lockedDepositDetail');
+  if(detail) detail.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="color:var(--txt2);font-size:12px">Nominal Deposit</span>
+      <span style="font-weight:700;font-size:15px">${fmtRp(dep.amount)}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="color:var(--txt2);font-size:12px">Admin Fee</span>
+      <span style="color:var(--warn);font-weight:600">${fmtRp(dep.admin_fee||0)}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="color:var(--txt2);font-size:12px">Total Ditransfer</span>
+      <span style="color:var(--accent);font-weight:700;font-size:16px">${fmtRp(dep.total_paid)}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="color:var(--txt2);font-size:12px">Bukti Dikirim</span>
+      <span style="font-size:12px">${fmtDate(dep.submitted_at||dep.created_at)}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0">
+      <span style="color:var(--txt2);font-size:12px">Status</span>
+      <span style="background:rgba(245,158,11,.15);color:var(--warn);font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid rgba(245,158,11,.3)">⏳ Menunggu Admin</span>
+    </div>`;
 
-  // Populate locked history table too
   loadDepositHistoryToEl('histBodyLocked');
 }
 

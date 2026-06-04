@@ -928,7 +928,7 @@ function openEditProd(id) {
   document.getElementById('pProdDesc').value   = p.description || '';
   document.getElementById('pProdPrice').value  = p.price || '';
   document.getElementById('pProdStock').value  = p.stock || 1;
-  document.getElementById('pProdTags').value   = p.tags || '';
+  document.getElementById('pProdTags').value   = p.keywords || '';
   document.getElementById('pProdCat').value    = p.category || '';
   document.getElementById('pProdStatus').value = p.is_active ? 'true' : 'false';
   document.getElementById('pProdImgUrl').value = p.image_url || '';
@@ -989,7 +989,17 @@ async function saveProd() {
 
   if (!name || !cat) return toast('Nama & kategori wajib diisi', 'e');
 
-  const payload = { name, category: cat, description: desc, price, stock, tags, image_url: imgUrl || null, is_active: active, seller_id: seller.id };
+  const payload = {
+    name,
+    category: cat,
+    description: desc,
+    price,
+    stock,
+    keywords: tags,
+    image_url: imgUrl || null,
+    is_active: active,
+    seller_id: seller.id
+  };
 
   let error;
   if (id) {
