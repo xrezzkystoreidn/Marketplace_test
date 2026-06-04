@@ -930,8 +930,6 @@ let sessionStats = { chats: 0, tickets: 0, rt: '—', sat: '—' };
 
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', async () => {
-  document.body.style.opacity = '0';
-  document.body.style.transition = 'opacity .22s ease';
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { toast('Belum login', 'e'); setTimeout(() => location.href='index.html', 1500); return; }
   csAgent = session.user;
@@ -940,8 +938,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await Promise.all([loadOverview(), loadTickets(), loadComplains(), loadChats(), loadMacros()]);
     subscribeRealtime();
     startLiveClock();
-    requestAnimationFrame(() => { document.body.style.opacity = '1'; });
-  } catch(e) {
+    } catch(e) {
     if (e.message !== 'Access denied') {
       console.error('[CS] Init error:', e);
       document.body.style.opacity = '1';

@@ -248,7 +248,10 @@
     <i class="fas fa-arrow-left"></i>
   </button>
   <div class="mph-title" id="mphTitle">Kelola Deposit</div>
-  <div class="mph-logo">ADMIN</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="btn bw bxs" onclick="refreshAll()"><i class="fas fa-rotate-right"></i></button>
+    <span style="font-size:10px;font-weight:700;background:rgba(245,158,11,.2);color:var(--warn);padding:3px 8px;border-radius:4px" id="pendingCountTop">0 pending</span>
+  </div>
 </div>
 
 
@@ -582,45 +585,50 @@ const FEE_TIERS = [
 ];
 
 // ══ INIT ══
-document.addEventListener('DOMContentLoaded', async () => {
-  document.body.style.opacity = '0';
-  document.body.style.transition = 'opacity .22s ease';
+document.addEventListener('DOMContentLoaded', () => {
+  // LANGSUNG tampilkan — jangan tunggu network
+  document.body.style.opacity = '1';
 
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) {
-    toast('Login dulu', 'e');
-    setTimeout(() => location.href = 'index.html', 1200);
-    return;
-  }
-  admin = session.user;
+  // Jalankan auth + data di background
+  (async () => {
+    try {
+      const { data: { session } } = await sb.auth.getSession();
+      if (!session) {
+        toast('Login dulu', 'e');
+        setTimeout(() => location.href = 'index.html', 1200);
+        return;
+      }
+      admin = session.user;
 
-  // ── ROLE GUARD: hanya admin ──
-  const { data: prof } = await sb.from('profiles').select('role, username').eq('id', admin.id).maybeSingle();
-  if (!prof || prof.role !== 'admin') {
-    document.body.style.opacity = '1';
-    document.body.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;
-        color:#f5f7fa;font-family:'Poppins',sans-serif;background:#0f1115;text-align:center;padding:20px">
-        <i class="fas fa-shield-halved" style="font-size:48px;color:#ef4444;opacity:.6"></i>
-        <h2 style="font-family:'Syne',sans-serif;font-size:22px">Akses Ditolak</h2>
-        <p style="color:#9ba6b2;font-size:14px">Halaman ini hanya untuk <strong style="color:#ef4444">Admin</strong>.</p>
-        <a href="index.html" style="margin-top:8px;background:#4a7dff;color:#fff;padding:10px 24px;border-radius:9px;
-          text-decoration:none;font-size:13px;font-weight:600"><i class="fas fa-home"></i> Kembali ke Beranda</a>
-      </div>`;
-    return;
-  }
+      // ── ROLE GUARD ──
+      const { data: prof } = await sb.from('profiles').select('role, username').eq('id', admin.id).maybeSingle();
+      if (!prof || prof.role !== 'admin') {
+        document.body.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;
+            color:#f5f7fa;font-family:'Poppins',sans-serif;background:#0f1115;text-align:center;padding:20px">
+            <i class="fas fa-shield-halved" style="font-size:48px;color:#ef4444;opacity:.6"></i>
+            <h2 style="font-family:'Syne',sans-serif;font-size:22px">Akses Ditolak</h2>
+            <p style="color:#9ba6b2;font-size:14px">Halaman ini hanya untuk <strong style="color:#ef4444">Admin</strong>.</p>
+            <a href="index.html" style="margin-top:8px;background:#4a7dff;color:#fff;padding:10px 24px;border-radius:9px;
+              text-decoration:none;font-size:13px;font-weight:600"><i class="fas fa-home"></i> Kembali ke Beranda</a>
+          </div>`;
+        return;
+      }
 
-  // Show admin name in topbar
-  const adminName = prof.username || admin.email;
-  const el = document.getElementById('adminNameBadge');
-  if (el) el.textContent = adminName;
+      const adminName = prof.username || admin.email;
+      const el = document.getElementById('adminNameBadge');
+      if (el) el.textContent = adminName;
 
-  await refreshAll();
-  subscribeRealtime();
-  buildFeeSettingTable();
-  loadQrisSetting();
+      await refreshAll();
+      subscribeRealtime();
+      buildFeeSettingTable();
+      loadQrisSetting();
 
-  requestAnimationFrame(() => { document.body.style.opacity = '1'; });
+    } catch(err) {
+      console.error('[deposit-admin] init error:', err);
+      toast('Gagal memuat: ' + err.message, 'e');
+    }
+  })();
 });
 
 // ══ REALTIME ══
@@ -637,18 +645,24 @@ function subscribeRealtime() {
 
 // ══ REFRESH ══
 async function refreshAll() {
-  const { data } = await sb.from('deposit_requests')
-    .select('*, profiles(username, email, avatar_url, balance)')
+  const { data, error } = await sb.from('deposit_requests')
+    .select('*, profiles(username, email, avatar_url, balance, whatsapp)')
     .order('created_at', { ascending: false });
-  allDeposits = data || [];
 
+  if (error) {
+    console.error('[deposit-admin] refreshAll error:', error);
+    toast('Gagal memuat data: ' + error.message, 'e');
+    return;
+  }
+
+  allDeposits = data || [];
   updateStats();
   renderPendingList();
   renderAllDeposits();
   renderFilteredList('completed', 'approvedList');
-  renderFilteredList('rejected', 'rejectedList');
-  renderFilteredList('expired', 'expiredList');
-  loadStats();
+  renderFilteredList('rejected',  'rejectedList');
+  renderFilteredList('expired',   'expiredList');
+  loadStats(); // stats page chart
 }
 
 // ══ STATS ══
@@ -665,7 +679,10 @@ function updateStats() {
   document.getElementById('st-totaltoday').textContent= fmtRp(totalAcc);
   document.getElementById('sb-pending').textContent   = pending.length;
   document.getElementById('sb-all').textContent       = allDeposits.length;
-  document.getElementById('pendingCountTop').textContent = `${pending.length} pending`;
+  // Update all pendingCountTop elements (topbar + mobile header)
+  document.querySelectorAll('#pendingCountTop').forEach(el => {
+    el.textContent = `${pending.length} pending`;
+  });
 
   // Update mobile nav badge
   const manBadge = document.getElementById('man-badge');
@@ -1132,9 +1149,13 @@ function fmtDate(d) { if (!d) return '—'; return new Date(d).toLocaleDateStrin
 function fmtDateFull(d) { if (!d) return '—'; return new Date(d).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
 function esc(s) { if (!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function toast(msg, type='') {
+  const tc = document.getElementById('tc');
+  if (!tc) { console.warn('[toast]', msg); return; }
   const el = document.createElement('div');
-  el.className = `toast ${type}`; el.textContent = msg;
-  document.getElementById('tc').appendChild(el);
+  el.className = `toast ${type}`;
+  el.textContent = msg;
+  el.style.pointerEvents = 'auto';
+  tc.appendChild(el);
   setTimeout(() => el.remove(), 3800);
 }
 </script>
@@ -1247,21 +1268,24 @@ function toast(msg, type='') {
 @media (max-width: 900px) {
   #xbn { display: flex !important; }
   #mobilePageHeader { display: flex !important; }
-  nav:not(#xbn) { display: none !important; }
   #topbar { display: none !important; }
   #sidebar { display: none !important; }
-  #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
-  body > .main, main, .page, #main { padding-bottom: 80px !important; padding-top: 0 !important; }
-  .page { min-height: calc(100vh - 52px); }
+  #wrapper { padding-top: 0 !important; }
+  #main {
+    margin-left: 0 !important;
+    padding: 14px 12px 140px !important;
+  }
+  .dep-amounts { flex-wrap: wrap; gap: 6px; }
+  .dep-main { flex-wrap: wrap; gap: 10px; }
+  .dep-right { width: 100%; justify-content: flex-start !important; }
+  .proof-detail-grid { grid-template-columns: 1fr !important; }
+  #tc { bottom: 76px !important; right: 12px !important; }
 }
 @media (min-width: 901px) {
   #xbn { display: none !important; }
   #mobilePageHeader { display: none !important; }
 }
 </style>
-
-  <div class="mph-logo">XREZZKY</div>
-</div>
 
 <!-- Bottom Nav -->
 <div id="xbn">
@@ -1390,6 +1414,9 @@ document.addEventListener('click', function(e) {
   if (btn) xbnRipple(btn);
 });
 </script>
+
+<!-- TOAST CONTAINER -->
+<div id="tc" style="position:fixed;bottom:80px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none"></div>
 
 </body>
 </html>

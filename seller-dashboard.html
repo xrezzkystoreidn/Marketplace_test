@@ -766,8 +766,6 @@ let activePage  = 'overview';
 
 // ══ INIT ══
 document.addEventListener('DOMContentLoaded', async () => {
-  document.body.style.opacity = '0';
-  document.body.style.transition = 'opacity .22s ease';
   const { data: { session } } = await sb.auth.getSession();
   if (!session) { toast('Belum login', 'e'); setTimeout(() => location.href='index.html', 1500); return; }
   seller = session.user;

@@ -649,6 +649,13 @@ const CLD_PRESET = 'xrezzky_unsigned';
 const CLD_BASE   = `https://res.cloudinary.com/${CLD_CLOUD}/image/upload/`;
 const CLD_UP     = `https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`;
 
+
+// ── Guard Supabase CDN ──
+if (typeof supabase === 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => { document.body.style.opacity = '1'; });
+  throw new Error('Supabase CDN failed to load');
+}
+
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
 // ═══ STATE ═══
@@ -660,10 +667,7 @@ let activeTab = 'overview';
 
 // ═══ INIT ═══
 document.addEventListener('DOMContentLoaded', async () => {
-  document.body.style.opacity = '0';
-  document.body.style.transition = 'opacity .22s ease';
-
-  const { data: { session } } = await sb.auth.getSession();
+    const { data: { session } } = await sb.auth.getSession();
 
   if (!session) {
     // Show guest wall — must register/login to view profile

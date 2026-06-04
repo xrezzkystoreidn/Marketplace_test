@@ -328,6 +328,13 @@
 const SUPA_URL = 'https://jydfjfjttpmropoczgop.supabase.co';
 const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
 const CLD_BASE = 'https://res.cloudinary.com/drjmclzbi/image/upload/';
+
+// ── Guard Supabase CDN ──
+if (typeof supabase === 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => { document.body.style.opacity = '1'; });
+  throw new Error('Supabase CDN failed to load');
+}
+
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
 let user = null, profile = null, product = null, seller = null;
@@ -335,8 +342,6 @@ let qty = 1, selectedPayMethod = null, voucher = null, discount = 0;
 const FEE = 500; // service fee
 
 document.addEventListener('DOMContentLoaded', async () => {
-  document.body.style.opacity = '0';
-  document.body.style.transition = 'opacity .22s ease';
   const params = new URLSearchParams(location.search);
   const productId = params.get('product');
 
@@ -360,7 +365,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   renderPayMethods();
   updateSummary();
-  requestAnimationFrame(() => { document.body.style.opacity = '1'; });
 });
 
 async function loadProduct(id) {

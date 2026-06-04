@@ -297,8 +297,6 @@ const TYPE_CONFIG = {
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
-  document.body.style.opacity = '0';
-  document.body.style.transition = 'opacity .22s ease';
   const { data:{ session } } = await sb.auth.getSession();
   if (!session) { toast('Login dulu','e'); setTimeout(()=>location.href='index.html',1200); document.body.style.opacity='1'; return; }
   // Role check
