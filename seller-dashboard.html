@@ -884,6 +884,7 @@ function renderMyProducts(prods) {
           <span class="chip ${p.is_active ? 'c-g':'c-gr'}">${p.is_active?'Aktif':'Off'}</span>
         </div>
         <div class="pc-actions">
+          <a href="checkout.html?product=${p.id}" target="_blank" class="btn btn-g btn-xs" title="Preview di toko"><i class="fas fa-eye"></i></a>
           <button class="btn btn-g btn-xs" style="flex:1" onclick="openEditProd('${p.id}')"><i class="fas fa-pen"></i> Edit</button>
           <button class="btn ${p.is_active ? 'btn-d':'btn-s'} btn-xs" onclick="toggleProd('${p.id}',${p.is_active})">${p.is_active ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>'}</button>
           <button class="btn btn-d btn-xs" onclick="confirmAct('Hapus produk ini?','🗑️','btn-d',()=>deleteProd('${p.id}'))"><i class="fas fa-trash"></i></button>

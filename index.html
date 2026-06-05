@@ -1520,8 +1520,19 @@ function closeDetail() {
 }
 
 async function doBeli(productId, productName) {
-  if (!currentUser) { closeDetail(); openAuth('login'); return toast('Login dulu untuk membeli', 'error'); }
-  toast(`Fitur pembelian "${productName}" segera hadir 🛒`);
+  if (!currentUser) {
+    closeDetail();
+    openAuth('login');
+    toast('Login dulu untuk membeli', 'e');
+    return;
+  }
+  // Redirect ke checkout dengan product ID
+  location.href = `checkout.html?product=${productId}`;
+}
+
+function doWishlist(productId) {
+  if (!currentUser) { openAuth('login'); return; }
+  toast('Fitur wishlist segera hadir ❤️', 'w');
 }
 
 function doWishlist(productId) {

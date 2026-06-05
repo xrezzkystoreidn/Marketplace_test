@@ -289,7 +289,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function loadOrders() {
   const { data } = await sb.from('orders')
-    .select('*, products(name, image_url, category, seller_id), profiles!orders_seller_id_fkey(username)')
+    .select('*, products(name, image_url, category, seller_id), profiles!orders_seller_id_fkey(username), use_mc, mc_fee, product_id')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
   allOrders = data || [];
@@ -300,7 +300,7 @@ async function loadOrders() {
 
 function updateSummary() {
   const done    = allOrders.filter(o => o.status === 'completed');
-  const pending = allOrders.filter(o => ['pending','processing'].includes(o.status));
+  const pending = allOrders.filter(o => ['pending','pending_mc','processing'].includes(o.status));
   const spent   = done.reduce((a, o) => a + (o.total_price||0), 0);
   document.getElementById('sm-total').textContent   = allOrders.length;
   document.getElementById('sm-done').textContent    = done.length;
@@ -392,44 +392,55 @@ function renderList() {
 
 function renderDetail(o) {
   const p = o.products || {};
+  const isMC = o.use_mc;
   const stages = [
-    { label: 'Order Dibuat',    done: true,                                              time: o.created_at },
-    { label: 'Dikonfirmasi',    done: ['processing','completed'].includes(o.status),    time: o.accepted_at },
-    { label: 'Diproses',        done: ['processing','completed'].includes(o.status),    time: null },
-    { label: 'Selesai',         done: o.status === 'completed',                         time: o.completed_at },
+    { label:'Order Dibuat',   done:true,                                                     time:o.created_at },
+    { label:'Dikonfirmasi',   done:['processing','pending_mc','completed'].includes(o.status),time:o.accepted_at },
+    { label:'Diproses',       done:['processing','completed'].includes(o.status),            time:null },
+    { label:'Selesai',        done:o.status==='completed',                                   time:o.completed_at },
   ];
 
   return `
     <div class="td-grid">
-      <div class="td-field"><div class="k">Order ID</div><div class="v" style="font-size:11px; color:var(--txt2)">${o.id}</div></div>
+      <div class="td-field"><div class="k">Order ID</div><div class="v" style="font-size:11px;color:var(--txt2);cursor:pointer" onclick="copyId('${o.id}')"><i class="fas fa-copy" style="margin-right:4px;opacity:.5"></i>${o.id.slice(0,8).toUpperCase()}</div></div>
       <div class="td-field"><div class="k">Kategori</div><div class="v">${esc(p.category||'—')}</div></div>
-      <div class="td-field"><div class="k">Total Bayar</div><div class="v" style="color:var(--accent); font-size:15px; font-weight:700">${fmtRp(o.total_price)}</div></div>
-      <div class="td-field"><div class="k">Metode Bayar</div><div class="v">${esc(o.payment_method||'Saldo XREZZKY')}</div></div>
+      <div class="td-field"><div class="k">Total Bayar</div><div class="v" style="color:var(--accent);font-size:15px;font-weight:700">${fmtRp(o.total_price)}</div></div>
+      <div class="td-field"><div class="k">Metode</div><div class="v">${esc(o.payment_method||'Saldo XREZZKY')}</div></div>
     </div>
 
+    ${isMC ? `<div style="background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.2);border-radius:var(--rsm);padding:9px 12px;font-size:12px;color:var(--txt2);margin-bottom:12px;display:flex;align-items:center;gap:8px">
+      <i class="fas fa-shield-halved" style="color:var(--purple)"></i>
+      <span>Transaksi via <strong style="color:var(--purple)">Middleman (MC)</strong> — saldo di-hold sampai kamu konfirmasi terima.</span>
+    </div>` : ''}
+
     <div style="margin-bottom:14px">
-      <div style="font-size:12px; font-weight:600; color:var(--txt2); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px">Status Pesanan</div>
+      <div style="font-size:12px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Status Pesanan</div>
       <div class="timeline">
-        ${stages.map((s, i) => `
+        ${stages.map((s,i)=>`
           <div class="tl-item">
-            <div class="tl-dot ${s.done ? (i===stages.filter(x=>x.done).length-1 && o.status!=='completed' ? 'active' : 'done') : 'pending'}">
-              ${s.done ? '<i class="fas fa-check" style="font-size:9px"></i>' : i+1}
+            <div class="tl-dot ${s.done?(i===stages.filter(x=>x.done).length-1&&o.status!=='completed'?'active':'done'):'pending'}">
+              ${s.done?'<i class="fas fa-check" style="font-size:9px"></i>':i+1}
             </div>
             <div class="tl-content">
               <div class="tl-title">${s.label}</div>
-              <div class="tl-time">${s.time ? fmtDateFull(s.time) : s.done ? 'Selesai' : 'Menunggu'}</div>
+              <div class="tl-time">${s.time?fmtDateFull(s.time):s.done?'Selesai':'Menunggu'}</div>
             </div>
           </div>`).join('')}
       </div>
     </div>
 
-    ${o.notes ? `<div style="background:rgba(245,158,11,.08); border:1px solid rgba(245,158,11,.2); border-radius:var(--rsm); padding:10px 12px; font-size:12px; color:var(--warn); margin-bottom:12px"><i class="fas fa-note-sticky" style="margin-right:6px"></i>${esc(o.notes)}</div>` : ''}
+    ${o.notes ? `<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--rsm);padding:10px 12px;font-size:12px;color:var(--warn);margin-bottom:12px"><i class="fas fa-note-sticky" style="margin-right:6px"></i>${esc(o.notes)}</div>` : ''}
 
     <div class="td-actions">
-      ${o.status === 'completed' && !o.reviewed ? `<button class="btn bp bsm" onclick="openReviewModal('${o.id}')"><i class="fas fa-star"></i> Beri Ulasan</button>` : ''}
-      ${o.status === 'completed' && o.reviewed ? `<span class="chip cg"><i class="fas fa-check" style="margin-right:4px"></i>Sudah Diulas</span>` : ''}
-      ${o.status === 'pending' ? `<button class="btn" style="background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2)" onclick="cancelOrder('${o.id}')"><i class="fas fa-times"></i> Batalkan</button>` : ''}
-      <button class="btn bg bsm" onclick="contactSeller('${o.id}')"><i class="fas fa-comment"></i> Hubungi Seller</button>
+      ${(o.status==='pending'||o.status==='pending_mc') ? `
+        <button class="btn bp bsm" onclick="openOrderChat('${o.id}')"><i class="fas fa-comments"></i> Buka Chat</button>
+        ${(o.status==='pending_mc'||o.status==='pending') ? `<button class="btn bs bsm" onclick="confirmReceive('${o.id}')"><i class="fas fa-circle-check"></i> Konfirmasi Terima</button>` : ''}
+        <button class="btn" style="background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2);font-size:12px;padding:5px 11px" onclick="cancelOrder('${o.id}')"><i class="fas fa-times"></i> Batalkan</button>
+      ` : ''}
+      ${o.status==='completed' && !o.reviewed ? `<button class="btn bp bsm" onclick="openReviewModal('${o.id}')"><i class="fas fa-star"></i> Beri Ulasan</button>` : ''}
+      ${o.status==='completed' && o.reviewed  ? `<span class="chip cg"><i class="fas fa-check" style="margin-right:4px"></i>Sudah Diulas</span>` : ''}
+      ${o.status==='completed' ? `<button class="btn bg bsm" onclick="openOrderChat('${o.id}')"><i class="fas fa-comments"></i> Lihat Chat</button>` : ''}
+      ${o.product_id ? `<a href="checkout.html?product=${o.product_id}" class="btn bg bsm"><i class="fas fa-rotate-right"></i> Beli Lagi</a>` : ''}
       <button class="btn bg bsm" onclick="reportOrder('${o.id}')"><i class="fas fa-flag"></i> Laporkan</button>
     </div>`;
 }
@@ -465,7 +476,60 @@ async function cancelOrder(id) {
   await loadOrders();
 }
 
-function contactSeller(id) { toast('Buka halaman chat untuk menghubungi seller', 'w'); }
+async function openOrderChat(orderId) {
+  // Cari chat session berdasarkan order_id
+  const { data: sess } = await sb.from('chat_sessions')
+    .select('id,status').eq('order_id', orderId).maybeSingle();
+  if (!sess) {
+    toast('Tidak ada obrolan untuk order ini', 'w');
+    return;
+  }
+  // Redirect ke checkout dengan parameter chat
+  location.href = `checkout.html?product=${allOrders.find(o=>o.id===orderId)?.product_id||''}&chat=${sess.id}&order=${orderId}`;
+}
+
+async function confirmReceive(orderId) {
+  const o = allOrders.find(x=>x.id===orderId);
+  if (!o) return;
+  if (!confirm('Konfirmasi sudah terima produk?\nSaldo akan diteruskan ke seller.')) return;
+  const { error } = await sb.from('orders').update({
+    status:'completed', completed_at: new Date().toISOString()
+  }).eq('id', orderId).eq('user_id', user.id);
+  if (error) return toast('Gagal: '+error.message, 'e');
+
+  // Kredit saldo seller
+  const sellerGet = (o.total_price||0) - 500;
+  if (o.seller_id && sellerGet > 0) {
+    await sb.from('profiles').update({
+      balance: sb.rpc ? undefined : sellerGet, // akan di-handle via RPC ideally
+      completed_orders: (0) // increment
+    });
+    // Simple update tanpa RPC
+    const { data: sp } = await sb.from('profiles').select('balance,completed_orders').eq('id',o.seller_id).maybeSingle();
+    if (sp) {
+      await sb.from('profiles').update({
+        balance: (sp.balance||0)+sellerGet,
+        completed_orders: (sp.completed_orders||0)+1
+      }).eq('id', o.seller_id);
+    }
+  }
+
+  // Close chat session
+  const { data: sess } = await sb.from('chat_sessions').select('id').eq('order_id', orderId).maybeSingle();
+  if (sess) {
+    await sb.from('chat_sessions').update({ status:'resolved', resolved_at: new Date().toISOString() }).eq('id', sess.id);
+    await sb.from('chat_messages').insert([{
+      session_id: sess.id, sender_id: user.id, sender_type: 'system',
+      message: '✅ Buyer konfirmasi terima produk.\n💰 Saldo diteruskan ke seller.\n🔒 Obrolan ditutup.',
+      created_at: new Date().toISOString(),
+    }]);
+  }
+
+  toast('Terima kasih! Transaksi selesai ✅', 's');
+  await loadOrders();
+}
+
+function contactSeller(id) { openOrderChat(id); }
 function reportOrder(id) { toast('Laporan akan ditangani CS kami segera', 'w'); }
 
 // ── REVIEW ──
@@ -538,7 +602,10 @@ function fmtDate(d) { if(!d) return '—'; return new Date(d).toLocaleDateString
 function fmtDateFull(d) { if(!d) return '—'; return new Date(d).toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
 function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function statusChip(s) {
-  const m={pending:'cy',processing:'cb',completed:'cg',cancelled:'cr'}; const l={pending:'Pending',processing:'Diproses',completed:'Selesai',cancelled:'Dibatalkan'};
+  const m={pending:'cy',pending_mc:'cp',processing:'cb',completed:'cg',cancelled:'cr',refunded:'cr'};
+  const l={pending:'Pending',pending_mc:'🛡️ MC Hold',processing:'Diproses',completed:'Selesai',cancelled:'Dibatalkan',refunded:'Refund'};
+  const lbl=l[s]||s; const cls=m[s]||'cy';
+  return`<span class="chip ${cls}">${lbl}</span>`;
   return `<span class="chip ${m[s]||'cgr'}">${l[s]||s}</span>`;
 }
 function toast(msg, type='') { const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=msg; document.getElementById('tc').appendChild(el); setTimeout(()=>el.remove(),3500); }

@@ -1,651 +1,661 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>XREZZKY — Checkout</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #0f1115; --nav: #171c24; --surface: #1d2430; --border: #2a3442;
-      --accent: #4a7dff; --ah: #5d8fff; --txt: #f5f7fa; --txt2: #9ba6b2;
-      --success: #22c55e; --warn: #f59e0b; --danger: #ef4444; --radius: 13px; --rsm: 9px;
-    }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; }
-    ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-    nav { position: sticky; top: 0; z-index: 100; background: rgba(23,28,36,.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); height: 56px; display: flex; align-items: center; padding: 0 20px; gap: 14px; }
-    .nb { display: flex; align-items: center; gap: 8px; font-family: 'Syne',sans-serif; font-size: 15px; font-weight: 700; text-decoration: none; color: var(--txt); }
-    .nb-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
-    .ns { flex: 1; }
-    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .18s; text-decoration: none; }
-    .bp { background: var(--accent); color: #fff; } .bp:hover { background: var(--ah); }
-    .bg { background: transparent; color: var(--txt2); border: 1px solid var(--border); } .bg:hover { color: var(--txt); border-color: var(--txt2); }
-    .bsm { padding: 5px 11px; font-size: 12px; }
-
-    /* ── STEP INDICATOR ── */
-    .steps { display: flex; align-items: center; justify-content: center; gap: 0; padding: 20px; max-width: 500px; margin: 0 auto; }
-    .step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; position: relative; }
-    .step:not(:last-child)::after { content:''; position:absolute; top:16px; left:calc(50% + 20px); right:calc(-50% + 20px); height:2px; background:var(--border); }
-    .step.done::after { background:var(--accent); }
-    .step-dot { width: 32px; height: 32px; border-radius: 50%; background: var(--surface); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; transition: all .3s; z-index: 1; }
-    .step.active .step-dot { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .step.done   .step-dot { background: var(--success); border-color: var(--success); color: #fff; }
-    .step-label { font-size: 11px; color: var(--txt2); font-weight: 500; white-space: nowrap; }
-    .step.active .step-label { color: var(--accent); }
-    .step.done   .step-label { color: var(--success); }
-
-    /* ── PAGE ── */
-    .page { max-width: 860px; margin: 0 auto; padding: 0 20px 32px; }
-    @media(max-width:900px){ .page{ padding-bottom: 90px; } }
-    .co-layout { display: grid; grid-template-columns: 1fr 310px; gap: 20px; align-items: start; }
-
-    /* ── SECTION ── */
-    .co-sec { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 14px; }
-    .co-sec-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-    .co-sec-head .step-num { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
-    .co-sec-head h3 { font-size: 14px; font-weight: 600; }
-    .co-sec-body { padding: 18px; }
-
-    /* Product preview */
-    .prod-preview { display: flex; gap: 14px; align-items: flex-start; }
-    .pp-img { width: 80px; height: 80px; border-radius: var(--rsm); background: var(--surface); overflow: hidden; display: flex; align-items: center; justify-content: center; color: var(--txt2); font-size: 22px; flex-shrink: 0; border: 1px solid var(--border); }
-    .pp-img img { width: 100%; height: 100%; object-fit: cover; }
-    .pp-cat  { font-size: 11px; font-weight: 600; color: var(--accent); background: rgba(74,125,255,.1); padding: 2px 7px; border-radius: 4px; display: inline-block; margin-bottom: 5px; }
-    .pp-name { font-size: 16px; font-weight: 700; margin-bottom: 6px; line-height: 1.3; }
-    .pp-seller { font-size: 12px; color: var(--txt2); margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
-    .pp-rating { font-size: 12px; color: var(--warn); }
-    .pp-sold   { font-size: 12px; color: var(--txt2); margin-left: 8px; }
-
-    /* Qty selector */
-    .qty-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
-    .qty-label { font-size: 12px; color: var(--txt2); }
-    .qty-ctrl { display: flex; align-items: center; gap: 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); overflow: hidden; }
-    .qty-btn { width: 32px; height: 32px; background: none; border: none; color: var(--txt); font-size: 15px; cursor: pointer; transition: background .18s; display: flex; align-items: center; justify-content: center; }
-    .qty-btn:hover { background: var(--border); }
-    .qty-val { width: 40px; text-align: center; font-size: 13px; font-weight: 600; line-height: 32px; }
-    .stock-info { font-size: 12px; color: var(--success); margin-left: 8px; }
-
-    /* Notes */
-    .co-notes { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 9px 12px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; resize: none; outline: none; transition: border .18s; min-height: 70px; }
-    .co-notes:focus { border-color: var(--accent); }
-    .co-notes::placeholder { color: var(--txt2); opacity: .5; }
-
-    /* ── PAYMENT METHOD ── */
-    .pay-methods { display: flex; flex-direction: column; gap: 8px; }
-    .pm-item { display: flex; align-items: center; gap: 12px; padding: 13px 15px; background: var(--surface); border: 2px solid var(--border); border-radius: var(--rsm); cursor: pointer; transition: all .18s; }
-    .pm-item:hover { border-color: rgba(74,125,255,.4); }
-    .pm-item.selected { border-color: var(--accent); background: rgba(74,125,255,.07); }
-    .pm-item.disabled { opacity: .4; cursor: not-allowed; }
-    .pm-item.disabled:hover { border-color: var(--border); }
-    .pm-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .18s; }
-    .pm-item.selected .pm-radio { border-color: var(--accent); background: var(--accent); }
-    .pm-item.selected .pm-radio::after { content:''; width:7px; height:7px; border-radius:50%; background:#fff; }
-    .pm-icon { width: 36px; height: 36px; border-radius: var(--rsm); display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
-    .pm-info .pm-name { font-size: 13px; font-weight: 600; }
-    .pm-info .pm-sub  { font-size: 11px; color: var(--txt2); margin-top: 2px; }
-    .pm-info .pm-bal  { font-size: 12px; color: var(--success); font-weight: 600; margin-top: 2px; }
-    .pm-badge { margin-left: auto; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 700; }
-
-    /* ── VOUCHER ── */
-    .voucher-row { display: flex; gap: 8px; }
-    .voucher-inp { flex: 1; background: var(--surface); border: 2px solid var(--border); border-radius: var(--rsm); padding: 10px 12px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 13px; outline: none; transition: border .18s; }
-    .voucher-inp:focus { border-color: var(--accent); }
-    .voucher-inp::placeholder { color: var(--txt2); opacity: .5; }
-    .voucher-applied { background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2); border-radius: var(--rsm); padding: 10px 12px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--success); margin-top: 8px; }
-    .chip { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
-    .cg { background: rgba(34,197,94,.15); color: var(--success); }
-    .cy { background: rgba(245,158,11,.15); color: var(--warn); }
-
-    /* ── ORDER SUMMARY STICKY ── */
-    .order-summary { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; position: sticky; top: 72px; }
-    .os-title { font-family: 'Syne',sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 16px; }
-    .os-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(42,52,66,.6); font-size: 13px; }
-    .os-row:last-of-type { border-bottom: none; }
-    .os-label { color: var(--txt2); }
-    .os-val   { font-weight: 600; }
-    .os-total { display: flex; justify-content: space-between; padding-top: 14px; border-top: 2px solid var(--border); margin-top: 4px; }
-    .ot-l { font-size: 15px; font-weight: 600; }
-    .ot-v { font-size: 22px; font-weight: 800; color: var(--accent); font-family: 'Syne',sans-serif; }
-    .buy-btn { width: 100%; padding: 14px; background: var(--success); color: #fff; border: none; border-radius: var(--rsm); font-family: 'Poppins',sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; }
-    .buy-btn:hover { background: #1fb554; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(34,197,94,.3); }
-    .buy-btn:disabled { background: var(--border); color: var(--txt2); cursor: not-allowed; transform: none; box-shadow: none; }
-
-    /* Seller info compact */
-    .seller-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); margin-bottom: 14px; }
-    .sr-av { width: 32px; height: 32px; border-radius: 50%; background: var(--nav); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--accent); overflow: hidden; flex-shrink: 0; }
-    .sr-av img { width: 100%; height: 100%; object-fit: cover; }
-
-    /* Guarantees */
-    .guarantees { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
-    .gu-item { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--txt2); }
-    .gu-item i { color: var(--success); font-size: 12px; }
-
-    /* Modal */
-    .mo { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.75); display: none; align-items: center; justify-content: center; padding: 20px; }
-    .mo.open { display: flex; }
-    .mb { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; animation: fup .3s ease; overflow: hidden; }
-    @keyframes fup { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
-    .mh { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .mh h3 { font-family: 'Syne',sans-serif; font-size: 16px; font-weight: 700; }
-    .mbody { padding: 22px; }
-    .mc-btn { background: none; border: none; color: var(--txt2); font-size: 16px; cursor: pointer; }
-
-    /* Success */
-    .success-wrap { text-align: center; padding: 10px 0; }
-    .ss-ring { width: 80px; height: 80px; border-radius: 50%; border: 3px solid var(--success); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; font-size: 32px; color: var(--success); animation: pop .4s ease; }
-    @keyframes pop { 0%{transform:scale(.5);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
-    .ss-title { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 6px; }
-    .ss-sub { font-size: 13px; color: var(--txt2); margin-bottom: 16px; }
-    .ss-detail { background: var(--surface); border: 1px solid var(--border); border-radius: var(--rsm); padding: 14px; margin-bottom: 18px; display: flex; flex-direction: column; gap: 8px; }
-    .ss-detail-row { display: flex; justify-content: space-between; font-size: 13px; }
-    .ss-detail-row .sk { color: var(--txt2); }
-    .ss-acts { display: flex; flex-direction: column; gap: 8px; }
-
-    /* Toast & spinner */
-    #tc { position: fixed; bottom: 80px; right: 16px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
-    .toast { background: var(--nav); border: 1px solid var(--border); border-left: 3px solid var(--accent); color: var(--txt); font-size: 13px; padding: 10px 16px; border-radius: var(--rsm); min-width: 260px; animation: sli .3s ease; }
-    .toast.s { border-left-color: var(--success); } .toast.e { border-left-color: var(--danger); } .toast.w { border-left-color: var(--warn); }
-    @keyframes sli { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
-    .sp { width: 22px; height: 22px; border: 3px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spn .7s linear infinite; }
-    @keyframes spn { to{transform:rotate(360deg)} }
-
-    @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
-    .anim { animation: fadeIn .35s ease both; }
-    .anim2 { animation: fadeIn .35s .1s ease both; }
-
-    @media (max-width:700px) { .co-layout { grid-template-columns: 1fr; } .order-summary { position: static; } .guarantees { grid-template-columns: 1fr; } }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>XREZZKY — Checkout</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f1115;--nav:#171c24;--surface:#1d2430;--border:#2a3442;
+  --accent:#4a7dff;--ah:#5d8fff;--txt:#f5f7fa;--txt2:#9ba6b2;
+  --success:#22c55e;--warn:#f59e0b;--danger:#ef4444;--purple:#a855f7;--cyan:#06b6d4;
+  --r:13px;--rsm:9px;
+}
+body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+nav{position:sticky;top:0;z-index:200;background:rgba(23,28,36,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 18px;gap:12px}
+.nb{display:flex;align-items:center;gap:7px;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;text-decoration:none;color:var(--txt)}
+.nb span{color:var(--accent)}.nb-dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.ns{flex:1}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rsm);font-family:'Poppins',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:all .18s;text-decoration:none}
+.bp{background:var(--accent);color:#fff}.bp:hover{background:var(--ah)}
+.bg{background:transparent;color:var(--txt2);border:1px solid var(--border)}.bg:hover{color:var(--txt)}
+.bs{background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.25)}
+.bd{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
+.bw{background:var(--surface);color:var(--txt);border:1px solid var(--border)}
+.bsm{padding:5px 11px;font-size:12px}.bxs{padding:4px 8px;font-size:11px}
+.page{max-width:900px;margin:0 auto;padding:18px 16px 100px}
+@media(max-width:680px){.page{padding:12px 12px 90px}}
+.co-grid{display:grid;grid-template-columns:1fr 270px;gap:16px;align-items:start}
+@media(max-width:680px){.co-grid{grid-template-columns:1fr}}
+.steps{display:flex;align-items:center;justify-content:center;padding:14px 20px;max-width:420px;margin:0 auto}
+.step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;top:14px;left:calc(50% + 16px);right:calc(-50% + 16px);height:2px;background:var(--border)}
+.step.done::after{background:var(--success)}
+.step-dot{width:28px;height:28px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;z-index:1;transition:.3s}
+.step.active .step-dot{background:var(--accent);border-color:var(--accent);color:#fff}
+.step.done .step-dot{background:var(--success);border-color:var(--success);color:#fff}
+.step-lbl{font-size:10px;color:var(--txt2);font-weight:500}
+.step.active .step-lbl{color:var(--accent)}.step.done .step-lbl{color:var(--success)}
+.card{background:var(--nav);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:13px}
+.card-head{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.card-ico{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.card-head h3{font-size:13px;font-weight:600}
+.card-body{padding:13px 16px}
+/* Trust */
+.trust{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.tn{background:rgba(155,166,178,.1);color:var(--txt2);border:1px solid var(--border)}
+.tg{background:rgba(245,158,11,.12);color:var(--warn);border:1px solid rgba(245,158,11,.3)}
+.tt{background:rgba(74,125,255,.12);color:var(--accent);border:1px solid rgba(74,125,255,.3)}
+.ta{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
+/* MC Banner */
+.mc-ban{display:flex;align-items:flex-start;gap:11px;padding:12px 14px;border-radius:var(--rsm);margin-bottom:13px}
+.mc-req{background:rgba(168,85,247,.08);border:2px solid rgba(168,85,247,.25)}
+.mc-opt{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2)}
+.mc-title{font-size:13px;font-weight:700}
+.mc-sub{font-size:11px;color:var(--txt2);margin-top:3px;line-height:1.5}
+.sw{position:relative;width:40px;height:22px;cursor:pointer;flex-shrink:0}
+.sw input{opacity:0;width:0;height:0;position:absolute}
+.sw-sl{position:absolute;inset:0;background:var(--border);border-radius:11px;transition:.25s}
+.sw-sl::before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.25s}
+.sw input:checked+.sw-sl{background:var(--accent)}
+.sw input:checked+.sw-sl::before{transform:translateX(18px)}
+/* Product preview */
+.pp-row{display:flex;gap:12px;padding:13px 16px;align-items:flex-start}
+.pp-img{width:68px;height:68px;border-radius:var(--rsm);background:var(--surface);border:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--txt2);flex-shrink:0}
+.pp-img img{width:100%;height:100%;object-fit:cover}
+.pp-cat{font-size:10px;font-weight:600;color:var(--accent);background:rgba(74,125,255,.1);padding:2px 7px;border-radius:4px;display:inline-block;margin-bottom:3px}
+.pp-name{font-size:13px;font-weight:700;line-height:1.4}
+.pp-price{font-size:18px;font-weight:800;color:var(--accent);font-family:'Syne',sans-serif;margin-top:4px}
+/* Seller row */
+.sl-row{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+.sl-av{width:34px;height:34px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0}
+.sl-av img{width:100%;height:100%;object-fit:cover}
+/* Pay method */
+.pm-item{display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:var(--rsm);border:1px solid var(--border);cursor:pointer;transition:all .18s;margin-bottom:8px;background:var(--surface)}
+.pm-item:hover{border-color:var(--accent)}
+.pm-item.selected{border-color:var(--accent);background:rgba(74,125,255,.07)}
+.pm-item.disabled{opacity:.4;cursor:not-allowed}
+.pm-radio{width:16px;height:16px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;transition:.18s;display:flex;align-items:center;justify-content:center}
+.pm-item.selected .pm-radio{border-color:var(--accent)}
+.pm-item.selected .pm-radio::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.pm-ico{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.pm-name{font-size:13px;font-weight:600}.pm-sub{font-size:11px;color:var(--txt2)}.pm-bal{font-size:11px;font-weight:600;color:var(--success)}
+/* Qty */
+.qty-ctrl{display:flex;align-items:center;border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden}
+.qty-btn{width:32px;height:32px;background:var(--surface);border:none;color:var(--txt);font-size:16px;cursor:pointer;transition:.15s}
+.qty-btn:hover{background:var(--border)}
+.qty-val{width:34px;text-align:center;font-size:14px;font-weight:700;line-height:32px;border-left:1px solid var(--border);border-right:1px solid var(--border)}
+/* Summary */
+.s-row{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px solid var(--border)}
+.s-row:last-child{border-bottom:none}
+.s-tot-row{padding:10px 0;font-size:15px;font-weight:700}
+.s-tot-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent)}
+/* Chips */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.cg{background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.2)}
+.cy{background:rgba(245,158,11,.12);color:var(--warn);border:1px solid rgba(245,158,11,.2)}
+.cr{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
+.cp{background:rgba(168,85,247,.12);color:var(--purple);border:1px solid rgba(168,85,247,.25)}
+.cc{background:rgba(6,182,212,.1);color:var(--cyan);border:1px solid rgba(6,182,212,.2)}
+/* Chat */
+.chat-win{display:flex;flex-direction:column;height:350px}
+.chat-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.chat-msgs::-webkit-scrollbar{width:3px}
+.cmsg{max-width:78%;word-break:break-word}
+.cmsg-bubble{padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.55}
+.cmsg-time{font-size:10px;color:var(--txt2);margin-top:2px;padding:0 4px}
+.cmsg.me{align-self:flex-end}.cmsg.me .cmsg-bubble{background:var(--accent);color:#fff;border-radius:12px 12px 2px 12px}
+.cmsg.them{align-self:flex-start}.cmsg.them .cmsg-bubble{background:var(--surface);border:1px solid var(--border);border-radius:12px 12px 12px 2px}
+.cmsg.sys{align-self:center;max-width:90%;text-align:center}.cmsg.sys .cmsg-bubble{background:rgba(74,125,255,.07);border:1px solid rgba(74,125,255,.15);font-size:11px;color:var(--txt2);border-radius:8px}
+.c-inp{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0}
+.c-inp textarea{flex:1;background:var(--nav);border:1px solid var(--border);border-radius:var(--rsm);padding:8px 11px;color:var(--txt);font-family:'Poppins',sans-serif;font-size:13px;resize:none;outline:none;min-height:36px;max-height:80px;transition:border .18s}
+.c-inp textarea:focus{border-color:var(--accent)}.c-inp textarea:disabled{opacity:.4}
+.send-btn{width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;align-self:flex-end;transition:.18s}
+.send-btn:hover{background:var(--ah)}.send-btn:disabled{opacity:.35;cursor:not-allowed}
+.chat-closed{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);padding:8px 14px;font-size:12px;color:var(--danger);text-align:center;display:none}
+/* Store */
+#storePage{display:none}
+.store-hero{background:linear-gradient(135deg,rgba(74,125,255,.12),rgba(124,58,237,.08));border:1px solid rgba(74,125,255,.2);border-radius:var(--r);padding:18px;margin-bottom:14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.store-av{width:66px;height:66px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0;border:3px solid rgba(74,125,255,.3)}
+.store-av img{width:100%;height:100%;object-fit:cover}
+.store-nm{font-size:20px;font-weight:800;font-family:'Syne',sans-serif;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.store-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:11px}
+.sp-card{background:var(--nav);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s}
+.sp-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.sp-img{width:100%;aspect-ratio:4/3;background:var(--surface);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--txt2)}
+.sp-img img{width:100%;height:100%;object-fit:cover}
+.sp-body{padding:9px 11px}
+.sp-cat{font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.sp-name{font-size:12px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sp-price{font-size:13px;font-weight:700;color:var(--accent);margin-top:4px}
+/* Modals */
+.mo{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.78);display:none;align-items:center;justify-content:center;padding:16px}
+.mo.open{display:flex}
+@media(max-width:600px){.mo{padding:0;align-items:flex-end}}
+.mb{background:var(--nav);border:1px solid var(--border);border-radius:var(--r);width:100%;animation:fup .28s ease;overflow:hidden}
+@media(max-width:600px){.mb{border-radius:20px 20px 0 0;max-height:95vh}}
+@keyframes fup{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.mh{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.mh h3{font-size:15px;font-weight:700;font-family:'Syne',sans-serif}
+.mbody{padding:18px;overflow-y:auto}
+.mfoot{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.mc-x{background:none;border:none;color:var(--txt2);font-size:18px;cursor:pointer;line-height:1}
+/* PIN */
+.pin-row{display:flex;gap:8px;justify-content:center;margin:14px 0}
+.pin-d{width:44px;height:52px;background:var(--surface);border:2px solid var(--border);border-radius:var(--rsm);color:var(--txt);font-size:20px;font-weight:700;text-align:center;outline:none;transition:border .18s}
+.pin-d:focus{border-color:var(--accent)}
+/* FG */
+.fg{margin-bottom:11px}.fg label{display:block;font-size:12px;color:var(--txt2);margin-bottom:4px;font-weight:500}
+.fg input,.fg textarea,.fg select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:9px 12px;color:var(--txt);font-family:'Poppins',sans-serif;font-size:13px;outline:none;transition:border .18s}
+.fg input:focus,.fg select:focus{border-color:var(--accent)}
+/* Spinner */
+.sp{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spn .6s linear infinite;display:inline-block}
+@keyframes spn{to{transform:rotate(360deg)}}
+/* Toast */
+#tc{position:fixed;bottom:80px;right:16px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+@media(min-width:901px){#tc{bottom:20px}}
+.toast{background:var(--nav);border:1px solid var(--border);border-left:3px solid var(--accent);color:var(--txt);font-size:13px;padding:10px 14px;border-radius:var(--rsm);min-width:220px;pointer-events:auto;animation:sli .28s ease}
+.toast.s{border-left-color:var(--success)}.toast.e{border-left-color:var(--danger)}.toast.w{border-left-color:var(--warn)}
+@keyframes sli{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+</style>
 </head>
 <body>
-
 <nav>
-  <a class="nb" href="index.html"><div class="nb-dot"></div>XREZZKY</a>
+  <a class="nb" href="index.html"><div class="nb-dot"></div>XREZZKY<span>STORE</span></a>
   <div class="ns"></div>
+  <button class="btn bw bsm" id="storeBtn" onclick="showStore()" style="display:none"><i class="fas fa-store"></i> Lihat Toko</button>
   <button class="btn bg bsm" onclick="history.back()"><i class="fas fa-arrow-left"></i> Kembali</button>
 </nav>
-
-<!-- STEP INDICATOR -->
-<div class="steps" id="stepsEl">
-  <div class="step active" id="step1">
-    <div class="step-dot">1</div>
-    <div class="step-label">Produk</div>
-  </div>
-  <div class="step" id="step2">
-    <div class="step-dot">2</div>
-    <div class="step-label">Pembayaran</div>
-  </div>
-  <div class="step" id="step3">
-    <div class="step-dot">3</div>
-    <div class="step-label">Konfirmasi</div>
-  </div>
+<div class="steps">
+  <div class="step active" id="st1"><div class="step-dot">1</div><div class="step-lbl">Produk</div></div>
+  <div class="step" id="st2"><div class="step-dot">2</div><div class="step-lbl">Bayar</div></div>
+  <div class="step" id="st3"><div class="step-dot">3</div><div class="step-lbl">Selesai</div></div>
 </div>
-
 <div class="page">
-  <div class="co-layout">
-
-    <!-- LEFT -->
-    <div>
-
-      <!-- PRODUCT INFO -->
-      <div class="co-sec anim" id="prodSection">
-        <div class="co-sec-head">
-          <div class="step-num">1</div>
-          <h3>Detail Produk</h3>
+  <!-- CHECKOUT -->
+  <div id="coPage">
+    <div class="co-grid">
+      <div>
+        <div class="card">
+          <div class="sl-row" id="slRow">
+            <div class="sl-av" id="slAv">?</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span id="slNm">Seller</span><span id="slTrust" class="trust tn"></span></div>
+              <div style="font-size:11px;color:var(--txt2);margin-top:1px" id="slStat">Memuat...</div>
+            </div>
+            <button class="btn bg bxs" onclick="showStore()"><i class="fas fa-store"></i> Toko</button>
+          </div>
+          <div class="pp-row">
+            <div class="pp-img" id="ppImg"><i class="fas fa-box-open"></i></div>
+            <div style="flex:1;min-width:0">
+              <div class="pp-cat" id="ppCat">—</div>
+              <div class="pp-name" id="ppNm">Memuat...</div>
+              <div class="pp-price" id="ppPr">—</div>
+            </div>
+          </div>
+          <div id="ppDesc" style="padding:10px 16px 13px;font-size:13px;color:var(--txt2);line-height:1.7;border-top:1px solid var(--border);display:none"></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--border)">
+            <span style="font-size:13px;color:var(--txt2)">Qty:</span>
+            <div class="qty-ctrl">
+              <button class="qty-btn" onclick="chQty(-1)">&#8722;</button>
+              <div class="qty-val" id="qtyV">1</div>
+              <button class="qty-btn" onclick="chQty(1)">+</button>
+            </div>
+            <span id="stkTxt" style="font-size:11px;color:var(--txt2)"></span>
+          </div>
         </div>
-        <div class="co-sec-body">
-          <div id="prodPreviewWrap">
-            <div style="text-align:center; padding:40px; color:var(--txt2)">
-              <div class="sp" style="border-color:var(--border); border-top-color:var(--accent); width:32px; height:32px; margin:0 auto 12px"></div>
-              Memuat produk...
+        <!-- MC Banner -->
+        <div id="mcBan" class="mc-ban mc-req" style="display:none">
+          <i id="mcIco" class="fas fa-shield-halved" style="font-size:20px;flex-shrink:0;margin-top:1px;color:var(--purple)"></i>
+          <div style="flex:1">
+            <div class="mc-title" id="mcTit">MC Wajib</div>
+            <div class="mc-sub" id="mcSub">Seller baru</div>
+          </div>
+          <div id="mcCtrl" style="display:none;flex-direction:column;align-items:center;gap:4px">
+            <label class="sw"><input type="checkbox" id="mcTog" onchange="onMcTog()"><div class="sw-sl"></div></label>
+            <span style="font-size:10px;color:var(--txt2)" id="mcTLbl">MC</span>
+          </div>
+        </div>
+        <!-- Pay methods -->
+        <div class="card">
+          <div class="card-head"><div class="card-ico" style="background:rgba(74,125,255,.12);color:var(--accent)"><i class="fas fa-wallet"></i></div><h3>Metode Bayar</h3></div>
+          <div class="card-body" id="payList"></div>
+        </div>
+        <!-- Voucher -->
+        <div class="card">
+          <div class="card-head"><div class="card-ico" style="background:rgba(245,158,11,.12);color:var(--warn)"><i class="fas fa-tag"></i></div><h3>Voucher</h3></div>
+          <div class="card-body">
+            <div id="vApp" style="display:none;align-items:center;gap:8px;padding:8px 12px;background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);border-radius:var(--rsm);margin-bottom:10px">
+              <i class="fas fa-circle-check" style="color:var(--success)"></i>
+              <span id="vMsg" style="font-size:13px;flex:1"></span>
+              <button onclick="rmVoucher()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:13px;padding:0"><i class="fas fa-times"></i></button>
+            </div>
+            <div style="display:flex;gap:8px">
+              <input id="vInp" type="text" placeholder="Kode voucher..." style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:8px 12px;color:var(--txt);font-family:'Poppins',sans-serif;font-size:13px;outline:none"/>
+              <button class="btn bg bsm" onclick="applyV()"><i class="fas fa-arrow-right"></i></button>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- NOTES -->
-      <div class="co-sec anim2">
-        <div class="co-sec-head">
-          <div class="step-num" style="background:var(--surface); color:var(--txt2); border:1px solid var(--border)"><i class="fas fa-note-sticky" style="font-size:10px"></i></div>
-          <h3>Catatan untuk Seller <span style="font-size:11px; color:var(--txt2); font-weight:400">(opsional)</span></h3>
-        </div>
-        <div class="co-sec-body">
-          <textarea class="co-notes" id="orderNotes" placeholder="Misal: akun untuk server Asia, username atau data akun yang diperlukan..."></textarea>
+        <!-- Notes -->
+        <div class="card">
+          <div class="card-head"><div class="card-ico" style="background:rgba(245,158,11,.1);color:var(--warn)"><i class="fas fa-pen"></i></div><h3>Catatan ke Seller</h3></div>
+          <div class="card-body"><textarea id="orderNotes" rows="2" placeholder="Permintaan khusus, info tambahan..." style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:9px 12px;color:var(--txt);font-family:'Poppins',sans-serif;font-size:13px;resize:none;outline:none"></textarea></div>
         </div>
       </div>
-
-      <!-- PAYMENT METHOD -->
-      <div class="co-sec anim2">
-        <div class="co-sec-head">
-          <div class="step-num">2</div>
-          <h3>Metode Pembayaran</h3>
-        </div>
-        <div class="co-sec-body">
-          <div class="pay-methods" id="payMethods"></div>
-        </div>
-      </div>
-
-      <!-- VOUCHER -->
-      <div class="co-sec anim2">
-        <div class="co-sec-head">
-          <div class="step-num" style="background:var(--surface); color:var(--txt2); border:1px solid var(--border)"><i class="fas fa-tag" style="font-size:10px"></i></div>
-          <h3>Kode Voucher</h3>
-        </div>
-        <div class="co-sec-body">
-          <div class="voucher-row">
-            <input class="voucher-inp" type="text" id="voucherInp" placeholder="Masukkan kode voucher..." style="text-transform:uppercase" />
-            <button class="btn bp" onclick="applyVoucher()"><i class="fas fa-tag"></i> Pakai</button>
+      <!-- Summary -->
+      <div>
+        <div class="card" style="position:sticky;top:68px">
+          <div class="card-head"><div class="card-ico" style="background:rgba(34,197,94,.12);color:var(--success)"><i class="fas fa-receipt"></i></div><h3>Ringkasan</h3></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:0">
+            <div class="s-row"><span style="color:var(--txt2)">Produk</span><span id="sNm" style="max-width:148px;text-align:right;font-size:12px;font-weight:600">—</span></div>
+            <div class="s-row"><span style="color:var(--txt2)">Harga</span><span id="sHr">—</span></div>
+            <div class="s-row"><span style="color:var(--txt2)">Qty</span><span id="sQt">1</span></div>
+            <div class="s-row" id="sMcR" style="display:none"><span style="color:var(--purple)"><i class="fas fa-shield-halved" style="font-size:9px;margin-right:3px"></i>Fee MC</span><span id="sMc" style="color:var(--purple)">—</span></div>
+            <div class="s-row"><span style="color:var(--txt2)">Biaya Layanan</span><span id="sFe">—</span></div>
+            <div class="s-row" id="sDisR" style="display:none"><span style="color:var(--success)">Diskon</span><span id="sDis" style="color:var(--success)">—</span></div>
+            <div class="s-row s-tot-row"><span>Total</span><div class="s-tot-val" id="sTot">—</div></div>
           </div>
-          <div class="voucher-applied" id="voucherApplied" style="display:none">
-            <i class="fas fa-check-circle"></i>
-            <span id="voucherMsg">Voucher berhasil dipakai</span>
-            <button class="btn bg bsm" style="margin-left:auto; padding:3px 8px; font-size:11px" onclick="removeVoucher()">Hapus</button>
+          <div style="padding:0 14px 14px">
+            <button class="btn bp" id="buyBtn" style="width:100%;justify-content:center;padding:13px;font-size:14px;font-weight:700" onclick="openConfirm()" disabled>
+              <i class="fas fa-shopping-bag"></i> Beli Sekarang
+            </button>
           </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- RIGHT: Summary -->
-    <div>
-      <div class="order-summary">
-        <div class="os-title">Ringkasan Order</div>
-
-        <!-- Seller -->
-        <div class="seller-row" id="sellerRowSummary">
-          <div class="sr-av" id="summSellerAv">S</div>
-          <div>
-            <div style="font-size:12px; font-weight:600" id="summSellerName">—</div>
-            <div style="font-size:10px; color:var(--success)">● Verified Seller</div>
-          </div>
-          <a id="summSellerLink" href="#" style="margin-left:auto; font-size:11px; color:var(--accent); text-decoration:none"><i class="fas fa-arrow-up-right-from-square"></i> Profil</a>
-        </div>
-
-        <div class="os-row">
-          <span class="os-label">Produk</span>
-          <span class="os-val" id="sum-prod" style="max-width:160px; text-align:right; font-size:12px">—</span>
-        </div>
-        <div class="os-row">
-          <span class="os-label">Qty</span>
-          <span class="os-val" id="sum-qty">1</span>
-        </div>
-        <div class="os-row">
-          <span class="os-label">Harga Satuan</span>
-          <span class="os-val" id="sum-price">—</span>
-        </div>
-        <div class="os-row" id="row-discount" style="display:none">
-          <span class="os-label" style="color:var(--success)">Diskon Voucher</span>
-          <span class="os-val" style="color:var(--success)" id="sum-discount">—</span>
-        </div>
-        <div class="os-row">
-          <span class="os-label">Biaya Layanan</span>
-          <span class="os-val" id="sum-fee">Rp 0</span>
-        </div>
-        <div class="os-total">
-          <span class="ot-l">Total</span>
-          <span class="ot-v" id="sum-total">—</span>
-        </div>
-
-        <button class="buy-btn" id="buyBtn" onclick="confirmOrder()" disabled>
-          <i class="fas fa-shopping-bag"></i> Beli Sekarang
-        </button>
-
-        <!-- Guarantees -->
-        <div class="guarantees" style="margin-top:14px; margin-bottom:0">
-          <div class="gu-item"><i class="fas fa-shield-halved"></i> Transaksi aman</div>
-          <div class="gu-item"><i class="fas fa-rotate-left"></i> Garansi refund</div>
-          <div class="gu-item"><i class="fas fa-bolt"></i> Proses cepat</div>
-          <div class="gu-item"><i class="fas fa-headset"></i> CS 24 jam</div>
         </div>
       </div>
     </div>
-
+  </div>
+  <!-- STORE PAGE -->
+  <div id="storePage">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <button class="btn bg bsm" onclick="hideStore()"><i class="fas fa-arrow-left"></i> Kembali</button>
+      <span style="font-size:13px;font-weight:600;color:var(--txt2)">Detail Toko</span>
+    </div>
+    <div class="store-hero">
+      <div class="store-av" id="stAv">?</div>
+      <div style="flex:1">
+        <div class="store-nm" id="stNm">—</div>
+        <div style="font-size:12px;color:var(--txt2);margin-top:3px" id="stDesc"></div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap" id="stTags"></div>
+      </div>
+    </div>
+    <div id="stAbout" class="card" style="display:none">
+      <div class="card-head"><div class="card-ico" style="background:rgba(74,125,255,.12);color:var(--accent)"><i class="fas fa-circle-info"></i></div><h3>Tentang Toko</h3></div>
+      <div class="card-body" id="stAboutTxt" style="font-size:13px;color:var(--txt2);line-height:1.7"></div>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--txt2);margin-bottom:11px">Semua Produk</div>
+    <div class="store-grid" id="stGrid"><div style="text-align:center;padding:40px;color:var(--txt2);font-size:13px;grid-column:1/-1">Memuat...</div></div>
   </div>
 </div>
-
-<!-- CONFIRM MODAL -->
-<div class="mo" id="confirmModal">
-  <div class="mb" style="max-width:440px">
-    <div class="mh"><h3>Konfirmasi Pembelian</h3><button class="mc-btn" onclick="closeMo('confirmModal')"><i class="fas fa-times"></i></button></div>
-    <div class="mbody" id="confirmBody"></div>
+<!-- MODALS -->
+<!-- Confirm -->
+<div class="mo" id="mCo">
+  <div class="mb" style="max-width:400px">
+    <div class="mh"><h3>Konfirmasi Order</h3><button class="mc-x" onclick="closeMo('mCo')"><i class="fas fa-times"></i></button></div>
+    <div class="mbody" id="mCoBody" style="max-height:72vh"></div>
   </div>
 </div>
-
-<!-- SUCCESS MODAL -->
-<div class="mo" id="successModal">
-  <div class="mb" style="max-width:420px">
-    <div class="mbody" id="successBody" style="padding:28px"></div>
+<!-- PIN -->
+<div class="mo" id="mPin">
+  <div class="mb" style="max-width:310px">
+    <div class="mh"><h3><i class="fas fa-lock" style="color:var(--accent);margin-right:7px"></i>PIN Transaksi</h3><button class="mc-x" onclick="closeMo('mPin')"><i class="fas fa-times"></i></button></div>
+    <div class="mbody" style="text-align:center">
+      <p style="font-size:13px;color:var(--txt2);margin-bottom:6px">Masukkan PIN 6 digit untuk konfirmasi bayar.</p>
+      <div class="pin-row">
+        <input class="pin-d" id="p0" maxlength="1" type="password" inputmode="numeric" oninput="pn(0)"/>
+        <input class="pin-d" id="p1" maxlength="1" type="password" inputmode="numeric" oninput="pn(1)" onkeydown="pb(1,event)"/>
+        <input class="pin-d" id="p2" maxlength="1" type="password" inputmode="numeric" oninput="pn(2)" onkeydown="pb(2,event)"/>
+        <input class="pin-d" id="p3" maxlength="1" type="password" inputmode="numeric" oninput="pn(3)" onkeydown="pb(3,event)"/>
+        <input class="pin-d" id="p4" maxlength="1" type="password" inputmode="numeric" oninput="pn(4)" onkeydown="pb(4,event)"/>
+        <input class="pin-d" id="p5" maxlength="1" type="password" inputmode="numeric" oninput="pn(5)" onkeydown="pb(5,event)"/>
+      </div>
+      <div id="pinErr" style="color:var(--danger);font-size:12px;min-height:16px"></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn bg bsm" onclick="closeMo('mPin')">Batal</button>
+      <button class="btn bp bsm" onclick="verifyPin()"><i class="fas fa-unlock"></i> Konfirmasi</button>
+    </div>
   </div>
 </div>
-
+<!-- Chat -->
+<div class="mo" id="mChat">
+  <div class="mb" style="max-width:480px">
+    <div class="mh">
+      <h3 id="chatTit"><i class="fas fa-comments" style="color:var(--accent);margin-right:7px"></i>Obrolan</h3>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="chip cy" id="chatSt" style="font-size:10px">Aktif</span>
+        <button class="mc-x" onclick="closeMo('mChat')"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+    <div class="chat-win">
+      <div class="chat-msgs" id="chatMsgs"></div>
+      <div class="chat-closed" id="chatClosed"><i class="fas fa-lock" style="margin-right:6px"></i>Obrolan ditutup — transaksi selesai</div>
+      <div class="c-inp" id="cInpW">
+        <textarea id="chatTxt" placeholder="Tulis pesan..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}" oninput="aH(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+    <div class="mfoot" id="chatFoot" style="flex-wrap:wrap;gap:8px;min-height:52px"></div>
+  </div>
+</div>
+<!-- Success -->
+<div class="mo" id="mSucc">
+  <div class="mb" style="max-width:380px">
+    <div class="mbody" id="mSuccBody" style="padding:24px;max-height:88vh;overflow-y:auto"></div>
+  </div>
+</div>
 <div id="tc"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPA_URL = 'https://jydfjfjttpmropoczgop.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
-const CLD_BASE = 'https://res.cloudinary.com/drjmclzbi/image/upload/';
-
-// ── Guard Supabase CDN ──
-if (typeof supabase === 'undefined') {
-  document.addEventListener('DOMContentLoaded', () => { document.body.style.opacity = '1'; });
-  throw new Error('Supabase CDN failed to load');
-}
-
-const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
-
-let user = null, profile = null, product = null, seller = null;
-let qty = 1, selectedPayMethod = null, voucher = null, discount = 0;
-const FEE = 500; // service fee
-
-document.addEventListener('DOMContentLoaded', async () => {
-  const params = new URLSearchParams(location.search);
-  const productId = params.get('product');
-
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) {
-    toast('Login dulu untuk checkout', 'e');
-    setTimeout(() => location.href='index.html', 1500);
-    return;
-  }
-  user    = session.user;
-  const { data: p } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
-  profile = p || { id: user.id, balance: 0 };
-
-  if (productId) {
-    await loadProduct(productId);
-  } else {
-    // Demo product
-    product = { id:'demo', name:'Akun Mobile Legends Epic 50 Skin', category:'akun', description:'Akun ML Epic dengan 50+ skin legendary. Server: Asia. Rank: Mythic. Sudah terhubung Moonton.', price:350000, image_url:null, sold_count:124, avg_rating:4.8, seller_id:'demo-seller', stock:3 };
-    seller  = { id:'demo-seller', username:'xrezzky_store', avatar_url:null };
-    renderProduct();
-  }
-  renderPayMethods();
-  updateSummary();
+const SUPA_URL='https://jydfjfjttpmropoczgop.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const CLD='https://res.cloudinary.com/drjmclzbi/image/upload/';
+const SVC=500,MCF=2000,MC_LIMIT=20;
+if(typeof supabase==='undefined')throw new Error('Supabase CDN not loaded');
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+let user=null,profile=null,product=null,sellerP=null;
+let qty=1,payMethod=null,voucher=null,discount=0;
+let useMC=true,mcRequired=true,mcOptional=false;
+let activeOrder=null,activeChatId=null,chatSub=null;
+document.addEventListener('DOMContentLoaded',()=>{
+  (async()=>{
+    try{
+      const{data:{session}}=await sb.auth.getSession();
+      if(!session){toast('Login dulu','e');setTimeout(()=>location.href='index.html',1200);return;}
+      user=session.user;
+      const{data:p}=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
+      profile=p||{id:user.id,balance:0};
+      const pid=new URLSearchParams(location.search).get('product');
+      if(!pid){toast('Produk tidak ditemukan','e');setTimeout(()=>location.href='index.html',1200);return;}
+      await loadProduct(pid);
+      renderPayMethods();
+      updateSum();
+    }catch(e){console.error('[co]',e);toast('Error: '+e.message,'e');}
+  })();
 });
-
-async function loadProduct(id) {
-  const { data: p } = await sb.from('products').select('*').eq('id', id).single();
-  if (!p) { toast('Produk tidak ditemukan', 'e'); history.back(); return; }
-  product = p;
-  if (p.seller_id) {
-    const { data: s } = await sb.from('profiles').select('username, avatar_url').eq('id', p.seller_id).single();
-    seller = s;
-  }
-  renderProduct();
-  updateSummary();
+async function loadProduct(id){
+  const{data:p,error}=await sb.from('products').select('*').eq('id',id).single();
+  if(error||!p){toast('Produk tidak ada','e');history.back();return;}
+  product=p;
+  if(p.seller_id){const{data:s}=await sb.from('profiles').select('*').eq('id',p.seller_id).maybeSingle();sellerP=s;}
+  renderProd();renderSeller();
+  document.getElementById('storeBtn').style.display='inline-flex';
+  document.title='Beli '+p.name+' — XREZZKY';
 }
-
-function renderProduct() {
-  if (!product) return;
-  const img = product.image_url ? `<img src="${CLD_BASE}${product.image_url}" loading="lazy" />` : `<i class="fas fa-box-open"></i>`;
-  const s   = seller || {};
-  const avHtml = s.avatar_url ? `<img src="${CLD_BASE}${s.avatar_url}" />` : (s.username||'S')[0].toUpperCase();
-
-  document.getElementById('prodPreviewWrap').innerHTML = `
-    <div class="seller-row" style="margin-bottom:14px">
-      <div class="sr-av">${avHtml}</div>
-      <div>
-        <div style="font-size:12px; font-weight:600">${esc(s.username||'Seller')}</div>
-        <div style="font-size:10px; color:var(--success)">● Verified Seller</div>
-      </div>
-      <a href="profil.html?id=${product.seller_id}" style="margin-left:auto; font-size:11px; color:var(--accent); text-decoration:none"><i class="fas fa-arrow-up-right-from-square"></i> Profil</a>
-    </div>
-
-    <div class="prod-preview">
-      <div class="pp-img">${img}</div>
-      <div style="flex:1; min-width:0">
-        <div class="pp-cat">${esc(product.category||'—')}</div>
-        <div class="pp-name">${esc(product.name)}</div>
-        <div class="pp-seller"><i class="fas fa-store" style="font-size:10px"></i> ${esc(s.username||'—')}</div>
-        <div style="display:flex; align-items:center; gap:4px">
-          ${product.avg_rating ? `<div class="pp-rating">★ ${Number(product.avg_rating).toFixed(1)}</div>` : ''}
-          ${product.sold_count ? `<div class="pp-sold">(${product.sold_count}x terjual)</div>` : ''}
-        </div>
-      </div>
-      <div style="flex-shrink:0; text-align:right">
-        <div style="font-size:20px; font-weight:800; color:var(--accent)">${fmtRp(product.price)}</div>
-      </div>
-    </div>
-
-    ${product.description ? `<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:12px 14px; margin-top:14px; font-size:13px; color:var(--txt2); line-height:1.65">${esc(product.description)}</div>` : ''}
-
-    <div class="qty-row" style="margin-top:14px">
-      <span class="qty-label">Jumlah:</span>
-      <div class="qty-ctrl">
-        <button class="qty-btn" onclick="changeQty(-1)">−</button>
-        <div class="qty-val" id="qtyDisplay">1</div>
-        <button class="qty-btn" onclick="changeQty(1)">+</button>
-      </div>
-      ${product.stock ? `<span class="stock-info"><i class="fas fa-box" style="margin-right:3px"></i>${product.stock} stok tersedia</span>` : ''}
-    </div>`;
-
-  // Update summary seller
-  document.getElementById('summSellerAv').innerHTML = avHtml;
-  document.getElementById('summSellerName').textContent = s.username || 'Seller';
-  document.getElementById('summSellerLink').href = `profil.html?id=${product.seller_id}`;
-  document.getElementById('sum-prod').textContent = product.name;
+function renderProd(){
+  const p=product;
+  document.getElementById('ppImg').innerHTML=p.image_url?'<img src="'+CLD+p.image_url+'"/>':'<i class="fas fa-box-open"></i>';
+  document.getElementById('ppCat').textContent=p.category||'—';
+  document.getElementById('ppNm').textContent=p.name;
+  document.getElementById('ppPr').textContent=fmtRp(p.price);
+  document.getElementById('stkTxt').textContent=p.stock?p.stock+' stok':'';
+  document.getElementById('sNm').textContent=p.name;
+  if(p.description){document.getElementById('ppDesc').textContent=p.description;document.getElementById('ppDesc').style.display='block';}
 }
-
-function changeQty(d) {
-  const max = product?.stock || 99;
-  qty = Math.max(1, Math.min(max, qty + d));
-  document.getElementById('qtyDisplay').textContent = qty;
-  document.getElementById('sum-qty').textContent = qty;
-  updateSummary();
+function renderSeller(){
+  const s=sellerP||{};const nm=s.username||'Seller';const txn=s.completed_orders||0;
+  const av=document.getElementById('slAv');
+  av.innerHTML=s.avatar_url?'<img src="'+CLD+s.avatar_url+'"/>':nm[0].toUpperCase();
+  document.getElementById('slNm').textContent=nm;
+  document.getElementById('slStat').textContent=txn+' transaksi selesai';
+  const tb=document.getElementById('slTrust');
+  if(s.role==='admin'){tb.className='trust ta';tb.innerHTML='<i class="fas fa-shield-halved"></i> Admin';mcRequired=false;mcOptional=false;useMC=false;}
+  else if(txn>=MC_LIMIT||s.is_verified){tb.className='trust tt';tb.innerHTML='<i class="fas fa-star"></i> Terpercaya ('+txn+'x)';mcRequired=false;mcOptional=true;useMC=false;}
+  else if(txn>=10){tb.className='trust tg';tb.innerHTML='<i class="fas fa-thumbs-up"></i> Berkembang ('+txn+'/20)';mcRequired=true;mcOptional=false;useMC=true;}
+  else{tb.className='trust tn';tb.innerHTML='<i class="fas fa-user-clock"></i> New Seller ('+txn+'/20)';mcRequired=true;mcOptional=false;useMC=true;}
+  renderMCBan();
 }
-
-function renderPayMethods() {
-  const balance = profile?.balance || 0;
-  const methods = [
-    { id:'saldo',   icon:'fas fa-wallet',        color:'var(--accent)', name:'Saldo XREZZKY', sub: `Saldo: ${fmtRp(balance)}`, balance, badge: balance >= (product?.price||0)*qty ? null : 'Tidak Cukup' },
-    { id:'transfer',icon:'fas fa-building-columns',color:'var(--warn)', name:'Transfer Bank',  sub:'BCA, BNI, BRI, Mandiri', badge: null },
-    { id:'ewallet', icon:'fas fa-mobile-screen',  color:'var(--success)',name:'E-Wallet',       sub:'DANA, GoPay, OVO, ShopeePay', badge: null },
-    { id:'qris',    icon:'fas fa-qrcode',         color:'var(--danger)', name:'QRIS',           sub:'Scan QR dari aplikasi manapun', badge: null },
+function renderMCBan(){
+  const ban=document.getElementById('mcBan'),ctrl=document.getElementById('mcCtrl');
+  ban.style.display='flex';
+  if(mcRequired){
+    ban.className='mc-ban mc-req';
+    document.getElementById('mcIco').style.color='var(--purple)';
+    document.getElementById('mcTit').textContent='🛡️ Middleman (MC) Wajib';
+    document.getElementById('mcSub').textContent='Seller belum 20 transaksi. Saldo di-hold sampai kamu konfirmasi terima produk.';
+    ctrl.style.display='none';useMC=true;
+  }else if(mcOptional){
+    ban.className='mc-ban mc-opt';
+    document.getElementById('mcIco').style.color='var(--success)';
+    document.getElementById('mcTit').textContent='✅ Seller Terpercaya — MC Opsional';
+    const amt=(product?.price||0)*qty;
+    document.getElementById('mcSub').textContent='Seller sudah 20+ transaksi.'+(amt>=200000&&!useMC?' ⚠️ Nominal besar, disarankan MC.':' Bebas pilih.');
+    ctrl.style.display='flex';
+    document.getElementById('mcTog').checked=useMC;
+    document.getElementById('mcTLbl').textContent=useMC?'MC Aktif':'Langsung';
+  }else{ban.style.display='none';}
+  updateSum();
+}
+function onMcTog(){
+  useMC=document.getElementById('mcTog').checked;
+  document.getElementById('mcTLbl').textContent=useMC?'MC Aktif':'Langsung';
+  const amt=(product?.price||0)*qty;
+  if(!useMC&&amt>=200000)toast('⚠️ Nominal besar ('+fmtRp(amt)+') — disarankan MC','w');
+  updateSum();
+}
+function chQty(d){qty=Math.max(1,Math.min(product?.stock||99,qty+d));document.getElementById('qtyV').textContent=qty;document.getElementById('sQt').textContent=qty;if(mcOptional)renderMCBan();updateSum();}
+function renderPayMethods(){
+  const bal=profile?.balance||0,price=(product?.price||0)*qty;
+  const ms=[
+    {id:'saldo',icon:'fas fa-wallet',col:'var(--accent)',nm:'Saldo XREZZKY',sub:'Saldo: '+fmtRp(bal),ok:bal>=price},
+    {id:'transfer',icon:'fas fa-building-columns',col:'var(--warn)',nm:'Transfer Bank',sub:'BCA, BNI, BRI, Mandiri'},
+    {id:'ewallet',icon:'fas fa-mobile-screen',col:'var(--success)',nm:'E-Wallet',sub:'DANA, GoPay, OVO'},
+    {id:'qris',icon:'fas fa-qrcode',col:'var(--danger)',nm:'QRIS',sub:'Scan dari app manapun'},
   ];
-
-  document.getElementById('payMethods').innerHTML = methods.map(m => {
-    const disabled = m.badge === 'Tidak Cukup';
-    return `<div class="pm-item ${disabled?'disabled':''}" id="pm-${m.id}" onclick="${disabled?'toast(\'Saldo tidak cukup. Deposit dulu\',\'e\')':  `selectPayMethod('${m.id}')`}">
-      <div class="pm-radio"></div>
-      <div class="pm-icon" style="background:${m.color}22; color:${m.color}"><i class="${m.icon}"></i></div>
-      <div class="pm-info">
-        <div class="pm-name">${m.name}</div>
-        <div class="${m.id==='saldo'?'pm-bal':'pm-sub'}">${m.sub}</div>
-      </div>
-      ${m.badge ? `<span class="pm-badge cy">${m.badge}</span>` : ''}
-    </div>`;
+  document.getElementById('payList').innerHTML=ms.map(m=>{
+    const dis=m.id==='saldo'&&m.ok===false;
+    return'<div class="pm-item '+(dis?'disabled':'')+'" id="pm-'+m.id+'" onclick="'+(dis?'toast(\'Saldo tidak cukup\',\'e\')':'selPay(\''+m.id+'\')')+'"><div class="pm-radio"></div><div class="pm-ico" style="background:'+m.col+'22;color:'+m.col+'"><i class="'+m.icon+'"></i></div><div style="flex:1"><div class="pm-name">'+m.nm+'</div><div class="'+(m.id==='saldo'&&!dis?'pm-bal':'pm-sub')+'">'+m.sub+'</div></div>'+(dis?'<span class="chip cr" style="font-size:10px">Kurang</span>':'')+'</div>';
   }).join('');
 }
-
-function selectPayMethod(id) {
-  selectedPayMethod = id;
-  document.querySelectorAll('.pm-item').forEach(el => el.classList.remove('selected'));
-  document.getElementById(`pm-${id}`)?.classList.add('selected');
-  updateSummary();
+function selPay(id){payMethod=id;document.querySelectorAll('.pm-item').forEach(e=>e.classList.remove('selected'));document.getElementById('pm-'+id)?.classList.add('selected');updateSum();}
+function applyV(){
+  const code=document.getElementById('vInp').value.trim().toUpperCase();if(!code)return toast('Masukkan kode','w');
+  const vv={'XREZZKY10':{d:.10,l:'Diskon 10%'},'HEMAT20K':{d:20000,l:'Hemat Rp 20rb',fx:true},'NEWUSER':{d:.15,l:'Diskon 15%'}};
+  const v=vv[code];if(!v){toast('Voucher tidak valid','e');return;}
+  voucher=v;discount=v.fx?v.d:Math.round((product?.price||0)*qty*v.d);
+  document.getElementById('vApp').style.display='flex';document.getElementById('vMsg').textContent=v.l+' (−'+fmtRp(discount)+')';
+  document.getElementById('sDisR').style.display='flex';document.getElementById('sDis').textContent='−'+fmtRp(discount);
+  toast('Voucher applied ✅','s');updateSum();
 }
-
-function applyVoucher() {
-  const code = document.getElementById('voucherInp').value.trim().toUpperCase();
-  if (!code) return toast('Masukkan kode voucher', 'w');
-
-  // Demo vouchers
-  const vouchers = { 'XREZZKY10': { disc: .10, label: 'Diskon 10%' }, 'HEMAT20K': { disc: 20000, label: 'Hemat Rp 20.000', type:'fixed' }, 'NEWUSER': { disc: .15, label: 'Diskon 15% New User' } };
-  const v = vouchers[code];
-  if (!v) { toast('Kode voucher tidak valid', 'e'); return; }
-
-  voucher  = v;
-  discount = v.type === 'fixed' ? v.disc : Math.round((product?.price||0) * qty * v.disc);
-  document.getElementById('voucherApplied').style.display = 'flex';
-  document.getElementById('voucherMsg').textContent = `${v.label} (−${fmtRp(discount)})`;
-  document.getElementById('row-discount').style.display = 'flex';
-  document.getElementById('sum-discount').textContent = `−${fmtRp(discount)}`;
-  toast('Voucher dipakai ✅', 's');
-  updateSummary();
+function rmVoucher(){voucher=null;discount=0;document.getElementById('vApp').style.display='none';document.getElementById('vInp').value='';document.getElementById('sDisR').style.display='none';updateSum();}
+function updateSum(){
+  if(!product)return;
+  const sub=(product.price||0)*qty,mcF=useMC?MCF:0,tot=Math.max(0,sub-discount+SVC+mcF);
+  document.getElementById('sHr').textContent=fmtRp(product.price);
+  document.getElementById('sFe').textContent=fmtRp(SVC);
+  document.getElementById('sTot').textContent=fmtRp(tot);
+  const rm=document.getElementById('sMcR');
+  if(useMC){rm.style.display='flex';document.getElementById('sMc').textContent=fmtRp(MCF);}else rm.style.display='none';
+  if(payMethod){markDone('st2');document.getElementById('st3').classList.add('active');}
+  document.getElementById('buyBtn').disabled=!(product&&payMethod);
 }
-
-function removeVoucher() {
-  voucher  = null; discount = 0;
-  document.getElementById('voucherApplied').style.display = 'none';
-  document.getElementById('voucherInp').value = '';
-  document.getElementById('row-discount').style.display = 'none';
-  updateSummary();
+function markDone(id){const el=document.getElementById(id);el.classList.remove('active');el.classList.add('done');el.querySelector('.step-dot').innerHTML='<i class="fas fa-check" style="font-size:9px"></i>';}
+function openConfirm(){
+  if(!product||!payMethod)return;
+  if(!profile?.transaction_pin){toast('Buat PIN dulu di Profil','w');setTimeout(()=>location.href='profil.html',1500);return;}
+  const sub=(product.price||0)*qty,mcF=useMC?MCF:0,tot=Math.max(0,sub-discount+SVC+mcF);
+  if(payMethod==='saldo'&&(profile.balance||0)<tot){toast('Saldo tidak cukup','e');return;}
+  const s=sellerP||{};
+  const mLbl={saldo:'Saldo XREZZKY',transfer:'Transfer Bank',ewallet:'E-Wallet',qris:'QRIS'};
+  document.getElementById('mCoBody').innerHTML=
+    '<div style="display:flex;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:12px;margin-bottom:14px;align-items:center">'
+    +'<div style="width:48px;height:48px;border-radius:var(--rsm);background:var(--nav);border:1px solid var(--border);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--txt2)">'
+    +(product.image_url?'<img src="'+CLD+product.image_url+'" style="width:100%;height:100%;object-fit:cover"/>':'<i class="fas fa-box-open"></i>')
+    +'</div><div><div style="font-size:13px;font-weight:700">'+esc(product.name)+'</div><div style="font-size:11px;color:var(--txt2)">'+esc(s.username||'Seller')+' · '+qty+'x</div></div></div>'
+    +'<div style="border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;margin-bottom:14px">'
+    +'<div style="display:flex;justify-content:space-between;padding:8px 12px;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--txt2)">Subtotal</span><span style="font-weight:600">'+fmtRp(sub)+'</span></div>'
+    +(discount>0?'<div style="display:flex;justify-content:space-between;padding:8px 12px;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--txt2)">Diskon</span><span style="color:var(--success);font-weight:600">−'+fmtRp(discount)+'</span></div>':'')
+    +'<div style="display:flex;justify-content:space-between;padding:8px 12px;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--txt2)">Biaya Layanan</span><span style="font-weight:600">'+fmtRp(SVC)+'</span></div>'
+    +(useMC?'<div style="display:flex;justify-content:space-between;padding:8px 12px;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--purple)"><i class="fas fa-shield-halved" style="font-size:10px;margin-right:4px"></i>Fee MC</span><span style="color:var(--purple);font-weight:600">'+fmtRp(MCF)+'</span></div>':'')
+    +'<div style="display:flex;justify-content:space-between;padding:8px 12px;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--txt2)">Metode</span><span style="font-weight:600">'+(mLbl[payMethod]||payMethod)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:8px 12px;font-size:13px;border-bottom:1px solid var(--border)"><span style="color:var(--txt2)">Middleman</span><span>'+(useMC?'<span class="chip cp">Aktif</span>':'<span class="chip cg">Langsung</span>')+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:11px 12px"><span style="font-size:14px;font-weight:700">Total</span><span style="font-family:\'Syne\',sans-serif;font-size:20px;font-weight:800;color:var(--accent)">'+fmtRp(tot)+'</span></div>'
+    +'</div>'
+    +(useMC?'<div style="background:rgba(168,85,247,.07);border:1px solid rgba(168,85,247,.2);border-radius:var(--rsm);padding:10px 12px;font-size:12px;color:var(--txt2);margin-bottom:12px"><i class="fas fa-shield-halved" style="color:var(--purple);margin-right:6px"></i>Saldo di-<strong style="color:var(--purple)">hold</strong> sampai kamu konfirmasi terima produk.</div>'
+    :'<div style="background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.2);border-radius:var(--rsm);padding:10px 12px;font-size:12px;color:var(--txt2);margin-bottom:12px"><i class="fas fa-bolt" style="color:var(--success);margin-right:6px"></i>Transaksi <strong style="color:var(--success)">langsung</strong> — seller kirim data produk di obrolan.</div>')
+    +'<div style="display:flex;gap:8px"><button class="btn bg" style="flex:1;justify-content:center" onclick="closeMo(\'mCo\')">Batal</button>'
+    +'<button class="btn bp" style="flex:2;justify-content:center;font-weight:700" onclick="closeMo(\'mCo\');openPin()"><i class="fas fa-lock"></i> Masukkan PIN</button></div>';
+  openMo('mCo');
 }
-
-function updateSummary() {
-  if (!product) return;
-  const subtotal = product.price * qty;
-  const total    = Math.max(0, subtotal - discount + FEE);
-
-  document.getElementById('sum-price').textContent = fmtRp(product.price);
-  document.getElementById('sum-qty').textContent   = qty;
-  document.getElementById('sum-fee').textContent   = fmtRp(FEE);
-  document.getElementById('sum-total').textContent = fmtRp(total);
-
-  // Update step 2
-  const step2 = document.getElementById('step2');
-  const step3 = document.getElementById('step3');
-  if (selectedPayMethod) { step2.classList.add('done'); step2.querySelector('.step-dot').innerHTML = '<i class="fas fa-check" style="font-size:10px"></i>'; step3.classList.add('active'); }
-
-  const buyBtn = document.getElementById('buyBtn');
-  buyBtn.disabled = !(product && selectedPayMethod);
-}
-
-function confirmOrder() {
-  if (!product || !selectedPayMethod) return;
-  const subtotal = product.price * qty;
-  const total    = Math.max(0, subtotal - discount + FEE);
-  const notes    = document.getElementById('orderNotes').value.trim();
-  const methLabels = { saldo:'Saldo XREZZKY', transfer:'Transfer Bank', ewallet:'E-Wallet', qris:'QRIS' };
-  const s = seller || {};
-
-  document.getElementById('confirmBody').innerHTML = `
-    <div style="display:flex; gap:12px; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:13px; margin-bottom:16px">
-      <div style="width:52px; height:52px; border-radius:var(--rsm); background:var(--nav); overflow:hidden; display:flex; align-items:center; justify-content:center; color:var(--txt2); font-size:20px; flex-shrink:0; border:1px solid var(--border)">
-        ${product.image_url ? `<img src="${CLD_BASE}${product.image_url}" style="width:100%;height:100%;object-fit:cover"/>` : '<i class="fas fa-box-open"></i>'}
-      </div>
-      <div>
-        <div style="font-size:14px; font-weight:600">${esc(product.name)}</div>
-        <div style="font-size:12px; color:var(--txt2)">${esc(s.username||'—')} • ${qty}x</div>
-      </div>
-    </div>
-
-    <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:16px">
-      <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border)">
-        <span style="color:var(--txt2)">Subtotal</span><span style="font-weight:600">${fmtRp(subtotal)}</span>
-      </div>
-      ${discount > 0 ? `<div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border)"><span style="color:var(--success)">Diskon</span><span style="color:var(--success); font-weight:600">−${fmtRp(discount)}</span></div>` : ''}
-      <div style="display:flex; justify-content:space-between; font-size:13px; padding:8px 0; border-bottom:1px solid var(--border)">
-        <span style="color:var(--txt2)">Biaya Layanan</span><span style="font-weight:600">${fmtRp(FEE)}</span>
-      </div>
-      <div style="display:flex; justify-content:space-between; font-size:15px; padding:10px 0">
-        <span style="font-weight:700">Total Bayar</span><span style="font-weight:800; color:var(--accent); font-family:'Syne',sans-serif; font-size:20px">${fmtRp(total)}</span>
-      </div>
-    </div>
-
-    <div style="background:rgba(74,125,255,.07); border:1px solid rgba(74,125,255,.18); border-radius:var(--rsm); padding:11px 13px; margin-bottom:16px; font-size:12px; display:flex; align-items:center; gap:8px; color:var(--txt2)">
-      <i class="fas fa-credit-card" style="color:var(--accent)"></i>
-      Metode: <strong style="color:var(--txt)">${methLabels[selectedPayMethod]||selectedPayMethod}</strong>
-    </div>
-
-    ${notes ? `<div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--rsm); padding:10px 12px; margin-bottom:14px; font-size:12px; color:var(--txt2)"><i class="fas fa-note-sticky" style="margin-right:5px; color:var(--warn)"></i>${esc(notes)}</div>` : ''}
-
-    <div style="display:flex; gap:8px">
-      <button class="btn bg" style="flex:1; justify-content:center" onclick="closeMo('confirmModal')">Batal</button>
-      <button class="btn" style="flex:2; justify-content:center; background:var(--success); color:#fff; font-weight:700" onclick="placeOrder()">
-        <i class="fas fa-shopping-bag"></i> Konfirmasi Beli
-      </button>
-    </div>`;
-
-  openMo('confirmModal');
-}
-
-async function placeOrder() {
-  const subtotal = product.price * qty;
-  const total    = Math.max(0, subtotal - discount + FEE);
-  const notes    = document.getElementById('orderNotes').value.trim();
-
-  // Warn if no PIN
-  if (!profile.transaction_pin) {
-    toast('⚠️ Kamu belum punya PIN transaksi. Buat PIN di Profil → Keamanan.', 'w');
-    return;
+function openPin(){[0,1,2,3,4,5].forEach(i=>{const e=document.getElementById('p'+i);if(e)e.value='';});document.getElementById('pinErr').textContent='';openMo('mPin');setTimeout(()=>document.getElementById('p0')?.focus(),200);}
+function pn(i){const v=document.getElementById('p'+i).value;if(v&&i<5)document.getElementById('p'+(i+1)).focus();}
+function pb(i,e){if(e.key==='Backspace'&&!document.getElementById('p'+i).value&&i>0)document.getElementById('p'+(i-1)).focus();}
+async function verifyPin(){
+  const pin=[0,1,2,3,4,5].map(i=>document.getElementById('p'+i)?.value||'').join('');
+  if(pin.length!==6){document.getElementById('pinErr').textContent='PIN harus 6 digit';return;}
+  if(!profile?.transaction_pin||btoa(pin)!==profile.transaction_pin){
+    document.getElementById('pinErr').textContent='PIN salah!';
+    [0,1,2,3,4,5].forEach(i=>{const e=document.getElementById('p'+i);if(e)e.value='';});
+    document.getElementById('p0')?.focus();return;
   }
-  // Check balance if saldo
-  if (selectedPayMethod === 'saldo' && (profile.balance||0) < total) {
-    closeMo('confirmModal'); toast('Saldo tidak cukup. Silakan deposit dulu', 'e'); return;
-  }
-
-  closeMo('confirmModal');
-  document.getElementById('buyBtn').innerHTML = '<div class="sp"></div> Memproses...';
-  document.getElementById('buyBtn').disabled = true;
-
-  const { data: order, error } = await sb.from('orders').insert([{
-    user_id: user.id, seller_id: product.seller_id, product_id: product.id,
-    total_price: total, quantity: qty, payment_method: selectedPayMethod,
-    notes, status: 'pending', voucher_code: voucher ? document.getElementById('voucherInp').value.toUpperCase() : null,
-    discount, created_at: new Date().toISOString()
-  }]).select().single();
-
-  document.getElementById('buyBtn').innerHTML = '<i class="fas fa-shopping-bag"></i> Beli Sekarang';
-  document.getElementById('buyBtn').disabled = false;
-
-  if (error) { toast('Gagal membuat order: '+error.message, 'e'); return; }
-
-  // Deduct balance if saldo
-  if (selectedPayMethod === 'saldo') {
-    const newBal = (profile.balance||0) - total;
-    await sb.from('profiles').update({ balance: newBal }).eq('id', user.id);
-    profile.balance = newBal;
-  }
-
-  // Update sold count
-  await sb.from('products').update({ sold_count: (product.sold_count||0) + qty }).eq('id', product.id);
-
-  showSuccess(order || { id: Date.now().toString() }, total);
+  document.getElementById('pinErr').textContent='';
+  closeMo('mPin');await placeOrder();
 }
-
-function showSuccess(order, total) {
-  // Mark steps done
-  ['step1','step2','step3'].forEach(id => {
-    const el = document.getElementById(id);
-    el.classList.remove('active');
-    el.classList.add('done');
-    el.querySelector('.step-dot').innerHTML = '<i class="fas fa-check" style="font-size:10px"></i>';
-  });
-
-  document.getElementById('successBody').innerHTML = `
-    <div class="success-wrap">
-      <div class="ss-ring"><i class="fas fa-check"></i></div>
-      <div class="ss-title">Pesanan Dibuat! 🎉</div>
-      <div class="ss-sub">Seller akan segera memproses pesanan kamu</div>
-
-      <div class="ss-detail">
-        <div class="ss-detail-row"><span class="sk">Order ID</span><span style="font-weight:700; font-size:12px">#${order.id.toString().slice(0,8).toUpperCase()}</span></div>
-        <div class="ss-detail-row"><span class="sk">Produk</span><span style="font-weight:600; font-size:12px">${esc(product.name)}</span></div>
-        <div class="ss-detail-row"><span class="sk">Total Bayar</span><span style="font-weight:800; color:var(--success)">${fmtRp(total)}</span></div>
-        <div class="ss-detail-row"><span class="sk">Status</span><span><span class="chip cy">Pending</span></span></div>
-      </div>
-
-      <div class="ss-acts">
-        <a href="riwayat.html" class="btn bp" style="justify-content:center; width:100%; padding:12px"><i class="fas fa-receipt"></i> Lihat Riwayat</a>
-        <a href="index.html" class="btn bg" style="justify-content:center; width:100%; padding:11px"><i class="fas fa-store"></i> Lanjut Belanja</a>
-      </div>
-    </div>`;
-
-  openMo('successModal');
+async function placeOrder(){
+  const sub=(product.price||0)*qty,mcF=useMC?MCF:0,tot=Math.max(0,sub-discount+SVC+mcF);
+  const notes=document.getElementById('orderNotes').value.trim();
+  const btn=document.getElementById('buyBtn');btn.innerHTML='<div class="sp"></div> Memproses...';btn.disabled=true;
+  try{
+    const{data:ord,error:oE}=await sb.from('orders').insert([{
+      user_id:user.id,buyer_id:user.id,seller_id:product.seller_id,product_id:product.id,
+      quantity:qty,total_price:tot,amount:tot,payment_method:payMethod,notes,
+      status:useMC?'pending_mc':'pending',use_mc:useMC,mc_fee:mcF,discount,
+      voucher_code:voucher?document.getElementById('vInp').value.toUpperCase():null,
+      created_at:new Date().toISOString(),
+    }]).select().single();
+    if(oE)throw new Error(oE.message);
+    activeOrder=ord;
+    if(payMethod==='saldo'){await sb.from('profiles').update({balance:(profile.balance||0)-tot}).eq('id',user.id);profile.balance=(profile.balance||0)-tot;}
+    await sb.from('products').update({sold_count:(product.sold_count||0)+qty}).eq('id',product.id);
+    const{data:sess}=await sb.from('chat_sessions').insert([{
+      user_id:user.id,cs_id:product.seller_id,order_id:ord.id,
+      status:'active',session_type:useMC?'mc':'direct',created_at:new Date().toISOString(),
+    }]).select().single();
+    if(sess){
+      activeChatId=sess.id;
+      const sysMsg=useMC?
+        '🛡️ Pesanan MC masuk!\n📦 '+product.name+'\n💰 Total: '+fmtRp(tot)+'\nSaldo buyer di-hold. Seller kirim data → buyer konfirmasi → saldo cair ke seller.':
+        '⚡ Pesanan langsung!\n📦 '+product.name+'\n💰 Total: '+fmtRp(tot)+'\nSeller harap segera kirim data/akun produk di chat ini.';
+      await sb.from('chat_messages').insert([{session_id:sess.id,sender_id:user.id,sender_type:'system',message:sysMsg,created_at:new Date().toISOString()}]);
+    }
+    showSucc(ord,tot);
+  }catch(e){console.error('[place]',e);toast('Gagal: '+e.message,'e');}
+  finally{btn.innerHTML='<i class="fas fa-shopping-bag"></i> Beli Sekarang';btn.disabled=false;}
 }
-
-function openMo(id) { document.getElementById(id).classList.add('open'); }
-function closeMo(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.mo').forEach(el => el.addEventListener('click', e => { if(e.target===el && el.id!=='successModal') closeMo(el.id); }));
-document.addEventListener('keydown', e => { if(e.key==='Escape') { closeMo('confirmModal'); } });
-
-function fmtRp(v) { if(!v&&v!==0) return '—'; if(v===0) return 'Gratis'; return 'Rp '+Number(v).toLocaleString('id-ID'); }
-function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function toast(msg, type='') { const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=msg; document.getElementById('tc').appendChild(el); setTimeout(()=>el.remove(),3500); }
+function showSucc(ord,tot){
+  ['st1','st2','st3'].forEach(id=>{const el=document.getElementById(id);el.classList.remove('active');el.classList.add('done');el.querySelector('.step-dot').innerHTML='<i class="fas fa-check" style="font-size:9px"></i>';});
+  document.getElementById('mSuccBody').innerHTML=
+    '<div style="text-align:center;padding:4px 0 18px"><div style="width:60px;height:60px;border-radius:50%;background:rgba(34,197,94,.12);border:2px solid var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:var(--success)"><i class="fas fa-check"></i></div>'
+    +'<div style="font-family:\'Syne\',sans-serif;font-size:20px;font-weight:800;margin-bottom:5px">Pesanan Berhasil! 🎉</div>'
+    +'<div style="font-size:12px;color:var(--txt2)">'+(useMC?'Saldo di-hold sampai kamu konfirmasi terima':'Seller akan segera kirim data di obrolan')+'</div></div>'
+    +'<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:12px;margin-bottom:14px;font-size:13px;display:flex;flex-direction:column;gap:7px">'
+    +'<div style="display:flex;justify-content:space-between"><span style="color:var(--txt2)">Order ID</span><span style="font-weight:700">#'+ord.id.slice(0,8).toUpperCase()+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between"><span style="color:var(--txt2)">Total</span><span style="font-weight:800;color:var(--success)">'+fmtRp(tot)+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between"><span style="color:var(--txt2)">MC</span><span>'+(useMC?'<span class="chip cp">Aktif</span>':'<span class="chip cg">Langsung</span>')+'</span></div></div>'
+    +'<div style="display:flex;flex-direction:column;gap:8px">'
+    +(activeChatId?'<button class="btn bp" style="justify-content:center;padding:12px;font-weight:700" onclick="closeMo(\'mSucc\');openChat()"><i class="fas fa-comments"></i> Buka Obrolan dengan Seller</button>':'')
+    +'<a href="riwayat.html" class="btn bg" style="justify-content:center;padding:11px"><i class="fas fa-receipt"></i> Riwayat Pesanan</a>'
+    +'<a href="index.html" class="btn bg" style="justify-content:center;padding:10px"><i class="fas fa-store"></i> Lanjut Belanja</a></div>';
+  openMo('mSucc');
+}
+async function openChat(){
+  if(!activeChatId)return;
+  const{data:sess}=await sb.from('chat_sessions').select('*').eq('id',activeChatId).maybeSingle();
+  const{data:ord}=await sb.from('orders').select('status,use_mc').eq('id',activeOrder?.id).maybeSingle();
+  const isClosed=['resolved','closed'].includes(sess?.status)||['completed','cancelled'].includes(ord?.status);
+  const{data:msgs}=await sb.from('chat_messages').select('*').eq('session_id',activeChatId).order('created_at',{ascending:true});
+  document.getElementById('chatTit').innerHTML='<i class="fas fa-comments" style="color:var(--accent);margin-right:7px"></i>Obrolan #'+(activeOrder?.id?.slice(0,8).toUpperCase()||'—');
+  const stEl=document.getElementById('chatSt');stEl.textContent=isClosed?'Ditutup':'Aktif';stEl.className='chip '+(isClosed?'cr':'cg');
+  const msgsEl=document.getElementById('chatMsgs');msgsEl.innerHTML=(msgs||[]).map(m=>buildMsg(m)).join('');
+  document.getElementById('chatClosed').style.display=isClosed?'block':'none';
+  document.getElementById('chatTxt').disabled=isClosed;document.getElementById('sendBtn').disabled=isClosed;
+  document.getElementById('chatTxt').placeholder=isClosed?'Obrolan ditutup':'Tulis pesan ke seller...';
+  renderChatFoot(ord?.status,ord?.use_mc,activeChatId,activeOrder?.id);
+  scrollChat();subChat();openMo('mChat');
+}
+function buildMsg(m){
+  if(!m)return'';
+  const isMe=m.sender_id===user?.id,isSys=m.sender_type==='system';
+  const time=m.created_at?new Date(m.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'';
+  const txt=esc(m.message||'').replace(/\n/g,'<br/>');
+  if(isSys)return'<div class="cmsg sys"><div class="cmsg-bubble">'+txt+'</div></div>';
+  return'<div class="cmsg '+(isMe?'me':'them')+'"><div class="cmsg-bubble">'+txt+'</div><div class="cmsg-time">'+time+'</div></div>';
+}
+async function sendMsg(){
+  const txt=document.getElementById('chatTxt').value.trim();if(!txt||!activeChatId)return;
+  document.getElementById('chatTxt').value='';document.getElementById('chatTxt').style.height='auto';
+  await sb.from('chat_messages').insert([{session_id:activeChatId,sender_id:user.id,sender_type:'user',message:txt,created_at:new Date().toISOString()}]);
+}
+function subChat(){
+  if(chatSub)sb.removeChannel(chatSub);
+  chatSub=sb.channel('chat:'+activeChatId).on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages',filter:'session_id=eq.'+activeChatId},async p=>{
+    document.getElementById('chatMsgs').insertAdjacentHTML('beforeend',buildMsg(p.new));scrollChat();
+  }).subscribe();
+}
+function scrollChat(){const e=document.getElementById('chatMsgs');if(e)e.scrollTop=e.scrollHeight;}
+function aH(el){el.style.height='auto';el.style.height=el.scrollHeight+'px';}
+function renderChatFoot(status,isMC,sessId,ordId){
+  const f=document.getElementById('chatFoot');if(!f)return;
+  let html='';
+  if((isMC&&status==='pending_mc')||(status==='pending')){
+    html='<button class="btn bs" onclick="confirmRcv(\''+ordId+'\',\''+sessId+'\')"><i class="fas fa-circle-check"></i> Konfirmasi Terima Produk</button>';
+    html+='<button class="btn bd bsm" onclick="openDisp(\''+ordId+'\',\''+sessId+'\')"><i class="fas fa-triangle-exclamation"></i> Komplain</button>';
+  }else if(['completed','cancelled'].includes(status)){
+    html='<span style="font-size:12px;color:var(--txt2);padding:8px 0"><i class="fas fa-lock" style="margin-right:5px"></i>Transaksi selesai</span>';
+  }
+  f.innerHTML=html;
+}
+async function confirmRcv(ordId,sessId){
+  if(!confirm('Konfirmasi sudah terima produk?\nSaldo akan cair ke seller.'))return;
+  const sub=(product?.price||0)*qty,sellerGet=sub-SVC;
+  await sb.from('orders').update({status:'completed',completed_at:new Date().toISOString()}).eq('id',ordId);
+  if(sellerP&&sellerGet>0){
+    await sb.from('profiles').update({balance:(sellerP.balance||0)+sellerGet,completed_orders:(sellerP.completed_orders||0)+1}).eq('id',product.seller_id);
+  }
+  await sb.from('chat_messages').insert([{session_id:sessId,sender_id:user.id,sender_type:'system',message:'✅ Buyer konfirmasi terima produk.\n💰 Saldo '+fmtRp(sellerGet)+' cair ke seller.\n🔒 Obrolan ditutup.',created_at:new Date().toISOString()}]);
+  await sb.from('chat_sessions').update({status:'resolved',resolved_at:new Date().toISOString()}).eq('id',sessId);
+  toast('Saldo seller dikreditkan ✅','s');
+  document.getElementById('chatClosed').style.display='block';
+  document.getElementById('chatTxt').disabled=true;document.getElementById('sendBtn').disabled=true;
+  renderChatFoot('completed',useMC,sessId,ordId);
+  const stEl=document.getElementById('chatSt');stEl.textContent='Ditutup';stEl.className='chip cr';
+}
+async function openDisp(ordId,sessId){
+  const reason=prompt('Jelaskan masalah kamu:');if(!reason?.trim())return;
+  await sb.from('complaints').insert([{user_id:user.id,seller_id:product?.seller_id,order_id:ordId,title:'Komplain #'+ordId.slice(0,8),description:reason,status:'open',created_at:new Date().toISOString()}]);
+  await sb.from('chat_messages').insert([{session_id:sessId,sender_id:user.id,sender_type:'system',message:'⚠️ Buyer komplain:\n"'+reason+'"\n\nAdmin akan meninjau.',created_at:new Date().toISOString()}]);
+  toast('Komplain dikirim','w');
+}
+async function showStore(){
+  if(!sellerP)return;
+  document.getElementById('coPage').style.display='none';document.getElementById('storePage').style.display='block';window.scrollTo({top:0,behavior:'smooth'});
+  const s=sellerP,nm=s.username||'Seller',txn=s.completed_orders||0;
+  document.getElementById('stAv').innerHTML=s.avatar_url?'<img src="'+CLD+s.avatar_url+'"/>':nm[0].toUpperCase();
+  document.getElementById('stNm').innerHTML=esc(s.store_name||nm)+(s.is_verified?' <span class="chip cg" style="font-size:10px">✓ Verified</span>':'');
+  document.getElementById('stDesc').textContent=s.store_description||s.bio||'';
+  document.getElementById('stTags').innerHTML=
+    (txn?'<span class="chip cy" style="font-size:10px"><i class="fas fa-shopping-bag"></i> '+txn+' transaksi</span>':'')
+    +(s.store_category?'<span class="chip cc" style="font-size:10px">'+esc(s.store_category)+'</span>':'')
+    +(s.store_hours?'<span class="chip" style="font-size:10px;background:var(--surface);color:var(--txt2);border:1px solid var(--border)"><i class="fas fa-clock"></i> '+esc(s.store_hours)+'</span>':'')
+    +(txn>=MC_LIMIT?'<span class="chip cp" style="font-size:10px">🛡️ Seller Terpercaya</span>':'');
+  if(s.store_description||s.bio){document.getElementById('stAbout').style.display='block';document.getElementById('stAboutTxt').textContent=s.store_description||s.bio;}
+  const{data:prods}=await sb.from('products').select('*').eq('seller_id',s.id).eq('is_active',true).order('sold_count',{ascending:false}).limit(30);
+  const grid=document.getElementById('stGrid');
+  if(!prods?.length){grid.innerHTML='<div style="text-align:center;padding:40px;color:var(--txt2);font-size:13px;grid-column:1/-1"><i class="fas fa-box-open" style="font-size:30px;display:block;margin-bottom:10px;opacity:.3"></i>Belum ada produk</div>';return;}
+  grid.innerHTML=prods.map(p=>'<div class="sp-card" onclick="location.href=\'checkout.html?product='+p.id+'\'"><div class="sp-img">'+(p.image_url?'<img src="'+CLD+p.image_url+'"/>':'<i class="fas fa-box-open"></i>')+'</div><div class="sp-body"><div class="sp-cat">'+esc(p.category||'—')+'</div><div class="sp-name">'+esc(p.name)+'</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><div class="sp-price">'+fmtRp(p.price)+'</div>'+(p.sold_count?'<span style="font-size:10px;color:var(--txt2)">'+p.sold_count+'x</span>':'')+'</div>'+(p.avg_rating?'<div style="font-size:10px;color:var(--warn);margin-top:2px">&#9733; '+Number(p.avg_rating).toFixed(1)+'</div>':'')+'</div></div>').join('');
+}
+function hideStore(){document.getElementById('storePage').style.display='none';document.getElementById('coPage').style.display='block';window.scrollTo({top:0,behavior:'smooth'});}
+function openMo(id){document.getElementById(id)?.classList.add('open');}
+function closeMo(id){document.getElementById(id)?.classList.remove('open');}
+document.addEventListener('click',e=>{document.querySelectorAll('.mo').forEach(mo=>{if(e.target===mo&&mo.id!=='mSucc'&&mo.id!=='mPin')closeMo(mo.id);});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMo('mCo');closeMo('mPin');}});
+function fmtRp(v){if(!v&&v!==0)return'—';if(v===0)return'Gratis';return'Rp '+Number(v).toLocaleString('id-ID');}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toast(msg,type=''){const tc=document.getElementById('tc');if(!tc)return;const el=document.createElement('div');el.className='toast '+type;el.textContent=msg;el.style.pointerEvents='auto';tc.appendChild(el);setTimeout(()=>el.remove(),3800);}
 </script>
 </body>
 </html>
