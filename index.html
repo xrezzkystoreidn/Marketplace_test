@@ -1421,7 +1421,7 @@ async function doReset() {
   if (!email) { showAuthError('resetError','Masukkan email kamu'); return; }
   setAuthLoading('resetBtn',true,'<i class="fas fa-envelope"></i> Kirim Link Reset');
   clearAuthErrors();
-  const { error }=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.origin});
+  const { error }=await sb.auth.resetPasswordForEmail(email,{redirectTo: SITE_URL + 'reset-password.html'});
   setAuthLoading('resetBtn',false,'<i class="fas fa-envelope"></i> Kirim Link Reset');
   if (error) {
     let msg=error.message;
