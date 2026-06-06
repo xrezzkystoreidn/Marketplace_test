@@ -1149,34 +1149,34 @@ let allProducts  = [];
 //  INIT
 // ══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  // LANGSUNG tampilkan halaman — jangan tunggu network
-  document.body.style.opacity = '1';
-  document.body.style.transition = 'none';
-
-  // Skeleton dulu sementara data dimuat
   showSkeletons();
 
-  // Load semua data di background — kalau satu gagal, yang lain tetap jalan
-  (async () => {
-    try { await checkSession(); } catch(e) { console.warn('[auth]', e); }
-    try { await loadProducts(); } catch(e) {
-      console.error('[products]', e);
-      renderEmpty('Gagal memuat produk. Cek koneksi internet.');
-    }
-    try { await loadStats(); } catch(e) { console.warn('[stats]', e); }
-    try { await loadCategories(); } catch(e) { console.warn('[cats]', e); }
-    try { await checkInfoBadge(); } catch(e) {}
+  // Produk + auth jalan PARALEL — tidak saling tunggu
+  Promise.allSettled([
+    loadProducts(),
+    checkSession(),
+  ]).then(() => {
+    // background tasks setelah produk & auth selesai
+    loadStats().catch(()=>{});
+    loadCategories().catch(()=>{});
+    checkInfoBadge().catch(()=>{});
     try { bindSearch(); } catch(e) {}
     try { subscribeRealtimeProducts(); } catch(e) {}
 
-    // Handle deep link hash
     if (location.hash === '#info') {
       setTimeout(() => {
         try { openInfoSheet(); xbnSetActive('info'); } catch(e) {}
       }, 300);
       history.replaceState(null, '', location.pathname);
     }
-  })();
+  });
+
+  // Balik dari halaman lain — cukup refresh session, JANGAN reload produk
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && currentUser) {
+      checkSession().catch(()=>{});
+    }
+  });
 });
 
 function bindSearch() {
@@ -1188,15 +1188,38 @@ function bindSearch() {
 //  AUTH
 // ══════════════════════════════════════════
 async function checkSession() {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session?.user) await setUser(session.user);
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session?.user) {
+      currentUser = session.user;
+      // Load profile tapi TIDAK block loadProducts — fire and forget
+      loadCurrentProfile().then(() => {
+        updateNavUser();
+        xbnUpdateAvatar();
+      }).catch(e => console.warn('[profile]', e));
+      // Update nav langsung dengan data yang ada
+      updateNavUser();
+    } else {
+      updateNavUser();
+    }
+  } catch(e) {
+    console.warn('[checkSession]', e);
+    updateNavUser();
+  }
 }
 
-async function setUser(user) {
-  currentUser = user;
-  // load profile
-  const { data } = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
-  currentProfile = data;
+async function loadCurrentProfile() {
+  if (!currentUser) return;
+  try {
+    // Timeout 4 detik — kalau Supabase lambat, jangan block halaman
+    const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 4000));
+    const fetch = sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+    const { data } = await Promise.race([fetch, timeout]);
+    currentProfile = data || { id: currentUser.id, balance: 0 };
+  } catch(e) {
+    currentProfile = { id: currentUser?.id, balance: 0 };
+    console.warn('[loadProfile]', e);
+  }
   updateNavUser();
   xbnUpdateAvatar();
 }
@@ -1358,9 +1381,10 @@ async function doLogin() {
       msg='Email belum dikonfirmasi. Cek inbox/spam.';
     showAuthError('loginError', msg); return;
   }
-  await setUser(data.user);
+  currentUser=data.user;
   closeAuth();
   toast('Selamat datang kembali! 👋','s');
+  loadCurrentProfile();
 }
 
 async function doRegister() {
@@ -1387,7 +1411,7 @@ async function doRegister() {
   }
   if (data.user) {
     await sb.from('profiles').upsert({ id:data.user.id, username, email, created_at:new Date().toISOString() });
-    if (data.session) { await setUser(data.user); closeAuth(); toast('Akun berhasil dibuat! Selamat datang 🎉','s'); }
+    if (data.session) { currentUser=data.user; closeAuth(); toast('Akun berhasil dibuat! Selamat datang 🎉','s'); loadCurrentProfile(); }
     else { showAuthSuccess('registerError','✉️ Cek email kamu untuk konfirmasi akun.'); }
   }
 }
@@ -1813,21 +1837,41 @@ function switchAuthTab(tab) {
 }
 
 // Handle Google OAuth callback
-sb.auth.onAuthStateChange(async(event,session)=>{
-  if(event==='SIGNED_IN'&&session?.user&&!currentUser){
-    currentUser=session.user;
-    const{data:p}=await sb.from('profiles').select('*').eq('id',currentUser.id).maybeSingle();
-    currentProfile=p||{id:currentUser.id,balance:0};
-    if(!p){
-      // New Google user — create profile
-      const nm=currentUser.user_metadata?.name||currentUser.email.split('@')[0];
-      await sb.from('profiles').upsert({id:currentUser.id,email:currentUser.email,username:nm.replace(/\s+/g,'_').toLowerCase(),full_name:nm,avatar_url:currentUser.user_metadata?.avatar_url||null,created_at:new Date().toISOString()});
-    }
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'SIGNED_IN' && session?.user) {
+    const isNewUser = !currentUser;
+    currentUser = session.user;
+    updateNavUser(); // langsung update nav tanpa tunggu profile
+    // Load profile di background
+    (async () => {
+      try {
+        const { data: p } = await sb.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
+        currentProfile = p || { id: currentUser.id, balance: 0 };
+        if (!p) {
+          // Google user baru — buat profile
+          const nm = currentUser.user_metadata?.name || currentUser.email.split('@')[0];
+          const uname = nm.replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'').toLowerCase();
+          await sb.from('profiles').upsert({
+            id: currentUser.id, email: currentUser.email,
+            username: uname, full_name: nm,
+            avatar_url: currentUser.user_metadata?.avatar_url || null,
+            created_at: new Date().toISOString()
+          }, { onConflict: 'id' });
+          currentProfile = { id: currentUser.id, email: currentUser.email, username: uname, balance: 0 };
+        }
+        updateNavUser();
+        xbnUpdateAvatar();
+        if (isNewUser) {
+          closeAuth();
+          toast('Selamat datang! 👋', 's');
+        }
+      } catch(e) {
+        console.warn('[authStateChange profile]', e);
+      }
+    })();
+  } else if (event === 'SIGNED_OUT') {
+    currentUser = null; currentProfile = null;
     updateNavUser();
-    closeAuth();
-    toast('Selamat datang! 👋','s');
-  } else if(event==='SIGNED_OUT'){
-    currentUser=null;currentProfile=null;updateNavUser();
   }
 });
 
