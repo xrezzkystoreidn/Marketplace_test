@@ -213,6 +213,7 @@
       backdrop-filter: blur(4px);
       display: none; align-items: flex-end; justify-content: center;
       padding: 0;
+      /* Overlay mulai dari bawah bottom nav di mobile */
     }
     .modal-overlay.open { display: flex; }
 
@@ -223,9 +224,11 @@
       border: 1px solid var(--border);
       border-bottom: none;
       animation: slideUp .32s cubic-bezier(.32,1,.6,1);
-      max-height: 95dvh;
+      max-height: 92dvh;
       overflow-y: auto;
       overscroll-behavior: contain;
+      /* Jarak dari bottom nav (64px) + safe area HP */
+      padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px));
     }
     .auth-modal-wrap::-webkit-scrollbar { display: none; }
 
@@ -643,7 +646,7 @@
       left: 0 !important;
       right: 0 !important;
       width: 100% !important;
-      z-index: 9999 !important;
+      z-index: 400 !important;
       background: rgba(23,28,36,.97);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -1405,12 +1408,18 @@ async function doReset() {
   showAuthSuccess('resetError',`📧 Link reset dikirim ke ${email}. Cek inbox atau spam kamu.`);
 }
 
+// ⚠️ GANTI URL INI sesuai environment:
+// Sekarang (GitHub Pages) : 'https://xrezzkystoreidn.github.io/Marketplace_test/'
+// Nanti pindah Vercel     : 'https://namaapp.vercel.app/'
+// Custom domain nanti     : 'https://xrezzky.com/'
+const SITE_URL = 'https://xrezzkystoreidn.github.io/Marketplace_test/';
+
 async function doGoogleLogin() {
-  const { error }=await sb.auth.signInWithOAuth({
-    provider:'google',
-    options:{ redirectTo:window.location.href, queryParams:{access_type:'offline',prompt:'select_account'} }
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: SITE_URL }
   });
-  if (error) showAuthError('loginError','Gagal login Google: '+error.message);
+  if (error) showAuthError('loginError', 'Gagal login Google: ' + error.message);
 }
 
 async function logout() {
