@@ -369,11 +369,32 @@ document.addEventListener('DOMContentLoaded',()=>{
       user=session.user;
       const{data:p}=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
       profile=p||{id:user.id,balance:0};
-      const pid=new URLSearchParams(location.search).get('product');
-      if(!pid){toast('Produk tidak ditemukan','e');setTimeout(()=>location.href='index.html',1200);return;}
-      await loadProduct(pid);
-      renderPayMethods();
-      updateSum();
+      const params=new URLSearchParams(location.search);
+      const pid=params.get('product');
+      const chatParam=params.get('chat');
+      const orderParam=params.get('order');
+      if(!pid&&!chatParam){toast('Produk tidak ditemukan','e');setTimeout(()=>location.href='index.html',1200);return;}
+
+      if(chatParam&&orderParam){
+        // Buka langsung ke chat (dari riwayat.html)
+        activeChatId=chatParam;
+        activeOrder={id:orderParam};
+        // Load product info for context
+        const{data:ord}=await sb.from('orders').select('*,products(*)').eq('id',orderParam).maybeSingle();
+        if(ord?.products){product=ord.products;sellerP={id:ord.seller_id};}
+        // Clean URL
+        history.replaceState(null,'',location.pathname+(pid?'?product='+pid:''));
+        await openChat(chatParam);
+        if(!pid) return; // hanya buka chat, tidak perlu load produk
+      }
+
+      if(pid){
+        await loadProduct(pid);
+        renderPayMethods();
+        updateSum();
+        // Cek localStorage: ada chat lama untuk produk ini?
+        // (tidak di sini — hanya tampilkan tombol "Lanjutkan Obrolan" jika ada)
+      }
     }catch(e){console.error('[co]',e);toast('Error: '+e.message,'e');}
   })();
 });
@@ -439,19 +460,36 @@ function onMcTog(){
 }
 function chQty(d){qty=Math.max(1,Math.min(product?.stock||99,qty+d));document.getElementById('qtyV').textContent=qty;document.getElementById('sQt').textContent=qty;if(mcOptional)renderMCBan();updateSum();}
 function renderPayMethods(){
-  const bal=profile?.balance||0,price=(product?.price||0)*qty;
-  const ms=[
-    {id:'saldo',icon:'fas fa-wallet',col:'var(--accent)',nm:'Saldo XREZZKY',sub:'Saldo: '+fmtRp(bal),ok:bal>=price},
-    {id:'transfer',icon:'fas fa-building-columns',col:'var(--warn)',nm:'Transfer Bank',sub:'BCA, BNI, BRI, Mandiri'},
-    {id:'ewallet',icon:'fas fa-mobile-screen',col:'var(--success)',nm:'E-Wallet',sub:'DANA, GoPay, OVO'},
-    {id:'qris',icon:'fas fa-qrcode',col:'var(--danger)',nm:'QRIS',sub:'Scan dari app manapun'},
-  ];
-  document.getElementById('payList').innerHTML=ms.map(m=>{
-    const dis=m.id==='saldo'&&m.ok===false;
-    return'<div class="pm-item '+(dis?'disabled':'')+'" id="pm-'+m.id+'" onclick="'+(dis?'toast(\'Saldo tidak cukup\',\'e\')':'selPay(\''+m.id+'\')')+'"><div class="pm-radio"></div><div class="pm-ico" style="background:'+m.col+'22;color:'+m.col+'"><i class="'+m.icon+'"></i></div><div style="flex:1"><div class="pm-name">'+m.nm+'</div><div class="'+(m.id==='saldo'&&!dis?'pm-bal':'pm-sub')+'">'+m.sub+'</div></div>'+(dis?'<span class="chip cr" style="font-size:10px">Kurang</span>':'')+'</div>';
-  }).join('');
+  const bal = profile?.balance||0;
+  const mcF = useMC?MCF:0;
+  const tot = Math.max(0,(product?.price||0)*qty - discount + SVC + mcF);
+  const ok  = bal >= tot;
+  payMethod = 'saldo'; // saldo only, auto-select
+  document.getElementById('payList').innerHTML =
+    '<div class="pm-item selected" style="cursor:default;border-color:var(--accent);background:rgba(74,125,255,.07)">'
+    +'<div class="pm-radio" style="border-color:var(--accent);background:var(--accent)"></div>'
+    +'<div class="pm-ico" style="background:rgba(74,125,255,.15);color:var(--accent)"><i class="fas fa-wallet"></i></div>'
+    +'<div style="flex:1">'
+    +'<div class="pm-name">Saldo XREZZKY</div>'
+    +'<div class="'+(ok?'pm-bal':'pm-sub')+'" style="'+(ok?'':'color:var(--danger)')+'">'+
+      (ok ? 'Saldo: '+fmtRp(bal)+' ✓' : 'Saldo kamu: '+fmtRp(bal)+' — kurang '+fmtRp(tot-bal))
+    +'</div></div>'
+    +(ok?'':'<span class="chip cr" style="font-size:10px;white-space:nowrap">Kurang</span>')
+    +'</div>'
+    +(!ok ?
+      '<div style="background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2);border-radius:var(--rsm);padding:11px 13px;margin-top:8px;display:flex;align-items:center;gap:10px">'
+      +'<i class="fas fa-triangle-exclamation" style="color:var(--warn);flex-shrink:0"></i>'
+      +'<div style="flex:1"><div style="font-size:12px;font-weight:600;color:var(--warn)">Saldo tidak cukup</div>'
+      +'<div style="font-size:11px;color:var(--txt2);margin-top:2px">Deposit minimal '+fmtRp(tot-bal)+' lagi untuk lanjut beli.</div></div>'
+      +'<a href="deposit.html" class="btn bp bxs" style="white-space:nowrap;flex-shrink:0"><i class="fas fa-plus"></i> Top Up</a>'
+      +'</div>' : '')
+    +'<div style="font-size:11px;color:var(--txt2);margin-top:10px;padding:8px 10px;background:var(--surface);border-radius:var(--rsm);display:flex;gap:6px;align-items:flex-start">'
+    +'<i class="fas fa-circle-info" style="color:var(--accent);flex-shrink:0;margin-top:1px"></i>'
+    +'<span>XREZZKY hanya mendukung pembayaran via <strong style="color:var(--txt)">Saldo XREZZKY</strong>. Deposit dulu jika saldo kurang.</span>'
+    +'</div>';
+  updateSum();
 }
-function selPay(id){payMethod=id;document.querySelectorAll('.pm-item').forEach(e=>e.classList.remove('selected'));document.getElementById('pm-'+id)?.classList.add('selected');updateSum();}
+function selPay(id){} // no-op: saldo only
 function applyV(){
   const code=document.getElementById('vInp').value.trim().toUpperCase();if(!code)return toast('Masukkan kode','w');
   const vv={'XREZZKY10':{d:.10,l:'Diskon 10%'},'HEMAT20K':{d:20000,l:'Hemat Rp 20rb',fx:true},'NEWUSER':{d:.15,l:'Diskon 15%'}};
@@ -546,7 +584,33 @@ async function placeOrder(){
   }catch(e){console.error('[place]',e);toast('Gagal: '+e.message,'e');}
   finally{btn.innerHTML='<i class="fas fa-shopping-bag"></i> Beli Sekarang';btn.disabled=false;}
 }
+function lockCheckout(){
+  // Disable semua input setelah order berhasil — tidak bisa ubah apapun
+  document.getElementById('buyBtn').disabled = true;
+  document.getElementById('buyBtn').innerHTML = '<i class="fas fa-lock"></i> Pesanan Dibuat';
+  document.getElementById('buyBtn').style.opacity = '0.5';
+  document.getElementById('orderNotes').disabled = true;
+  document.getElementById('vInp').disabled = true;
+  document.getElementById('qtyV').style.opacity = '0.5';
+  document.querySelectorAll('.qty-btn').forEach(b => b.disabled = true);
+  // Remove voucher apply button
+  const vBtn = document.querySelector('[onclick="applyV()"]');
+  if (vBtn) vBtn.disabled = true;
+  // Gray out pay section
+  const pl = document.getElementById('payList');
+  if (pl) pl.style.opacity = '0.6';
+  // Show locked banner
+  const coPage = document.getElementById('coPage');
+  if (coPage) {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:sticky;top:68px;z-index:100;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);border-radius:var(--rsm);padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--success)';
+    banner.innerHTML = '<i class="fas fa-lock-open"></i><strong>Pesanan berhasil dibuat</strong> — semua detail sudah terkunci.';
+    coPage.insertBefore(banner, coPage.firstChild);
+  }
+}
+
 function showSucc(ord,tot){
+  lockCheckout();
   ['st1','st2','st3'].forEach(id=>{const el=document.getElementById(id);el.classList.remove('active');el.classList.add('done');el.querySelector('.step-dot').innerHTML='<i class="fas fa-check" style="font-size:9px"></i>';});
   document.getElementById('mSuccBody').innerHTML=
     '<div style="text-align:center;padding:4px 0 18px"><div style="width:60px;height:60px;border-radius:50%;background:rgba(34,197,94,.12);border:2px solid var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px;color:var(--success)"><i class="fas fa-check"></i></div>'
@@ -562,12 +626,25 @@ function showSucc(ord,tot){
     +'<a href="index.html" class="btn bg" style="justify-content:center;padding:10px"><i class="fas fa-store"></i> Lanjut Belanja</a></div>';
   openMo('mSucc');
 }
-async function openChat(){
-  if(!activeChatId)return;
-  const{data:sess}=await sb.from('chat_sessions').select('*').eq('id',activeChatId).maybeSingle();
-  const{data:ord}=await sb.from('orders').select('status,use_mc').eq('id',activeOrder?.id).maybeSingle();
+async function openChat(sessionIdOverride){
+  // Support override (dari URL param atau riwayat)
+  const sessId = sessionIdOverride || activeChatId;
+  if(!sessId){ toast('Tidak ada obrolan untuk order ini','w'); return; }
+  activeChatId = sessId;
+
+  // Load session + order + messages semua sekaligus
+  const[{data:sess},{data:msgs}]=await Promise.all([
+    sb.from('chat_sessions').select('*,orders(status,use_mc,total_price,products(name))').eq('id',sessId).maybeSingle(),
+    sb.from('chat_messages').select('*,profiles:sender_id(username,avatar_url)').eq('session_id',sessId).order('created_at',{ascending:true}),
+  ]);
+
+  const ord = sess?.orders || {};
   const isClosed=['resolved','closed'].includes(sess?.status)||['completed','cancelled'].includes(ord?.status);
-  const{data:msgs}=await sb.from('chat_messages').select('*').eq('session_id',activeChatId).order('created_at',{ascending:true});
+
+  // Simpan ke localStorage supaya tidak hilang kalau refresh
+  if(activeOrder?.id) {
+    try { localStorage.setItem('xr_last_chat_'+activeOrder.id, sessId); } catch(e) {}
+  }
   document.getElementById('chatTit').innerHTML='<i class="fas fa-comments" style="color:var(--accent);margin-right:7px"></i>Obrolan #'+(activeOrder?.id?.slice(0,8).toUpperCase()||'—');
   const stEl=document.getElementById('chatSt');stEl.textContent=isClosed?'Ditutup':'Aktif';stEl.className='chip '+(isClosed?'cr':'cg');
   const msgsEl=document.getElementById('chatMsgs');msgsEl.innerHTML=(msgs||[]).map(m=>buildMsg(m)).join('');
@@ -580,10 +657,15 @@ async function openChat(){
 function buildMsg(m){
   if(!m)return'';
   const isMe=m.sender_id===user?.id,isSys=m.sender_type==='system';
+  const nm=m.profiles?.username||(isMe?'Kamu':'Seller');
   const time=m.created_at?new Date(m.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'';
   const txt=esc(m.message||'').replace(/\n/g,'<br/>');
   if(isSys)return'<div class="cmsg sys"><div class="cmsg-bubble">'+txt+'</div></div>';
-  return'<div class="cmsg '+(isMe?'me':'them')+'"><div class="cmsg-bubble">'+txt+'</div><div class="cmsg-time">'+time+'</div></div>';
+  return'<div class="cmsg '+(isMe?'me':'them')+'">'
+    +(!isMe?'<div style="font-size:10px;color:var(--txt2);margin-bottom:2px;padding:0 4px;font-weight:600">'+esc(nm)+'</div>':'')
+    +'<div class="cmsg-bubble">'+txt+'</div>'
+    +'<div class="cmsg-time">'+time+'</div>'
+    +'</div>';
 }
 async function sendMsg(){
   const txt=document.getElementById('chatTxt').value.trim();if(!txt||!activeChatId)return;
@@ -613,8 +695,13 @@ async function confirmRcv(ordId,sessId){
   if(!confirm('Konfirmasi sudah terima produk?\nSaldo akan cair ke seller.'))return;
   const sub=(product?.price||0)*qty,sellerGet=sub-SVC;
   await sb.from('orders').update({status:'completed',completed_at:new Date().toISOString()}).eq('id',ordId);
-  if(sellerP&&sellerGet>0){
-    await sb.from('profiles').update({balance:(sellerP.balance||0)+sellerGet,completed_orders:(sellerP.completed_orders||0)+1}).eq('id',product.seller_id);
+  if(sellerGet>0&&product?.seller_id){
+    // Fetch fresh balance dulu, bukan dari cache sellerP (bisa stale)
+    const{data:sp}=await sb.from('profiles').select('balance,completed_orders').eq('id',product.seller_id).maybeSingle();
+    await sb.from('profiles').update({
+      balance:(sp?.balance||0)+sellerGet,
+      completed_orders:(sp?.completed_orders||0)+1
+    }).eq('id',product.seller_id);
   }
   await sb.from('chat_messages').insert([{session_id:sessId,sender_id:user.id,sender_type:'system',message:'✅ Buyer konfirmasi terima produk.\n💰 Saldo '+fmtRp(sellerGet)+' cair ke seller.\n🔒 Obrolan ditutup.',created_at:new Date().toISOString()}]);
   await sb.from('chat_sessions').update({status:'resolved',resolved_at:new Date().toISOString()}).eq('id',sessId);
