@@ -167,7 +167,25 @@
     .si::placeholder { color: var(--txt2); }
     select.fsel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 7px 11px; color: var(--txt); font-family: 'Poppins',sans-serif; font-size: 12px; outline: none; cursor: pointer; }
 
-    /* ── MODAL ── */
+    /* ── CHAT ── */
+    .cmsg{max-width:78%;word-break:break-word;display:flex;flex-direction:column}
+    .cmsg-bubble{padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.55}
+    .cmsg-time{font-size:10px;color:var(--txt2);margin-top:2px;padding:0 4px}
+    .cmsg-name{font-size:10px;color:var(--txt2);margin-bottom:2px;padding:0 4px;font-weight:600}
+    .cmsg-img{max-width:220px;max-height:200px;border-radius:8px;cursor:zoom-in;display:block;margin-top:4px;object-fit:cover;border:1px solid var(--border)}
+    .cmsg-vid{max-width:260px;border-radius:8px;display:block;margin-top:4px;max-height:180px}
+    .cmsg.me{align-self:flex-end}
+    .cmsg.me .cmsg-bubble{background:var(--accent);color:#fff;border-radius:12px 12px 2px 12px}
+    .cmsg.them{align-self:flex-start}
+    .cmsg.them .cmsg-bubble{background:var(--surface);border:1px solid var(--border);border-radius:12px 12px 12px 2px}
+    .cmsg.sys{align-self:center;max-width:92%;text-align:center}
+    .cmsg.sys .cmsg-bubble{background:rgba(74,125,255,.07);border:1px solid rgba(74,125,255,.15);font-size:11px;color:var(--txt2);border-radius:8px}
+    /* Chat status chips */
+    .chip-pending{background:rgba(245,158,11,.12);color:var(--warn);border:1px solid rgba(245,158,11,.2)}
+    .chip-processing{background:rgba(74,125,255,.12);color:var(--accent);border:1px solid rgba(74,125,255,.2)}
+    .chip-pending_mc{background:rgba(168,85,247,.12);color:#a855f7;border:1px solid rgba(168,85,247,.25)}
+    .chip-completed{background:rgba(34,197,94,.12);color:var(--success);border:1px solid rgba(34,197,94,.2)}
+    .chip-cancelled{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
     .mo { position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,.72); display: none; align-items: center; justify-content: center; padding: 20px; }
     .mo.open { display: flex; }
     .mb { background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); width: 100%; animation: fup .3s ease; overflow: hidden; }
@@ -701,6 +719,67 @@
   </div>
 </div>
 
+<!-- ══ CHAT MODAL ══ -->
+<div class="mo" id="modalChat">
+  <div class="mb" style="max-width:500px;display:flex;flex-direction:column;max-height:90vh">
+    <div class="mh" style="flex-shrink:0">
+      <div style="display:flex;flex-direction:column;gap:2px;flex:1;min-width:0">
+        <h3 id="chatModalTitle" style="font-size:14px">Obrolan Pesanan</h3>
+        <div id="chatModalSub" style="font-size:11px;color:var(--txt2)"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        <span class="chip" id="chatOrderStatus" style="font-size:10px"></span>
+        <button class="mc" onclick="closeChatModal()"><i class="fas fa-times"></i></button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-msgs" id="chatMsgsEl" style="flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;background:var(--bg);min-height:260px;max-height:380px"></div>
+
+    <!-- Closed bar -->
+    <div id="chatClosedBarSeller" style="display:none;background:rgba(239,68,68,.07);border-top:1px solid rgba(239,68,68,.2);padding:8px 14px;font-size:12px;color:var(--danger);text-align:center">
+      <i class="fas fa-lock" style="margin-right:6px"></i>Obrolan ditutup — transaksi selesai
+    </div>
+
+    <!-- Media preview -->
+    <div id="mediaPreviewBar" style="display:none;padding:8px 12px;background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <div id="mediaThumb" style="width:48px;height:48px;border-radius:6px;background:var(--nav);border:1px solid var(--border);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--txt2);flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div id="mediaFileName" style="font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
+        <div id="mediaFileSize" style="font-size:11px;color:var(--txt2)"></div>
+      </div>
+      <div id="mediaUploadBar" style="display:none;flex:1">
+        <div style="height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+          <div id="mediaUploadFill" style="height:100%;background:var(--accent);border-radius:2px;transition:width .3s;width:0%"></div>
+        </div>
+        <div id="mediaUploadPct" style="font-size:10px;color:var(--txt2);margin-top:3px">0%</div>
+      </div>
+      <button onclick="clearMediaPreview()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:16px;padding:4px;flex-shrink:0"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Input -->
+    <div id="chatInputArea" style="display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--border);background:var(--surface);flex-shrink:0;align-items:flex-end">
+      <input type="file" id="mediaFileInput" accept="image/*,video/*" style="display:none" onchange="onMediaSelect(event)"/>
+      <button onclick="document.getElementById('mediaFileInput').click()" id="mediaBtn"
+        style="width:36px;height:36px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--txt2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;transition:.18s"
+        title="Kirim foto/video (maks 10MB)">
+        <i class="fas fa-paperclip"></i>
+      </button>
+      <textarea id="chatInputEl" placeholder="Tulis pesan..." rows="1"
+        style="flex:1;background:var(--nav);border:1.5px solid var(--border);border-radius:var(--rsm);padding:8px 12px;color:var(--txt);font-family:'Poppins',sans-serif;font-size:13px;resize:none;outline:none;min-height:36px;max-height:90px;transition:border .18s;line-height:1.4"
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSellerMsg()}"
+        oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+      <button onclick="sendSellerMsg()" id="sendMsgBtn"
+        style="width:36px;height:36px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:.18s;align-self:flex-end">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+
+    <!-- Chat action footer (confirm, complete, etc) -->
+    <div id="chatActionFoot" style="padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;flex-shrink:0"></div>
+  </div>
+</div>
+
 <!-- WITHDRAWAL -->
 <div class="mo" id="modalWithdrawal">
   <div class="mb" style="max-width:420px">
@@ -1083,12 +1162,13 @@ function renderOrders(orders) {
       <td>${statusChip(o.status)}</td>
       <td style="display:flex; gap:4px; flex-wrap:wrap">
         <button class="btn btn-g btn-xs" onclick="openOrderDetail('${o.id}')"><i class="fas fa-eye"></i></button>
-        ${o.status === 'pending' ? `
+        ${o.status === 'pending' || o.status === 'pending_mc' ? `
           <button class="btn btn-s btn-xs" onclick="updateOrder('${o.id}','processing')"><i class="fas fa-check"></i> Proses</button>
           <button class="btn btn-d btn-xs" onclick="updateOrder('${o.id}','cancelled')"><i class="fas fa-times"></i></button>
         ` : o.status === 'processing' ? `
           <button class="btn btn-p btn-xs" onclick="updateOrder('${o.id}','completed')"><i class="fas fa-check-double"></i> Selesai</button>
         ` : ''}
+        <button class="btn btn-g btn-xs" onclick="openSellerChat('${o.id}')" title="Buka Obrolan"><i class="fas fa-comments"></i></button>
       </td>
     </tr>`).join('');
 }
@@ -1151,7 +1231,7 @@ function openOrderDetail(id) {
   } else if (o.status === 'processing') {
     footBtns.push(`<button class="btn btn-p" onclick="updateOrder('${o.id}','completed'); closeMo('modalOrder')"><i class="fas fa-check-double"></i> Tandai Selesai</button>`);
   }
-  document.getElementById('orderDetailFoot').innerHTML = `<button class="btn btn-g" onclick="closeMo('modalOrder')">Tutup</button>${footBtns.join('')}`;
+  document.getElementById('orderDetailFoot').innerHTML = `<button class="btn btn-g" onclick="closeMo('modalOrder')">Tutup</button><button class="btn btn-p" onclick="closeMo('modalOrder');openSellerChat('${o.id}')"><i class="fas fa-comments"></i> Buka Chat</button>${footBtns.join('')}`;
 }
 
 async function updateOrder(id, status) {
@@ -1514,6 +1594,245 @@ function confirmAct(txt, ico, btnClass, cb) {
   btn.onclick = () => cb();
   openMo('modalConfirm');
 }
+
+// ══════════════════════════════════════════
+//  SELLER CHAT SYSTEM
+// ══════════════════════════════════════════
+let activeChatSession=null,activeChatOrder=null,chatRealtime=null,pendingMedia=null;
+
+async function openSellerChat(orderId){
+  const o=myOrders.find(x=>x.id===orderId);if(!o)return;
+  activeChatOrder=o;
+  let{data:sess}=await sb.from('chat_sessions').select('*').eq('order_id',orderId).maybeSingle();
+  if(!sess){
+    const{data:ns,error}=await sb.from('chat_sessions').insert([{
+      user_id:o.buyer_id||o.user_id,cs_id:seller.id,order_id:orderId,
+      status:'active',session_type:o.use_mc?'mc':'direct',created_at:new Date().toISOString()
+    }]).select().single();
+    if(error){toast('Gagal buat sesi: '+error.message,'e');return;}
+    sess=ns;
+  }
+  activeChatSession=sess;
+  const nm=o.profiles?.username||'Buyer';
+  document.getElementById('chatModalTitle').textContent='Obrolan #'+orderId.slice(0,8).toUpperCase();
+  document.getElementById('chatModalSub').textContent='Buyer: '+nm+' · '+fmtRp(o.total_price);
+  const stEl=document.getElementById('chatOrderStatus');
+  const stMap={pending:'⏳ Pending',pending_mc:'🛡️ MC Hold',processing:'🔄 Diproses',completed:'✅ Selesai',cancelled:'❌ Batal'};
+  const stCls={pending:'chip-pending',pending_mc:'chip-pending_mc',processing:'chip-processing',completed:'chip-completed',cancelled:'chip-cancelled'};
+  stEl.textContent=stMap[o.status]||o.status;stEl.className='chip '+(stCls[o.status]||'');
+  const isClosed=['completed','cancelled','resolved'].includes(o.status)||['resolved','closed'].includes(sess.status);
+  await loadChatMsgs(sess.id,isClosed);
+  renderSellerChatActions(o,sess.id,isClosed);
+  subscribeSellerChat(sess.id);
+  document.getElementById('chatInputEl').disabled=isClosed;
+  document.getElementById('sendMsgBtn').disabled=isClosed;
+  document.getElementById('mediaBtn').disabled=isClosed;
+  document.getElementById('chatClosedBarSeller').style.display=isClosed?'block':'none';
+  document.getElementById('chatInputArea').style.display=isClosed?'none':'flex';
+  openMo('modalChat');
+}
+
+function closeChatModal(){
+  closeMo('modalChat');
+  if(chatRealtime){sb.removeChannel(chatRealtime);chatRealtime=null;}
+  clearMediaPreview();
+}
+
+async function loadChatMsgs(sessId,isClosed){
+  const el=document.getElementById('chatMsgsEl');
+  el.innerHTML='<div style="text-align:center;padding:20px;color:var(--txt2);font-size:12px">Memuat pesan...</div>';
+  const{data:msgs}=await sb.from('chat_messages')
+    .select('*,profiles:sender_id(username,avatar_url)')
+    .eq('session_id',sessId).order('created_at',{ascending:true});
+  if(!msgs?.length){
+    el.innerHTML='<div style="text-align:center;padding:32px;color:var(--txt2);font-size:12px;opacity:.6"><i class="fas fa-comments" style="font-size:24px;display:block;margin-bottom:8px"></i>Belum ada pesan</div>';
+    return;
+  }
+  el.innerHTML=msgs.map(m=>buildSellerMsg(m)).join('');
+  scrollChatBot();
+}
+
+function buildSellerMsg(m){
+  if(!m)return'';
+  const isMe=m.sender_id===seller?.id,isSys=m.sender_type==='system';
+  const nm=m.profiles?.username||(isMe?'Kamu':'Buyer');
+  const time=m.created_at?new Date(m.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}):'';
+  if(isSys)return'<div class="cmsg sys"><div class="cmsg-bubble">'+esc(m.message||'').replace(/\n/g,'<br/>')+'</div></div>';
+  if(m.attachment){
+    const url=m.attachment.startsWith('http')?m.attachment:CLD_BASE+m.attachment;
+    const isVid=/\.(mp4|mov|webm|avi)$/i.test(m.attachment);
+    const med=isVid
+      ?'<video class="cmsg-vid" controls src="'+url+'"></video>'
+      :'<img class="cmsg-img" src="'+url+'" onclick="openLB(\''+url+'\')" loading="lazy"/>';
+    return'<div class="cmsg '+(isMe?'me':'them')+'">'
+      +(!isMe?'<div class="cmsg-name">'+esc(nm)+'</div>':'')
+      +'<div class="cmsg-bubble" style="padding:6px">'+med
+      +(m.message?'<div style="margin-top:6px;font-size:12px">'+esc(m.message).replace(/\n/g,'<br/>')+'</div>':'')
+      +'</div><div class="cmsg-time">'+time+'</div></div>';
+  }
+  return'<div class="cmsg '+(isMe?'me':'them')+'">'
+    +(!isMe?'<div class="cmsg-name">'+esc(nm)+'</div>':'')
+    +'<div class="cmsg-bubble">'+esc(m.message||'').replace(/\n/g,'<br/>')+'</div>'
+    +'<div class="cmsg-time">'+time+'</div></div>';
+}
+
+function scrollChatBot(){const el=document.getElementById('chatMsgsEl');if(el)setTimeout(()=>el.scrollTop=el.scrollHeight,50);}
+
+function subscribeSellerChat(sessId){
+  if(chatRealtime)sb.removeChannel(chatRealtime);
+  chatRealtime=sb.channel('schat:'+sessId)
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'chat_messages',filter:'session_id=eq.'+sessId},async p=>{
+      const{data:sender}=await sb.from('profiles').select('username,avatar_url').eq('id',p.new.sender_id).maybeSingle();
+      document.getElementById('chatMsgsEl')?.insertAdjacentHTML('beforeend',buildSellerMsg({...p.new,profiles:sender}));
+      scrollChatBot();
+    }).subscribe();
+}
+
+async function sendSellerMsg(){
+  const txt=document.getElementById('chatInputEl').value.trim();
+  const sessId=activeChatSession?.id;
+  if(!sessId||((!txt)&&!pendingMedia))return;
+  const btn=document.getElementById('sendMsgBtn');btn.disabled=true;
+  try{
+    let att=null;
+    if(pendingMedia){att=await uploadMedia(pendingMedia);if(!att){btn.disabled=false;return;}}
+    await sb.from('chat_messages').insert([{
+      session_id:sessId,sender_id:seller.id,sender_type:'user',
+      message:txt||'',attachment:att||null,created_at:new Date().toISOString()
+    }]);
+    await sb.from('chat_sessions').update({last_message:txt||'📎 Media',updated_at:new Date().toISOString()}).eq('id',sessId);
+    document.getElementById('chatInputEl').value='';
+    document.getElementById('chatInputEl').style.height='auto';
+    clearMediaPreview();
+  }catch(e){toast('Gagal kirim: '+e.message,'e');}
+  btn.disabled=false;
+}
+
+function onMediaSelect(event){
+  const file=event.target.files[0];if(!file)return;
+  if(file.size>10*1024*1024){toast('Maks 10MB!','e');event.target.value='';return;}
+  const ok=['image/jpeg','image/png','image/webp','image/gif','video/mp4','video/quicktime','video/webm'];
+  if(!ok.includes(file.type)){toast('Format tidak didukung. Gunakan JPG, PNG, GIF, atau MP4','e');event.target.value='';return;}
+  pendingMedia=file;
+  const bar=document.getElementById('mediaPreviewBar');
+  document.getElementById('mediaFileName').textContent=file.name;
+  document.getElementById('mediaFileSize').textContent=fmtBytes(file.size);
+  bar.style.display='flex';
+  if(file.type.startsWith('image/')){
+    const r=new FileReader();r.onload=e=>{document.getElementById('mediaThumb').innerHTML='<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover"/>';};r.readAsDataURL(file);
+  }else{document.getElementById('mediaThumb').innerHTML='<i class="fas fa-video" style="color:var(--accent)"></i>';}
+  event.target.value='';
+}
+
+function clearMediaPreview(){
+  pendingMedia=null;
+  document.getElementById('mediaPreviewBar').style.display='none';
+  document.getElementById('mediaThumb').innerHTML='';
+  document.getElementById('mediaUploadBar').style.display='none';
+  document.getElementById('mediaUploadFill').style.width='0%';
+}
+
+async function uploadMedia(file){
+  const upBar=document.getElementById('mediaUploadBar');
+  const upFill=document.getElementById('mediaUploadFill');
+  const upPct=document.getElementById('mediaUploadPct');
+  upBar.style.display='block';
+  try{
+    const folder=file.type.startsWith('video/')?'chat_videos':'chat_images';
+    const fd=new FormData();fd.append('file',file);fd.append('upload_preset',CLD_PRESET);fd.append('folder',folder);
+    return await new Promise((res,rej)=>{
+      const xhr=new XMLHttpRequest();xhr.open('POST',CLD_UPLOAD);
+      xhr.upload.onprogress=e=>{if(e.lengthComputable){const p=Math.round(e.loaded/e.total*90);upFill.style.width=p+'%';upPct.textContent=p+'%';}};
+      xhr.onload=()=>{
+        upFill.style.width='100%';upPct.textContent='100%';
+        const data=JSON.parse(xhr.responseText);
+        if(data.error){rej(new Error(data.error.message));return;}
+        const url=file.type.startsWith('video/')?data.secure_url:data.public_id+'.'+data.format;
+        setTimeout(()=>{upBar.style.display='none';},600);
+        res(url);
+      };
+      xhr.onerror=()=>rej(new Error('Upload gagal'));xhr.send(fd);
+    });
+  }catch(e){toast('Upload gagal: '+e.message,'e');upBar.style.display='none';return null;}
+}
+
+function renderSellerChatActions(o,sessId,isClosed){
+  const foot=document.getElementById('chatActionFoot');if(!foot)return;
+  if(isClosed){foot.innerHTML='<span style="font-size:12px;color:var(--txt2);padding:6px 0"><i class="fas fa-lock" style="margin-right:5px"></i>Transaksi selesai</span>';return;}
+  let html='';
+  if(o.status==='pending'||o.status==='pending_mc'){
+    html+=`<button class="btn btn-s btn-xs" style="flex:1;justify-content:center;padding:9px" onclick="sellerConfirm('${o.id}','${sessId}')"><i class="fas fa-check"></i> Konfirmasi & Proses</button>`;
+    html+=`<button class="btn btn-d btn-xs" style="padding:9px" onclick="sellerReject('${o.id}','${sessId}')"><i class="fas fa-times"></i> Tolak</button>`;
+  }else if(o.status==='processing'){
+    html+=`<button class="btn btn-p btn-xs" style="flex:1;justify-content:center;padding:9px" onclick="sellerSendProduct('${o.id}','${sessId}')"><i class="fas fa-paper-plane"></i> Kirim Data Produk</button>`;
+  }
+  html+=`<button class="btn btn-g btn-xs" onclick="showQR('${sessId}')" title="Pesan Cepat"><i class="fas fa-bolt"></i></button>`;
+  foot.innerHTML=html;
+}
+
+async function sellerConfirm(ordId,sessId){
+  if(!confirm('Konfirmasi dan proses pesanan ini?'))return;
+  const{error}=await sb.from('orders').update({status:'processing',updated_at:new Date().toISOString()}).eq('id',ordId).eq('seller_id',seller.id);
+  if(error){toast('Gagal: '+error.message,'e');return;}
+  await sb.from('chat_messages').insert([{session_id:sessId,sender_id:seller.id,sender_type:'system',
+    message:'✅ Seller mengkonfirmasi pesanan.\n📦 Produk sedang disiapkan. Seller akan segera mengirim data.',created_at:new Date().toISOString()}]);
+  toast('Pesanan dikonfirmasi ✅','s');await loadOrders();
+  const upd={...activeChatOrder,status:'processing'};activeChatOrder=upd;
+  renderSellerChatActions(upd,sessId,false);
+  document.getElementById('chatOrderStatus').textContent='🔄 Diproses';
+  document.getElementById('chatOrderStatus').className='chip chip-processing';
+}
+
+async function sellerSendProduct(ordId,sessId){
+  const data=prompt('Masukkan data produk (akun, password, dll) untuk buyer:');
+  if(!data?.trim())return;
+  await sb.from('chat_messages').insert([
+    {session_id:sessId,sender_id:seller.id,sender_type:'user',message:'📦 Data Produk:\n'+data,created_at:new Date().toISOString()},
+    {session_id:sessId,sender_id:seller.id,sender_type:'system',message:'🚀 Seller telah mengirim data produk. Silakan verifikasi dan tekan "Konfirmasi Terima" jika sudah sesuai.',created_at:new Date().toISOString()}
+  ]);
+  toast('Data produk terkirim ✅','s');
+}
+
+async function sellerReject(ordId,sessId){
+  const reason=prompt('Alasan menolak pesanan:');if(!reason?.trim())return;
+  const{error}=await sb.from('orders').update({status:'cancelled',updated_at:new Date().toISOString()}).eq('id',ordId).eq('seller_id',seller.id);
+  if(error){toast('Gagal: '+error.message,'e');return;}
+  const o=myOrders.find(x=>x.id===ordId);
+  if(o?.total_price){
+    const bid=o.buyer_id||o.user_id;
+    const{data:bp}=await sb.from('profiles').select('balance').eq('id',bid).maybeSingle();
+    if(bp)await sb.from('profiles').update({balance:(bp.balance||0)+o.total_price}).eq('id',bid);
+  }
+  await sb.from('chat_messages').insert([{session_id:sessId,sender_id:seller.id,sender_type:'system',
+    message:'❌ Pesanan dibatalkan seller.\n📝 Alasan: '+reason+'\n💰 Saldo dikembalikan ke buyer.',created_at:new Date().toISOString()}]);
+  await sb.from('chat_sessions').update({status:'closed',resolved_at:new Date().toISOString()}).eq('id',sessId);
+  toast('Pesanan ditolak & saldo buyer direfund','w');await loadOrders();
+  renderSellerChatActions({status:'cancelled'},sessId,true);
+  document.getElementById('chatClosedBarSeller').style.display='block';
+  document.getElementById('chatInputArea').style.display='none';
+}
+
+function showQR(sessId){
+  const existing=document.getElementById('qrPicker');if(existing){existing.remove();return;}
+  const replies=['👋 Halo! Pesanan diterima, segera diproses ya!','⏳ Mohon tunggu, kami sedang menyiapkan produk.','✅ Produk sudah siap, segera kami kirimkan.','❓ Ada pertanyaan? Silakan tanya di sini.','🙏 Terima kasih sudah belanja di toko kami!'];
+  const p=document.createElement('div');p.id='qrPicker';
+  p.style.cssText='position:absolute;bottom:120px;left:12px;right:12px;background:var(--nav);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.3)';
+  p.innerHTML='<div style="padding:8px 12px;font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border)">Pesan Cepat</div>'
+    +replies.map(r=>'<div onclick="useQR('+JSON.stringify(r)+')" style="padding:10px 14px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--border)" onmouseover="this.style.background=\'var(--surface)\'" onmouseout="this.style.background=\'none\'">'+r+'</div>').join('');
+  const mb=document.getElementById('modalChat')?.querySelector('.mb');
+  if(mb){mb.style.position='relative';mb.appendChild(p);}
+}
+function useQR(txt){document.getElementById('chatInputEl').value=txt;document.getElementById('qrPicker')?.remove();document.getElementById('chatInputEl').focus();}
+
+function openLB(url){
+  const lb=document.createElement('div');
+  lb.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:zoom-out';
+  lb.onclick=()=>lb.remove();
+  lb.innerHTML='<img src="'+url+'" style="max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px"/>';
+  document.body.appendChild(lb);
+}
+
+function fmtBytes(b){if(b<1024)return b+' B';if(b<1048576)return(b/1024).toFixed(1)+' KB';return(b/1048576).toFixed(1)+' MB';}
 
 // ══ UTILS ══
 function fmtRp(v) {
