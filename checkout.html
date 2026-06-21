@@ -424,7 +424,7 @@ function renderSeller(){
   document.getElementById('slNm').textContent=nm;
   document.getElementById('slStat').textContent=txn+' transaksi selesai';
   const tb=document.getElementById('slTrust');
-  if(s.role==='admin'){tb.className='trust ta';tb.innerHTML='<i class="fas fa-shield-halved"></i> Admin';mcRequired=false;mcOptional=false;useMC=false;}
+  if(['admin','owner'].includes(s.role)){tb.className='trust ta';tb.innerHTML='<i class="fas fa-shield-halved"></i> '+(s.role==='owner'?'Owner':'Admin');mcRequired=false;mcOptional=false;useMC=false;}
   else if(txn>=MC_LIMIT||s.is_verified){tb.className='trust tt';tb.innerHTML='<i class="fas fa-star"></i> Terpercaya ('+txn+'x)';mcRequired=false;mcOptional=true;useMC=false;}
   else if(txn>=10){tb.className='trust tg';tb.innerHTML='<i class="fas fa-thumbs-up"></i> Berkembang ('+txn+'/20)';mcRequired=true;mcOptional=false;useMC=true;}
   else{tb.className='trust tn';tb.innerHTML='<i class="fas fa-user-clock"></i> New Seller ('+txn+'/20)';mcRequired=true;mcOptional=false;useMC=true;}

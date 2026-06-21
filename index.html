@@ -1272,9 +1272,9 @@ function updateNavUser() {
   document.getElementById('ddBalance').textContent = fmtBalance(balance);
 
   // Role-based sections
-  const isSeller = role === 'seller' || role === 'admin';
-  const isCs     = role === 'cs'     || role === 'admin';
-  const isAdmin  = role === 'admin';
+  const isSeller = role === 'seller' || ['admin','owner'].includes(role);
+  const isCs     = role === 'cs'     || ['admin','owner'].includes(role);
+  const isAdmin  = ['admin','owner'].includes(role);
 
   document.getElementById('ddSellerSection').style.display = isSeller ? 'block' : 'none';
   document.getElementById('ddCsSection').style.display     = isCs     ? 'block' : 'none';
@@ -2169,9 +2169,9 @@ function openProfilSheet() {
 
   // Show/hide role links
   const show = (id, v) => { const el=document.getElementById(id); if(el) el.style.display=v?'block':'none'; };
-  show('psSellerLink', ['seller','admin'].includes(role));
-  show('psCsLink',     ['cs','admin'].includes(role));
-  show('psAdminLink',  role === 'admin');
+  show('psSellerLink', ['seller','admin','owner'].includes(role));
+  show('psCsLink',     ['cs','admin','owner'].includes(role));
+  show('psAdminLink',  ['admin','owner'].includes(role));
 
   sheet.classList.add('open');
 }

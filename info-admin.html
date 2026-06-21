@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!session) { toast('Login dulu','e'); setTimeout(()=>location.href='index.html',1200); document.body.style.opacity='1'; return; }
   // Role check
   const { data: _prof } = await sb.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
-  if (!_prof || _prof.role !== 'admin') {
+  if (!_prof || !['admin','owner'].includes(_prof.role)) {
     document.body.style.opacity = '1';
     document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;color:#f5f7fa;font-family:Poppins,sans-serif;background:#0f1115;text-align:center;padding:20px"><i class=\"fas fa-shield-halved\" style=\"font-size:48px;color:#ef4444;opacity:.6\"></i><h2 style=\"font-size:22px\">Akses Ditolak — Hanya Admin</h2><a href=\"index.html\" style=\"margin-top:8px;background:#4a7dff;color:#fff;padding:10px 24px;border-radius:9px;text-decoration:none;font-size:13px;font-weight:600\">Kembali</a></div>';
     return;

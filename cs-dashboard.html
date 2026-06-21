@@ -1597,7 +1597,7 @@ function lookupUser() {
           <div class="u-av">${u.avatar_url ? `<img src="${CLD_BASE}${u.avatar_url}" />` : (u.username||'U')[0].toUpperCase()}</div>
           <div><div class="u-name">${esc(u.username||'—')}</div><div class="u-email">${esc(u.email||'')}</div></div>
         </div></td>
-        <td><span class="chip ${u.role==='admin'?'cr':u.role==='seller'?'cy':'cb2'}">${u.role||'buyer'}</span></td>
+        <td><span class="chip ${['admin','owner'].includes(u.role)?'cr':u.role==='seller'?'cy':'cb2'}">${u.role||'buyer'}</span></td>
         <td style="color:var(--success); font-weight:600">${fmtRp(u.balance||0)}</td>
         <td class="td2">${fmtDate(u.created_at)}</td>
         <td>

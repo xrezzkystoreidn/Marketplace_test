@@ -826,15 +826,15 @@ function buildQuickLinks() {
     <a class="ql-item" href="seller-dashboard.html?tab=orders"><i class="fas fa-inbox"></i> Pesanan Masuk</a>`;
   }
 
-  if (['cs','admin'].includes(role)) {
+  if (['cs','admin','owner'].includes(role)) {
     html += `<div class="ql-sep"></div>
     <div style="font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;padding:4px 12px">CS</div>
     <a class="ql-item" href="cs-dashboard.html"><i class="fas fa-headset"></i> CS Dashboard<span class="ql-rbadge" style="background:rgba(6,182,212,.12);color:var(--cyan)">CS</span></a>`;
   }
 
-  if (role === 'admin') {
+  if (['admin','owner'].includes(role)) {
     html += `<div class="ql-sep"></div>
-    <div style="font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;padding:4px 12px">Admin</div>
+    <div style="font-size:10px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.07em;padding:4px 12px">${role==='owner'?'Owner':'Admin'}</div>
     <a class="ql-item" href="admin-panel.html"><i class="fas fa-chart-pie"></i> Admin Panel<span class="ql-rbadge" style="background:rgba(239,68,68,.1);color:var(--danger)">Admin</span></a>
     <a class="ql-item" href="deposit-admin.html"><i class="fas fa-qrcode"></i> Kelola Deposit</a>
     <a class="ql-item" href="info-admin.html"><i class="fas fa-bell"></i> Kelola Info</a>`;

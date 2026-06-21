@@ -713,7 +713,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   currentAdmin = session.user;
   // Role check
   const { data: prof } = await sb.from('profiles').select('role').eq('id', currentAdmin.id).maybeSingle();
-  if (!prof || prof.role !== 'admin') {
+  if (!prof || !['admin','owner'].includes(prof.role)) {
     document.body.style.opacity = '1';
     document.body.innerHTML = `
       <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;
@@ -991,7 +991,7 @@ function renderUsers(users) {
         <div class="user-av">${u.avatar_url ? `<img src="${CLD_BASE}${u.avatar_url}"/>` : (u.username||'U')[0].toUpperCase()}</div>
         <div><div class="user-info-name">${esc(u.username||'—')}</div><div class="user-info-email">${esc(u.email||'')}</div></div>
       </div></td>
-      <td><span class="chip ${u.role === 'admin' ? 'chip-red' : u.role === 'seller' ? 'chip-yellow' : 'chip-blue'}">${u.role||'buyer'}</span></td>
+      <td><span class="chip ${['admin','owner'].includes(u.role) ? 'chip-red' : u.role === 'seller' ? 'chip-yellow' : 'chip-blue'}">${u.role||'buyer'}</span></td>
       <td style="color:var(--success); font-weight:600">${fmtRp(u.balance||0)}</td>
       <td class="td-muted">${fmtDate(u.created_at)}</td>
       <td><span class="chip chip-green">Aktif</span></td>
@@ -1038,7 +1038,7 @@ async function openUserDetail(id) {
         <div class="ud-name">${esc(user.username || '—')}</div>
         <div class="ud-email">${esc(user.email || '')}</div>
         <div class="ud-chips">
-          <span class="chip ${user.role === 'admin' ? 'chip-red' : user.role === 'seller' ? 'chip-yellow' : 'chip-blue'}">${user.role||'buyer'}</span>
+          <span class="chip ${['admin','owner'].includes(user.role) ? 'chip-red' : user.role === 'seller' ? 'chip-yellow' : 'chip-blue'}">${user.role||'buyer'}</span>
           <span class="chip chip-green">Aktif</span>
         </div>
       </div>

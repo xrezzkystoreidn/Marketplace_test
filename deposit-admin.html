@@ -602,7 +602,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // ── ROLE GUARD ──
       const { data: prof } = await sb.from('profiles').select('role, username').eq('id', admin.id).maybeSingle();
-      if (!prof || prof.role !== 'admin') {
+      if (!prof || !['admin','owner'].includes(prof.role)) {
         document.body.innerHTML = `
           <div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px;
             color:#f5f7fa;font-family:'Poppins',sans-serif;background:#0f1115;text-align:center;padding:20px">

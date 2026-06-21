@@ -595,16 +595,29 @@ async function submitDeposit(){
     const data=await res.json();fill.style.width='100%';
     if(data.error)throw new Error(data.error.message);
     buktiUploadUrl=data.public_id+'.'+data.format;
+
+    let dbError = null;
     if(activeDepositId){
-      await sb.from('deposit_requests').update({proof_image:buktiUploadUrl,status:'waiting_review',submitted_at:new Date().toISOString()}).eq('id',activeDepositId);
+      const{error:updErr}=await sb.from('deposit_requests')
+        .update({proof_image:buktiUploadUrl,status:'waiting_review',submitted_at:new Date().toISOString()})
+        .eq('id',activeDepositId)
+        .eq('user_id',user.id); // pastikan cuma update milik sendiri
+      dbError = updErr;
     } else {
-      const{data:dep}=await sb.from('deposit_requests').insert([{
+      const{data:dep,error:insErr}=await sb.from('deposit_requests').insert([{
         user_id:user.id,amount:nominal,admin_fee:adminFee,total_paid:totalTransfer,
         method:'qris',proof_image:buktiUploadUrl,status:'waiting_review',
         submitted_at:new Date().toISOString(),created_at:new Date().toISOString()
       }]).select().single();
+      dbError = insErr;
       if(dep)activeDepositId=dep.id;
     }
+
+    if(dbError){
+      console.error('[submitDeposit] DB error:', dbError);
+      throw new Error('Gagal simpan ke database: '+dbError.message);
+    }
+
     clearInterval(countdownInterval);
     toast('Bukti berhasil dikirim! Menunggu konfirmasi admin ✅','s');
     // Show waiting status (deposit locked until admin confirms)
