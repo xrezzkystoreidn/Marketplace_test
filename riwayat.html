@@ -263,15 +263,42 @@
   </div>
 </div>
 
+<div class="mo" id="reportModal">
+  <div class="mb" style="max-width:440px">
+    <div class="mh"><h3>Laporkan Pesanan</h3><button class="mc" onclick="closeMo('reportModal')"><i class="fas fa-times"></i></button></div>
+    <div class="mbody">
+      <p style="font-size:13px;color:var(--txt2);margin-bottom:14px">Jelaskan masalah dengan pesanan ini. Tim CS kami akan meninjau laporanmu.</p>
+      <div class="fg">
+        <label style="display:block;font-size:12px;color:var(--txt2);margin-bottom:5px;font-weight:500">Kategori Masalah</label>
+        <select id="reportCategory" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:9px 12px;color:var(--txt);font-family:'Poppins',sans-serif;font-size:13px;outline:none">
+          <option value="produk_tidak_sesuai">Produk tidak sesuai</option>
+          <option value="seller_tidak_respon">Seller tidak merespon</option>
+          <option value="data_tidak_valid">Data/akun tidak valid</option>
+          <option value="penipuan">Indikasi penipuan</option>
+          <option value="lainnya">Lainnya</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label style="display:block;font-size:12px;color:var(--txt2);margin-bottom:5px;font-weight:500">Detail Masalah</label>
+        <textarea id="reportDesc" rows="4" placeholder="Jelaskan masalahnya secara detail..." style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:9px 12px;color:var(--txt);font-family:'Poppins',sans-serif;font-size:13px;resize:none;outline:none"></textarea>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn bg" onclick="closeMo('reportModal')">Batal</button>
+      <button class="btn bd" id="reportSubmitBtn" onclick="submitReport()"><i class="fas fa-flag"></i> Kirim Laporan</button>
+    </div>
+  </div>
+</div>
+
 <div id="tc"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPA_URL = 'https://jydfjfjttpmropoczgop.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const SUPA_URL = 'https://pvkhsjiftfzjpgkoiawq.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzMwMjQsImV4cCI6MjA5NzU0OTAyNH0.Fo82CROzoQE90ckYYv7rlnDkLxP0JZ2tN-T2hgnk-fA';
 const CLD_BASE = 'https://res.cloudinary.com/drjmclzbi/image/upload/';
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-let user = null, allOrders = [], filtered = [], activeStatus = '', expandedId = null, reviewOrderId = null;
+let user = null, allOrders = [], filtered = [], activeStatus = '', expandedId = null, reviewOrderId = null, reportOrderId = null;
 const PER_PAGE = 10; let page = 1;
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -470,9 +497,49 @@ function goPage(n) { page = n; window.scrollTo({top:0,behavior:'smooth'}); rende
 function copyId(id) { navigator.clipboard.writeText(id); toast('Order ID disalin ✅', 's'); }
 
 async function cancelOrder(id) {
-  const { error } = await sb.from('orders').update({ status:'cancelled' }).eq('id', id).eq('user_id', user.id);
-  if (error) return toast('Gagal: '+error.message, 'e');
-  toast('Pesanan dibatalkan', 'w');
+  if (!confirm('Batalkan pesanan ini? Saldo akan dikembalikan ke kamu.')) return;
+
+  const o = allOrders.find(x => x.id === id);
+  if (!o) return;
+
+  // Hanya bisa dibatalkan kalau masih pending/pending_mc (belum diproses seller)
+  if (!['pending','pending_mc'].includes(o.status)) {
+    toast('Pesanan sudah diproses, tidak bisa dibatalkan dari sini', 'e');
+    return;
+  }
+
+  const { error } = await sb.from('orders')
+    .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+    .eq('id', id).eq('user_id', user.id)
+    .in('status', ['pending','pending_mc']); // double guard supaya tidak cancel order yang udah diproses
+
+  if (error) return toast('Gagal: ' + error.message, 'e');
+
+  // Refund saldo ke buyer
+  const refundAmount = o.total_price || 0;
+  if (refundAmount > 0) {
+    const { data: bp } = await sb.from('profiles').select('balance').eq('id', user.id).maybeSingle();
+    if (bp) {
+      await sb.from('profiles').update({
+        balance: (bp.balance || 0) + refundAmount
+      }).eq('id', user.id);
+    }
+  }
+
+  // System message di chat kalau ada session-nya
+  const { data: sess } = await sb.from('chat_sessions').select('id').eq('order_id', id).maybeSingle();
+  if (sess) {
+    await sb.from('chat_messages').insert([{
+      session_id: sess.id, sender_id: user.id, sender_type: 'system',
+      message: `❌ Pesanan dibatalkan oleh buyer.\n💰 Saldo Rp ${refundAmount.toLocaleString('id-ID')} dikembalikan.`,
+      created_at: new Date().toISOString(),
+    }]);
+    await sb.from('chat_sessions').update({
+      status: 'closed', resolved_at: new Date().toISOString()
+    }).eq('id', sess.id);
+  }
+
+  toast(`Pesanan dibatalkan, saldo Rp ${refundAmount.toLocaleString('id-ID')} dikembalikan ✅`, 's');
   await loadOrders();
 }
 
@@ -500,11 +567,6 @@ async function confirmReceive(orderId) {
   // Kredit saldo seller
   const sellerGet = (o.total_price||0) - 500;
   if (o.seller_id && sellerGet > 0) {
-    await sb.from('profiles').update({
-      balance: sb.rpc ? undefined : sellerGet, // akan di-handle via RPC ideally
-      completed_orders: (0) // increment
-    });
-    // Simple update tanpa RPC
     const { data: sp } = await sb.from('profiles').select('balance,completed_orders').eq('id',o.seller_id).maybeSingle();
     if (sp) {
       await sb.from('profiles').update({
@@ -530,7 +592,66 @@ async function confirmReceive(orderId) {
 }
 
 function contactSeller(id) { openOrderChat(id); }
-function reportOrder(id) { toast('Laporan akan ditangani CS kami segera', 'w'); }
+function reportOrder(id) {
+  const o = allOrders.find(x => x.id === id);
+  if (!o) return;
+  reportOrderId = id;
+  document.getElementById('reportCategory').value = 'produk_tidak_sesuai';
+  document.getElementById('reportDesc').value = '';
+  openMo('reportModal');
+}
+
+async function submitReport() {
+  const o = allOrders.find(x => x.id === reportOrderId);
+  if (!o || !reportOrderId) return;
+
+  const category = document.getElementById('reportCategory').value;
+  const desc     = document.getElementById('reportDesc').value.trim();
+
+  if (!desc) { toast('Tolong jelaskan masalahnya dulu', 'e'); return; }
+  if (desc.length < 10) { toast('Detail terlalu singkat, jelaskan lebih lengkap', 'e'); return; }
+
+  const categoryLabels = {
+    produk_tidak_sesuai: 'Produk tidak sesuai',
+    seller_tidak_respon: 'Seller tidak merespon',
+    data_tidak_valid:    'Data/akun tidak valid',
+    penipuan:            'Indikasi penipuan',
+    lainnya:             'Lainnya',
+  };
+
+  const btn = document.getElementById('reportSubmitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengirim...';
+
+  const { error } = await sb.from('complaints').insert([{
+    user_id:     user.id,
+    seller_id:   o.seller_id || o.products?.seller_id || null,
+    order_id:    reportOrderId,
+    title:       `[${categoryLabels[category]}] Order #${reportOrderId.slice(0,8).toUpperCase()}`,
+    description: desc,
+    status:      'open',
+    created_at:  new Date().toISOString(),
+  }]);
+
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fas fa-flag"></i> Kirim Laporan';
+
+  if (error) { toast('Gagal mengirim laporan: ' + error.message, 'e'); return; }
+
+  // System message ke chat order kalau ada
+  const { data: sess } = await sb.from('chat_sessions').select('id').eq('order_id', reportOrderId).maybeSingle();
+  if (sess) {
+    await sb.from('chat_messages').insert([{
+      session_id: sess.id, sender_id: user.id, sender_type: 'system',
+      message: `⚠️ Buyer melaporkan masalah: ${categoryLabels[category]}\n"${desc}"\n\nTim CS akan segera meninjau.`,
+      created_at: new Date().toISOString(),
+    }]);
+  }
+
+  closeMo('reportModal');
+  toast('Laporan terkirim — tim CS kami akan segera meninjau ✅', 's');
+  reportOrderId = null;
+}
 
 // ── REVIEW ──
 function openReviewModal(orderId) {
@@ -807,8 +928,8 @@ function toast(msg, type='') { const el=document.createElement('div'); el.classN
     if (typeof supabase !== 'undefined') {
       try {
         var sb2 = supabase.createClient(
-          'https://jydfjfjttpmropoczgop.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+          'https://pvkhsjiftfzjpgkoiawq.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzMwMjQsImV4cCI6MjA5NzU0OTAyNH0.Fo82CROzoQE90ckYYv7rlnDkLxP0JZ2tN-T2hgnk-fA'
         );
         sb2.auth.getSession().then(function(r) {
           var session = r.data && r.data.session;

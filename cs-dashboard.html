@@ -909,8 +909,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ══ CONFIG ══
-const SUPA_URL = 'https://jydfjfjttpmropoczgop.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const SUPA_URL = 'https://pvkhsjiftfzjpgkoiawq.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzMwMjQsImV4cCI6MjA5NzU0OTAyNH0.Fo82CROzoQE90ckYYv7rlnDkLxP0JZ2tN-T2hgnk-fA';
 const CLD_BASE = 'https://res.cloudinary.com/drjmclzbi/image/upload/';
 
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
@@ -1105,10 +1105,10 @@ function renderRecentComplainsTable() {
 // ══ LIVE CHAT ══
 async function loadChats() {
   const { data } = await sb.from('chat_sessions')
-    .select('*, profiles(username, email, avatar_url)')
+    .select('*, customer:user_id(username, email, avatar_url)')
     .order('updated_at', { ascending: false })
     .limit(50);
-  allChats = data || [];
+  allChats = (data || []).map(x => ({ ...x, profiles: x.customer || {} }));
   renderChatList(allChats);
   document.getElementById('chatCountLabel').textContent = `(${allChats.length})`;
 
@@ -1331,9 +1331,9 @@ function showNotif(msg) {
 // ══ TICKETS ══
 async function loadTickets() {
   const { data, count } = await sb.from('support_tickets')
-    .select('*, profiles(username, email)', { count:'exact' })
+    .select('*, customer:user_id(username, email)', { count:'exact' })
     .order('created_at', { ascending: false });
-  allTickets = data || [];
+  allTickets = (data || []).map(x => ({ ...x, profiles: x.customer || {} }));
   document.getElementById('ticketCountLbl').textContent = `${count||0} Tiket`;
   const open = allTickets.filter(t => ['open','in_progress'].includes(t.status)).length;
   const badge = document.getElementById('sbTicketBadge');
@@ -1478,9 +1478,9 @@ async function saveNewTicket() {
 // ══ COMPLAINS ══
 async function loadComplains() {
   const { data, count } = await sb.from('complaints')
-    .select('*, profiles(username, email)', { count:'exact' })
+    .select('*, customer:user_id(username, email)', { count:'exact' })
     .order('created_at', { ascending: false });
-  allComplains = data || [];
+  allComplains = (data || []).map(x => ({ ...x, profiles: x.customer || {} }));
   document.getElementById('complainCountLbl').textContent = `${count||0} Komplain`;
 
   const open = allComplains.filter(c => ['open','investigating'].includes(c.status)).length;
@@ -1525,8 +1525,8 @@ async function openComplainDetail(id) {
   // Load order detail
   let orderInfo = null;
   if (c.order_id) {
-    const { data } = await sb.from('orders').select('*, products(name, image_url), profiles(username)').eq('id', c.order_id).single();
-    orderInfo = data;
+    const { data } = await sb.from('orders').select('*, products(name, image_url), buyer:buyer_id(username)').eq('id', c.order_id).single();
+    orderInfo = data ? { ...data, profiles: data.buyer || {} } : null;
   }
 
   body.innerHTML = `
@@ -1629,7 +1629,31 @@ function lookupOrders() {
     const body = document.getElementById('orderLookupBody');
     if (q.length < 2) { body.innerHTML = '<tr class="er"><td colspan="7">Masukkan kata kunci</td></tr>'; return; }
 
-    const { data } = await sb.from('orders').select('*, products(name), profiles(username, email)').or(`id.ilike.%${q}%,profiles.username.ilike.%${q}%`).limit(20);
+    // Cari order: kalau q mirip order ID, filter id. Kalau bukan, cari user dulu lewat username.
+    let data = [];
+    const isUuidLike = /^[0-9a-f-]{4,36}$/i.test(q);
+
+    if (isUuidLike) {
+      const { data: byId } = await sb.from('orders')
+        .select('*, products(name), buyer:buyer_id(username, email)')
+        .order('created_at', { ascending: false })
+        .limit(100);
+      data = (byId || []).filter(o => o.id.toLowerCase().includes(q.toLowerCase()));
+    } else {
+      const { data: users } = await sb.from('profiles')
+        .select('id').ilike('username', `%${q}%`).limit(20);
+      const userIds = (users || []).map(u => u.id);
+      if (userIds.length) {
+        const { data: byUser } = await sb.from('orders')
+          .select('*, products(name), buyer:buyer_id(username, email)')
+          .in('buyer_id', userIds)
+          .order('created_at', { ascending: false })
+          .limit(20);
+        data = byUser || [];
+      }
+    }
+
+    data = data.map(o => ({ ...o, profiles: o.buyer || {} }));
 
     body.innerHTML = data && data.length ? data.map(o => `
       <tr>
@@ -2089,8 +2113,8 @@ function toast(msg, type='') {
     if (typeof supabase !== 'undefined') {
       try {
         var sb2 = supabase.createClient(
-          'https://jydfjfjttpmropoczgop.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+          'https://pvkhsjiftfzjpgkoiawq.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzMwMjQsImV4cCI6MjA5NzU0OTAyNH0.Fo82CROzoQE90ckYYv7rlnDkLxP0JZ2tN-T2hgnk-fA'
         );
         sb2.auth.getSession().then(function(r) {
           var session = r.data && r.data.session;

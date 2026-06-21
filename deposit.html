@@ -353,8 +353,8 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPA_URL='https://jydfjfjttpmropoczgop.supabase.co';
-const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const SUPA_URL='https://pvkhsjiftfzjpgkoiawq.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzMwMjQsImV4cCI6MjA5NzU0OTAyNH0.Fo82CROzoQE90ckYYv7rlnDkLxP0JZ2tN-T2hgnk-fA';
 const CLD_CLOUD='drjmclzbi',CLD_PRESET='xrezzky_unsigned';
 const CLD_BASE=`https://res.cloudinary.com/${CLD_CLOUD}/image/upload/`;
 const CLD_UPLOAD=`https://api.cloudinary.com/v1_1/${CLD_CLOUD}/image/upload`;
@@ -946,8 +946,8 @@ function toast(msg,type=''){const el=document.createElement('div');el.className=
     if (typeof supabase !== 'undefined') {
       try {
         var sb2 = supabase.createClient(
-          'https://jydfjfjttpmropoczgop.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+          'https://pvkhsjiftfzjpgkoiawq.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzMwMjQsImV4cCI6MjA5NzU0OTAyNH0.Fo82CROzoQE90ckYYv7rlnDkLxP0JZ2tN-T2hgnk-fA'
         );
         sb2.auth.getSession().then(function(r) {
           var session = r.data && r.data.session;

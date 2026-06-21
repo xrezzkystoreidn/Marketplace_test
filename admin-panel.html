@@ -577,7 +577,7 @@
         <div class="card-box">
           <div class="card-box-header"><h3>Konfigurasi Aktif</h3></div>
           <div style="padding:20px; display:flex; flex-direction:column; gap:10px">
-            <div class="ud-field"><div class="uf-lab">Supabase URL</div><div class="uf-val" style="font-size:12px; color:var(--txt2)">https://jydfjfjttpmropoczgop.supabase.co</div></div>
+            <div class="ud-field"><div class="uf-lab">Supabase URL</div><div class="uf-val" style="font-size:12px; color:var(--txt2)">https://pvkhsjiftfzjpgkoiawq.supabase.co</div></div>
             <div class="ud-field"><div class="uf-lab">Cloudinary Cloud</div><div class="uf-val" style="color:var(--accent)">drjmclzbi</div></div>
             <div class="ud-field"><div class="uf-lab">Upload Preset</div><div class="uf-val" style="color:var(--accent)">xrezzky_unsigned</div></div>
             <div class="ud-field"><div class="uf-lab">API Key Cloudinary</div><div class="uf-val">511338818668895</div></div>
@@ -683,9 +683,9 @@
 // ══════════════════════════════════════════
 //  CONFIG
 // ══════════════════════════════════════════
-const SUPA_URL  = 'https://jydfjfjttpmropoczgop.supabase.co';
-const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
-const SUPA_SERVICE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3ODEwODI1MSwiZXhwIjoyMDkzNjg0MjUxfQ.rBuBsXDRaesLKR6as1lNk3nIp25l34VKY6-6x8gnPZg';
+const SUPA_URL  = 'https://pvkhsjiftfzjpgkoiawq.supabase.co';
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzMwMjQsImV4cCI6MjA5NzU0OTAyNH0.Fo82CROzoQE90ckYYv7rlnDkLxP0JZ2tN-T2hgnk-fA';
+const SUPA_SERVICE = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTk3MzAyNCwiZXhwIjoyMDk3NTQ5MDI0fQ.RhcwVo3oSsGiRIdQnUggZf-H5YfSzXsZFFv80GZBkYc';
 const CLD_CLOUD  = 'drjmclzbi';
 const CLD_KEY    = '511338818668895';
 const CLD_SECRET = 'dQgtFA-mKUR5qSQPT3HOJ-ehOXQ';
@@ -885,7 +885,7 @@ async function loadSupabaseStats() {
   const dbPct = Math.min((dbUsedMB / dbLimitMB) * 100, 100).toFixed(1);
 
   el.innerHTML = `
-    <div class="storage-stat"><span class="sk">Project Ref</span><span class="sv" style="color:var(--accent); font-size:12px">jydfjfjttpmropoczgop</span></div>
+    <div class="storage-stat"><span class="sk">Project Ref</span><span class="sv" style="color:var(--accent); font-size:12px">pvkhsjiftfzjpgkoiawq</span></div>
     <div class="storage-stat"><span class="sk">Total Rows</span><span class="sv">${totalRows.toLocaleString('id-ID')}</span></div>
     <div class="storage-stat"><span class="sk">Estimasi DB Size</span><span class="sv">${dbUsedMB} MB</span></div>
     <div class="storage-stat"><span class="sk">Batas Free Tier DB</span><span class="sv">500 MB</span></div>
@@ -1205,8 +1205,8 @@ async function deleteProduct(id) {
 //  ORDERS
 // ══════════════════════════════════════════
 async function loadOrders() {
-  const { data, count } = await sb.from('orders').select('*, products(name), profiles(username, email)', { count:'exact' }).order('created_at', { ascending: false });
-  allOrders = data || [];
+  const { data, count } = await sb.from('orders').select('*, products(name), buyer:buyer_id(username, email)', { count:'exact' }).order('created_at', { ascending: false });
+  allOrders = (data || []).map(o => ({ ...o, profiles: o.buyer || {} }));
   document.getElementById('orderCountLabel').textContent = `${count||0} Pesanan`;
   renderOrders(allOrders);
 }
@@ -1264,8 +1264,8 @@ async function updateOrderStatus(id) {
 //  TESTIMONIALS
 // ══════════════════════════════════════════
 async function loadTestimonials() {
-  const { data, count } = await sb.from('testimonials').select('*, products(name), profiles(username)', { count:'exact' }).order('created_at', { ascending: false });
-  allTestis = data || [];
+  const { data, count } = await sb.from('testimonials').select('*, products(name), reviewer:user_id(username)', { count:'exact' }).order('created_at', { ascending: false });
+  allTestis = (data || []).map(t => ({ ...t, profiles: t.reviewer || {} }));
   document.getElementById('testiCountLabel').textContent = `${count||0} Testimoni`;
   const body = document.getElementById('testiTableBody');
   if (!allTestis.length) { body.innerHTML = '<tr class="empty-row"><td colspan="6">Tidak ada testimoni</td></tr>'; return; }
@@ -1312,13 +1312,13 @@ async function loadActivityLog() {
   // Synthetic log from recent data
   const [{ data: newUsers }, { data: newOrders }, { data: newProds }] = await Promise.all([
     sb.from('profiles').select('username, created_at').order('created_at', { ascending: false }).limit(5),
-    sb.from('orders').select('id, status, created_at, profiles(username)').order('created_at', { ascending: false }).limit(5),
+    sb.from('orders').select('id, status, created_at, buyer:buyer_id(username)').order('created_at', { ascending: false }).limit(5),
     sb.from('products').select('name, created_at').order('created_at', { ascending: false }).limit(5),
   ]);
 
   const events = [
     ...(newUsers||[]).map(u => ({ icon:'user-plus', color:'var(--accent)', text:`User baru mendaftar: <strong>${esc(u.username||'—')}</strong>`, time: u.created_at })),
-    ...(newOrders||[]).map(o => ({ icon:'receipt', color:'var(--warn)', text:`Pesanan ${o.id.slice(0,8)} — Status: <strong>${o.status}</strong> oleh ${esc(o.profiles?.username||'—')}`, time: o.created_at })),
+    ...(newOrders||[]).map(o => ({ icon:'receipt', color:'var(--warn)', text:`Pesanan ${o.id.slice(0,8)} — Status: <strong>${o.status}</strong> oleh ${esc(o.buyer?.username||'—')}`, time: o.created_at })),
     ...(newProds||[]).map(p => ({ icon:'box', color:'var(--success)', text:`Produk ditambahkan: <strong>${esc(p.name)}</strong>`, time: p.created_at })),
   ].sort((a, b) => new Date(b.time) - new Date(a.time));
 
@@ -1610,8 +1610,8 @@ function toast(msg, type='info') {
     if (typeof supabase !== 'undefined') {
       try {
         var sb2 = supabase.createClient(
-          'https://jydfjfjttpmropoczgop.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+          'https://pvkhsjiftfzjpgkoiawq.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzMwMjQsImV4cCI6MjA5NzU0OTAyNH0.Fo82CROzoQE90ckYYv7rlnDkLxP0JZ2tN-T2hgnk-fA'
         );
         sb2.auth.getSession().then(function(r) {
           var session = r.data && r.data.session;

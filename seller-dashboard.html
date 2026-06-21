@@ -141,6 +141,7 @@
     .c-g  { background: rgba(34,197,94,.15);  color: var(--success); }
     .c-b  { background: rgba(74,125,255,.15); color: var(--accent); }
     .c-y  { background: rgba(245,158,11,.15); color: var(--warn); }
+    .c-p  { background: rgba(168,85,247,.15); color: #a855f7; }
     .c-r  { background: rgba(239,68,68,.15);  color: var(--danger); }
     .c-gr { background: rgba(155,166,178,.1); color: var(--txt2); }
 
@@ -827,8 +828,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ══ CONFIG ══
-const SUPA_URL = 'https://jydfjfjttpmropoczgop.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s';
+const SUPA_URL = 'https://pvkhsjiftfzjpgkoiawq.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzMwMjQsImV4cCI6MjA5NzU0OTAyNH0.Fo82CROzoQE90ckYYv7rlnDkLxP0JZ2tN-T2hgnk-fA';
 const CLD_CLOUD  = 'drjmclzbi';
 const CLD_PRESET = 'xrezzky_unsigned';
 const CLD_BASE   = `https://res.cloudinary.com/${CLD_CLOUD}/image/upload/`;
@@ -1118,21 +1119,29 @@ async function deleteProd(id) {
 
 // ══ ORDERS ══
 async function loadMyOrders() {
-  const { data } = await sb.from('orders')
-    .select('*, products(name, image_url, category), profiles(username, email, whatsapp)')
+  let data, error;
+  ({ data, error } = await sb.from('orders')
+    .select('*, products(name, image_url, category), buyer:buyer_id(username, email, whatsapp), alt_buyer:user_id(username, email, whatsapp)')
     .eq('seller_id', seller.id)
-    .order('created_at', { ascending: false });
-  myOrders = data || [];
+    .order('created_at', { ascending: false }));
 
-  const pending = myOrders.filter(o => o.status === 'pending').length;
+  if (error) {
+    console.error('[loadMyOrders]', error);
+    const fb = await sb.from('orders').select('*').eq('seller_id', seller.id).order('created_at', { ascending: false });
+    data = fb.data;
+  }
+
+  myOrders = (data || []).map(o => ({ ...o, profiles: o.buyer || o.alt_buyer || {} }));
+
+  const pending = myOrders.filter(o => ['pending','pending_mc'].includes(o.status)).length;
   const badge   = document.getElementById('notifBadge');
   const sBadge  = document.getElementById('sideOrderBadge');
   if (pending > 0) {
-    badge.style.display  = 'flex'; badge.textContent = pending;
-    sBadge.style.display = 'inline'; sBadge.textContent = pending;
+    if (badge)  { badge.style.display  = 'flex';   badge.textContent  = pending; }
+    if (sBadge) { sBadge.style.display = 'inline'; sBadge.textContent = pending; }
   } else {
-    badge.style.display  = 'none';
-    sBadge.style.display = 'none';
+    if (badge)  badge.style.display  = 'none';
+    if (sBadge) sBadge.style.display = 'none';
   }
 }
 
@@ -1225,8 +1234,7 @@ function openOrderDetail(id) {
   `;
 
   const footBtns = [];
-  if (o.status === 'pending') {
-    footBtns.push(`<button class="btn btn-s" onclick="updateOrder('${o.id}','processing'); closeMo('modalOrder')"><i class="fas fa-check"></i> Konfirmasi & Proses</button>`);
+  if (o.status === 'pending' || o.status === 'pending_mc') {
     footBtns.push(`<button class="btn btn-d btn-sm" onclick="updateOrder('${o.id}','cancelled'); closeMo('modalOrder')"><i class="fas fa-times"></i> Tolak</button>`);
   } else if (o.status === 'processing') {
     footBtns.push(`<button class="btn btn-p" onclick="updateOrder('${o.id}','completed'); closeMo('modalOrder')"><i class="fas fa-check-double"></i> Tandai Selesai</button>`);
@@ -1260,7 +1268,7 @@ async function updateOrder(id, status) {
 // ══ OVERVIEW ══
 function renderOverview() {
   const completed = myOrders.filter(o => o.status === 'completed');
-  const pending   = myOrders.filter(o => o.status === 'pending');
+  const pending   = myOrders.filter(o => ['pending','pending_mc'].includes(o.status));
   const revenue   = completed.reduce((a, o) => a + (o.total_price || 0), 0);
   const activeProd= myProducts.filter(p => p.is_active).length;
   const ratings   = myProducts.map(p => p.avg_rating).filter(Boolean);
@@ -1363,7 +1371,7 @@ async function loadSalesReport() {
   const periodOrders    = myOrders.filter(o => o.created_at >= sinceStr);
   const completedOrders = periodOrders.filter(o => o.status === 'completed');
   const revenue         = completedOrders.reduce((a,o) => a+(o.total_price||0), 0);
-  const pendingOrders   = periodOrders.filter(o => o.status === 'pending');
+  const pendingOrders   = periodOrders.filter(o => ['pending','pending_mc'].includes(o.status));
 
   // Summary cards
   document.getElementById('salesSummary').innerHTML = `
@@ -1849,8 +1857,8 @@ function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function statusChip(s) {
-  const m = { pending:'c-y', processing:'c-b', completed:'c-g', cancelled:'c-r' };
-  const l = { pending:'Pending', processing:'Diproses', completed:'Selesai', cancelled:'Dibatalkan' };
+  const m = { pending:'c-y', pending_mc:'c-p', processing:'c-b', completed:'c-g', cancelled:'c-r', refunded:'c-r' };
+  const l = { pending:'Pending', pending_mc:'🛡️ MC Hold', processing:'Diproses', completed:'Selesai', cancelled:'Dibatalkan', refunded:'Refund' };
   return `<span class="chip ${m[s]||'c-gr'}">${l[s]||s||'—'}</span>`;
 }
 function animVal(id, target) {
@@ -2069,8 +2077,8 @@ function toast(msg, type='') {
     if (typeof supabase !== 'undefined') {
       try {
         var sb2 = supabase.createClient(
-          'https://jydfjfjttpmropoczgop.supabase.co',
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZGZqZmp0dHBtcm9wb2N6Z29wIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgxMDgyNTEsImV4cCI6MjA5MzY4NDI1MX0.CyxQU-zng4OBP1kOlZEn0UZVGurfVp6TfNWS_zOaf3s'
+          'https://pvkhsjiftfzjpgkoiawq.supabase.co',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2a2hzamlmdGZ6anBna29pYXdxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5NzMwMjQsImV4cCI6MjA5NzU0OTAyNH0.Fo82CROzoQE90ckYYv7rlnDkLxP0JZ2tN-T2hgnk-fA'
         );
         sb2.auth.getSession().then(function(r) {
           var session = r.data && r.data.session;
