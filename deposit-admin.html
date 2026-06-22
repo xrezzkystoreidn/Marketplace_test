@@ -826,7 +826,7 @@ function renderDepCard(d, showActions) {
             <div class="pdf"><div class="k">Nominal Masuk</div><div class="v" style="color:var(--accent)">${fmtRp(d.amount)}</div></div>
             <div class="pdf"><div class="k">Saldo Setelah ACC</div><div class="v" style="color:var(--warn)">${fmtRp((p.balance||0)+(d.amount||0))}</div></div>
             <div class="pdf"><div class="k">Bukti Dikirim</div><div class="v" style="font-size:11px">${d.submitted_at?fmtDateFull(d.submitted_at):'—'}</div></div>
-            <div class="pdf"><div class="k">ID Deposit</div><div class="v" style="font-size:10px;color:var(--txt2);word-break:break-all">${d.id}</div></div>
+            <div class="pdf"><div class="k">ID Deposit</div><div class="v" style="font-size:11px;font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);cursor:pointer;letter-spacing:.04em" onclick="navigator.clipboard.writeText('${d.id}');toast('ID disalin ✅','s')">${d.id.slice(0,8).toUpperCase()}… <i class="fas fa-copy" style="opacity:.5;font-size:9px"></i></div></div>
             ${d.reject_reason?`<div class="pdf" style="grid-column:1/-1"><div class="k">Alasan Tolak</div><div class="v" style="color:var(--danger)">${esc(d.reject_reason)}</div></div>`:''}
             ${d.approved_at?`<div class="pdf" style="grid-column:1/-1"><div class="k">Disetujui</div><div class="v" style="color:var(--success)">${fmtDateFull(d.approved_at)}</div></div>`:''}
           </div>
@@ -1281,11 +1281,32 @@ function toast(msg, type='') {
   .proof-detail-grid { grid-template-columns: 1fr !important; }
   #tc { bottom: 76px !important; right: 12px !important; }
 }
+/* ══ GLOBAL LAYOUT FIX — tidak mepet, tidak terpotong ══ */
+.cb, .dep-card, .qris-setting-card { overflow: visible !important; }
+.cbh, .dep-main, .dep-proof { padding-left: 18px !important; padding-right: 18px !important; }
+.cbb { padding: 20px !important; }
+.dep-main { padding: 16px 18px !important; }
+.proof-detail-grid { gap: 10px !important; }
+.pdf { padding: 11px 14px !important; }
+.pdf .v { word-break: break-word !important; }
+.dep-amounts { gap: 12px !important; align-items: center; }
+.da-val { font-size: 14px !important; }
+.da-lbl { font-size: 10px !important; }
+.dep-right { gap: 8px !important; }
+/* Table tidak terpotong */
+[style*="overflow-x:auto"] table { min-width: 600px; }
+th, td { white-space: nowrap; }
+/* Card box header tidak mepet */
+.cbh { min-height: 48px; }
+/* Stat cards spacing */
+.sg { gap: 14px !important; }
+.sc { padding: 16px 20px !important; gap: 14px !important; }
+/* Page padding desktop */
 @media (min-width: 901px) {
-  #xbn { display: none !important; }
-  #mobilePageHeader { display: none !important; }
+  #main { padding: 28px 28px 40px !important; }
 }
 </style>
+<style>
 
 <!-- Bottom Nav -->
 <div id="xbn">

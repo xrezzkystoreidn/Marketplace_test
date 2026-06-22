@@ -341,6 +341,30 @@
   #wrapper, #main { margin-left: 0 !important; margin-top: 0 !important; }
   #main { padding: 14px 14px 80px !important; }
 }
+/* ══ LAYOUT FIX — padding, tidak terpotong, tidak mepet ══ */
+.cb-head { padding: 14px 18px !important; min-height: 48px; }
+.cb-body { padding: 18px !important; }
+.tbl-wrap { overflow-x: auto; }
+.tbl-wrap table { min-width: 580px; }
+th { white-space: nowrap; padding: 10px 14px !important; }
+td { padding: 10px 14px !important; vertical-align: middle; }
+.stat-grid { gap: 14px !important; }
+.sc { padding: 16px 20px !important; gap: 14px !important; }
+.sc .v { font-size: 18px !important; }
+.sc .l { font-size: 11px !important; }
+.prod-card { overflow: hidden; }
+.pc-body { padding: 12px 14px !important; }
+.order-confirm-card { padding: 14px 16px !important; gap: 13px !important; }
+.oc-info { min-width: 0; }
+.oi-prod { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 600px) {
+  .stat-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .prod-grid { grid-template-columns: repeat(2,1fr) !important; }
+  td, th { padding: 8px 10px !important; font-size: 12px; }
+}
+@media (min-width: 901px) {
+  #main { padding: 26px 26px 40px !important; }
+}
 </style>
 </head>
 <body>
@@ -1214,7 +1238,7 @@ function openOrderDetail(id) {
       </div>
       <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px">
         <div style="font-size:10px; color:var(--txt2); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px">Order ID</div>
-        <div style="font-size:11px; color:var(--txt2); word-break:break-all">${o.id}</div>
+        <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.04em;cursor:pointer;word-break:break-all" onclick="navigator.clipboard.writeText('${o.order_code||o.id}');toast('Order ID disalin ✅','s')" title="Klik untuk salin">${o.order_code||('XRZKY-'+o.id.slice(0,8).toUpperCase())} <i class="fas fa-copy" style="font-size:10px;opacity:.5"></i></div>
       </div>
       <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px 12px">
         <div style="font-size:10px; color:var(--txt2); font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-bottom:4px">Tgl Order</div>
@@ -1622,7 +1646,7 @@ async function openSellerChat(orderId){
   }
   activeChatSession=sess;
   const nm=o.profiles?.username||'Buyer';
-  document.getElementById('chatModalTitle').textContent='Obrolan #'+orderId.slice(0,8).toUpperCase();
+  document.getElementById('chatModalTitle').textContent='Obrolan '+(o.order_code||'XRZKY-'+orderId.slice(0,8).toUpperCase());
   document.getElementById('chatModalSub').textContent='Buyer: '+nm+' · '+fmtRp(o.total_price);
   const stEl=document.getElementById('chatOrderStatus');
   const stMap={pending:'⏳ Pending',pending_mc:'🛡️ MC Hold',processing:'🔄 Diproses',completed:'✅ Selesai',cancelled:'❌ Batal'};

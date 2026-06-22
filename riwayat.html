@@ -396,8 +396,8 @@ function renderList() {
         <div class="tx-img">${img}</div>
         <div class="tx-info">
           <div class="tx-id">
-            <span>#${o.id.slice(0,8).toUpperCase()}</span>
-            <span class="copy-id" onclick="event.stopPropagation(); copyId('${o.id}')"><i class="fas fa-copy"></i> Salin</span>
+            <span style="font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.03em;color:var(--accent)">${o.order_code||('XRZKY-'+o.id.slice(0,8).toUpperCase())}</span>
+            <span class="copy-id" onclick="event.stopPropagation(); copyId('${o.order_code||o.id}')"><i class="fas fa-copy"></i> Salin</span>
           </div>
           <div class="tx-name">${esc(p.name||'—')}</div>
           <div class="tx-seller"><i class="fas fa-store" style="font-size:10px"></i> ${esc(o.profiles?.username||'—')}</div>
@@ -429,7 +429,7 @@ function renderDetail(o) {
 
   return `
     <div class="td-grid">
-      <div class="td-field"><div class="k">Order ID</div><div class="v" style="font-size:11px;color:var(--txt2);cursor:pointer" onclick="copyId('${o.id}')"><i class="fas fa-copy" style="margin-right:4px;opacity:.5"></i>${o.id.slice(0,8).toUpperCase()}</div></div>
+      <div class="td-field"><div class="k">Order ID</div><div class="v" style="font-family:'Syne',sans-serif;font-weight:700;color:var(--accent);cursor:pointer;letter-spacing:.03em" onclick="copyId('${o.order_code||o.id}')"><i class="fas fa-copy" style="margin-right:4px;opacity:.5"></i>${o.order_code||('XRZKY-'+o.id.slice(0,8).toUpperCase())}</div></div>
       <div class="td-field"><div class="k">Kategori</div><div class="v">${esc(p.category||'—')}</div></div>
       <div class="td-field"><div class="k">Total Bayar</div><div class="v" style="color:var(--accent);font-size:15px;font-weight:700">${fmtRp(o.total_price)}</div></div>
       <div class="td-field"><div class="k">Metode</div><div class="v">${esc(o.payment_method||'Saldo XREZZKY')}</div></div>
@@ -494,7 +494,7 @@ function renderPagination() {
 function goPage(n) { page = n; window.scrollTo({top:0,behavior:'smooth'}); renderList(); }
 
 // ── ACTIONS ──
-function copyId(id) { navigator.clipboard.writeText(id); toast('Order ID disalin ✅', 's'); }
+function copyId(id) { navigator.clipboard.writeText(id); toast('Order ID disalin: ' + id + ' ✅', 's'); }
 
 async function cancelOrder(id) {
   if (!confirm('Batalkan pesanan ini? Saldo akan dikembalikan ke kamu.')) return;
@@ -701,15 +701,34 @@ async function submitReview() {
 
 // ── EXPORT ──
 function exportCSV() {
-  const rows = [['Order ID','Produk','Seller','Total','Status','Tanggal']];
-  filtered.forEach(o => rows.push([o.id, o.products?.name||'', o.profiles?.username||'', o.total_price||0, o.status, o.created_at?.split('T')[0]]));
+  const headers = ['Order ID','Produk','Seller','Subtotal','Biaya Layanan','Total','Status','Metode','Tanggal'];
+  const rows = [headers];
+  filtered.forEach(o => {
+    const orderId = o.order_code || ('XRZKY-' + o.id.slice(0,8).toUpperCase());
+    const total = o.total_price || 0;
+    const svc = o.service_fee || 0;
+    const sub = total - svc;
+    rows.push([
+      orderId,
+      '"' + (o.products?.name||'').replace(/"/g,'""') + '"',
+      '"' + (o.profiles?.username||'').replace(/"/g,'""') + '"',
+      fmtRpPlain(sub),
+      fmtRpPlain(svc),
+      fmtRpPlain(total),
+      o.status,
+      o.payment_method || 'saldo',
+      o.created_at ? new Date(o.created_at).toLocaleString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : ''
+    ]);
+  });
   const csv  = rows.map(r => r.join(',')).join('\n');
+  const bom  = '\uFEFF'; // BOM for Excel compatibility
   const a    = document.createElement('a');
-  a.href     = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-  a.download = `riwayat_xrezzky_${Date.now()}.csv`;
+  a.href     = 'data:text/csv;charset=utf-8,' + encodeURIComponent(bom + csv);
+  a.download = `riwayat_xrezzky_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
   toast('File CSV diunduh ✅', 's');
 }
+function fmtRpPlain(v) { if(!v&&v!==0) return '0'; return 'Rp ' + Number(v).toLocaleString('id-ID'); }
 
 // ── MODAL ──
 function openMo(id) { document.getElementById(id).classList.add('open'); }
@@ -849,6 +868,26 @@ function toast(msg, type='') { const el=document.createElement('div'); el.classN
 @media (min-width: 901px) {
   #xbn { display: none !important; }
   #mobilePageHeader { display: none !important; }
+}
+/* ══ LAYOUT FIX — padding rapih, tidak terpotong ══ */
+.tx-item { overflow: hidden; }
+.tx-main { padding: 14px 16px !important; gap: 13px; }
+.tx-img { flex-shrink: 0; }
+.tx-info { min-width: 0; }
+.tx-id span:first-child { white-space: nowrap; }
+.tx-detail { padding: 16px 18px !important; }
+.td-grid { gap: 10px !important; }
+.td-field { padding: 12px 14px !important; }
+.td-field .v { word-break: break-word; }
+.sum-grid { gap: 12px; }
+.sum-card { padding: 14px 18px !important; gap: 12px !important; }
+.filter-bar { padding: 13px 16px !important; gap: 10px; }
+@media (max-width: 600px) {
+  .sum-grid { grid-template-columns: repeat(2,1fr) !important; }
+  .td-grid { grid-template-columns: 1fr !important; }
+  .tx-main { padding: 12px 14px !important; }
+  .tx-right { min-width: 80px; }
+  .tx-price { font-size: 13px !important; }
 }
 </style>
 

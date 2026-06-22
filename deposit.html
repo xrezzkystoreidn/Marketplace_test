@@ -309,8 +309,8 @@
     <div class="card-head"><div class="iw" style="background:rgba(168,85,247,.15);color:#a855f7"><i class="fas fa-clock-rotate-left"></i></div><h3>Riwayat Deposit</h3></div>
     <div style="overflow-x:auto">
       <table class="hist-table">
-        <thead><tr><th>Nominal</th><th>Fee</th><th>Total</th><th>Waktu</th><th>Status</th></tr></thead>
-        <tbody id="histBody"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--txt2);font-size:13px">Belum ada riwayat</td></tr></tbody>
+        <thead><tr><th>ID</th><th>Nominal</th><th>Fee</th><th>Total</th><th>Waktu</th><th>Status</th></tr></thead>
+        <tbody id="histBody"><tr><td colspan="6" style="text-align:center;padding:28px;color:var(--txt2);font-size:13px">Belum ada riwayat</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -345,8 +345,8 @@
     <div class="card-head"><div class="iw" style="background:rgba(168,85,247,.15);color:#a855f7"><i class="fas fa-clock-rotate-left"></i></div><h3>Riwayat Deposit</h3></div>
     <div style="overflow-x:auto">
       <table class="hist-table">
-        <thead><tr><th>Nominal</th><th>Fee</th><th>Total</th><th>Waktu</th><th>Status</th></tr></thead>
-        <tbody id="histBodyLocked"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--txt2);font-size:13px">Memuat...</td></tr></tbody>
+        <thead><tr><th>ID</th><th>Nominal</th><th>Fee</th><th>Total</th><th>Waktu</th><th>Status</th></tr></thead>
+        <tbody id="histBodyLocked"><tr><td colspan="6" style="text-align:center;padding:28px;color:var(--txt2);font-size:13px">Memuat...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -737,7 +737,15 @@ async function loadDepositHistoryToEl(elId){
   if(!data||!data.length){body.innerHTML='<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--txt2);font-size:13px">Belum ada riwayat</td></tr>';return;}
   body.innerHTML=data.map(d=>{
     const chip=d.status==='completed'?'<span class="chip cg">Berhasil</span>':d.status==='rejected'?'<span class="chip cr">Ditolak</span>':d.status==='expired'?'<span class="chip" style="background:rgba(155,166,178,.1);color:var(--txt2)">Hangus</span>':'<span class="chip cy">Menunggu</span>';
-    return`<tr><td style="font-weight:600">${fmtRp(d.amount)}</td><td style="color:var(--warn)">${fmtRp(d.admin_fee||0)}</td><td style="color:var(--accent);font-weight:700">${fmtRp(d.total_paid)}</td><td style="color:var(--txt2);font-size:11px">${fmtDate(d.created_at)}</td><td>${chip}</td></tr>`;
+    const depId = d.deposit_code || d.id.slice(0,8).toUpperCase();
+    return`<tr>
+      <td style="font-size:10px;color:var(--txt2);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.03em">${depId}</td>
+      <td style="font-weight:600">${fmtRp(d.amount)}</td>
+      <td style="color:var(--warn)">${fmtRp(d.admin_fee||0)}</td>
+      <td style="color:var(--accent);font-weight:700">${fmtRp(d.total_paid)}</td>
+      <td style="color:var(--txt2);font-size:11px">${fmtDate(d.created_at)}</td>
+      <td>${chip}</td>
+    </tr>`;
   }).join('');
 }
 
@@ -871,6 +879,25 @@ function toast(msg,type=''){const el=document.createElement('div');el.className=
 #mobilePageHeader .mph-back:active { transform: scale(.9); }
 #mobilePageHeader .mph-title { font-size: 15px; font-weight: 700; color: #f5f7fa; flex: 1; }
 #mobilePageHeader .mph-logo { font-size: 11px; font-weight: 700; color: #4a7dff; opacity: .7; }
+/* ══ LAYOUT FIX — padding rapih, tidak mepet ══ */
+.card-head { padding: 14px 18px !important; min-height: 48px; }
+.card-body { padding: 18px !important; }
+.hist-table { min-width: 520px; }
+.hist-table th, .hist-table td { white-space: nowrap; }
+.hist-table th { font-size: 11px !important; padding: 9px 14px !important; }
+.hist-table td { padding: 9px 14px !important; }
+.fee-box { padding: 14px 16px !important; }
+.fee-row { padding: 7px 0 !important; }
+.qcd-row { padding: 8px 0 !important; }
+.qc-detail { padding: 14px 16px !important; }
+.balance-strip { padding: 14px 18px !important; }
+@media (max-width: 480px) {
+  .hist-table th:nth-child(3),
+  .hist-table td:nth-child(3) { display: none; }
+}
+@media (min-width: 901px) {
+  .page { padding: 28px 20px 50px !important; }
+}
 /* Hide top nav, show bottom nav on mobile */
 @media (max-width: 900px) {
   #xbn { display: flex !important; }

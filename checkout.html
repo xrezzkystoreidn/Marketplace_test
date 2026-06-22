@@ -558,11 +558,14 @@ async function placeOrder(){
   const notes=document.getElementById('orderNotes').value.trim();
   const btn=document.getElementById('buyBtn');btn.innerHTML='<div class="sp"></div> Memproses...';btn.disabled=true;
   try{
+    // Generate XRZKY Order ID
+    const xrzkyId = await generateOrderId();
     const{data:ord,error:oE}=await sb.from('orders').insert([{
       user_id:user.id,buyer_id:user.id,seller_id:product.seller_id,product_id:product.id,
       quantity:qty,total_price:tot,amount:tot,payment_method:payMethod,notes,
       status:useMC?'pending_mc':'pending',use_mc:useMC,mc_fee:mcF,discount,
       voucher_code:voucher?document.getElementById('vInp').value.toUpperCase():null,
+      order_code:xrzkyId,
       created_at:new Date().toISOString(),
     }]).select().single();
     if(oE)throw new Error(oE.message);
@@ -617,7 +620,7 @@ function showSucc(ord,tot){
     +'<div style="font-family:\'Syne\',sans-serif;font-size:20px;font-weight:800;margin-bottom:5px">Pesanan Berhasil! 🎉</div>'
     +'<div style="font-size:12px;color:var(--txt2)">'+(useMC?'Saldo di-hold sampai kamu konfirmasi terima':'Seller akan segera kirim data di obrolan')+'</div></div>'
     +'<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:12px;margin-bottom:14px;font-size:13px;display:flex;flex-direction:column;gap:7px">'
-    +'<div style="display:flex;justify-content:space-between"><span style="color:var(--txt2)">Order ID</span><span style="font-weight:700">#'+ord.id.slice(0,8).toUpperCase()+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between"><span style="color:var(--txt2)">Order ID</span><span style="font-weight:700;font-family:\'Syne\',sans-serif;color:var(--accent);letter-spacing:.03em">'+(ord.order_code||('XRZKY-'+ord.id.slice(0,8).toUpperCase()))+'</span></div>'
     +'<div style="display:flex;justify-content:space-between"><span style="color:var(--txt2)">Total</span><span style="font-weight:800;color:var(--success)">'+fmtRp(tot)+'</span></div>'
     +'<div style="display:flex;justify-content:space-between"><span style="color:var(--txt2)">MC</span><span>'+(useMC?'<span class="chip cp">Aktif</span>':'<span class="chip cg">Langsung</span>')+'</span></div></div>'
     +'<div style="display:flex;flex-direction:column;gap:8px">'
@@ -713,7 +716,7 @@ async function confirmRcv(ordId,sessId){
 }
 async function openDisp(ordId,sessId){
   const reason=prompt('Jelaskan masalah kamu:');if(!reason?.trim())return;
-  await sb.from('complaints').insert([{user_id:user.id,seller_id:product?.seller_id,order_id:ordId,title:'Komplain #'+ordId.slice(0,8),description:reason,status:'open',created_at:new Date().toISOString()}]);
+  await sb.from('complaints').insert([{user_id:user.id,seller_id:product?.seller_id,order_id:ordId,title:'Komplain '+(activeOrder?.order_code||'#'+ordId.slice(0,8)),description:reason,status:'open',created_at:new Date().toISOString()}]);
   await sb.from('chat_messages').insert([{session_id:sessId,sender_id:user.id,sender_type:'system',message:'⚠️ Buyer komplain:\n"'+reason+'"\n\nAdmin akan meninjau.',created_at:new Date().toISOString()}]);
   toast('Komplain dikirim','w');
 }
@@ -743,6 +746,23 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeMo('mCo');clos
 function fmtRp(v){if(!v&&v!==0)return'—';if(v===0)return'Gratis';return'Rp '+Number(v).toLocaleString('id-ID');}
 function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function toast(msg,type=''){const tc=document.getElementById('tc');if(!tc)return;const el=document.createElement('div');el.className='toast '+type;el.textContent=msg;el.style.pointerEvents='auto';tc.appendChild(el);setTimeout(()=>el.remove(),3800);}
+
+// ══ XRZKY ORDER ID GENERATOR ══
+async function generateOrderId(){
+  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  for(let attempt=0;attempt<10;attempt++){
+    const arr=new Uint8Array(8);
+    crypto.getRandomValues(arr);
+    const code='XRZKY-'+Array.from(arr).map(b=>chars[b%chars.length]).join('');
+    try{
+      const{data}=await sb.from('orders').select('id').eq('order_code',code).maybeSingle();
+      if(!data)return code;
+    }catch(e){return code;}
+  }
+  // Fallback
+  const arr=new Uint8Array(8);crypto.getRandomValues(arr);
+  return'XRZKY-'+Array.from(arr).map(b=>chars[b%chars.length]).join('');
+}
 </script>
 </body>
 </html>
