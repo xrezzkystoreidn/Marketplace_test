@@ -154,16 +154,32 @@
     .anim3 { animation: fadeSlide .35s .16s ease both; }
   </style>
 
+
 <style id="sh-page-fix">
 @media (min-width:901px){
-  /* Sembunyikan nav/aside sisa milik halaman */
-  nav:not(#sh-topbar){ display:none!important; }
-  aside:not(#sh-sidebar){ display:none!important; }
-  #xbn,#mobileHeader,#mobilePageHeader{ display:none!important; }
-  /* Offset konten */
-  body.sh-on{ padding-top:56px!important; }
-  body.sh-on .page,
-  body.sh-on main:not(#sh-sidebar){ margin-left:212px!important; }
+  nav:not(#sh-topbar){display:none!important;}
+  aside:not(#sh-sidebar){display:none!important;}
+  #xbn,#mobileHeader,#mobilePageHeader{display:none!important;}
+  body.sh-on{padding-top:56px!important;}
+  /* Content area push + full width */
+  body.sh-on .page{
+    margin-left:214px!important;
+    display:block!important;
+    width:calc(100% - 214px)!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+  body.sh-on main:not(#sh-sidebar){
+    margin-left:214px!important;
+    width:calc(100% - 214px)!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+  body.sh-on .page-content,
+  body.sh-on #pageRoot{
+    margin-left:214px!important;
+    width:calc(100% - 214px)!important;
+  }
 }
 </style>
 </head>
