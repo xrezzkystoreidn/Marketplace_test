@@ -305,6 +305,20 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-
 .xbn-av img{width:100%;height:100%;object-fit:cover}
 .xbn-btn.active .xbn-av{border-color:var(--accent)}
 </style>
+
+<style id="shell-override">
+/* SHELL OVERRIDE — desktop only (>=901px) */
+@media (min-width: 901px) {
+  body > nav:not(#shell-topbar),
+  nav:not(#shell-topbar) { display: none !important; }
+  aside:not(#shell-sidebar) { display: none !important; }
+  #xbn, #mobileHeader, #mobilePageHeader { display: none !important; }
+  body { padding-top: 58px !important; }
+  .page, #pageWrap { margin-left: 220px !important; }
+  body > main:not(#shell-sidebar),
+  body > .page-content { margin-left: 220px !important; }
+}
+</style>
 </head>
 <body>
 
@@ -1284,5 +1298,6 @@ function toast(msg, type='') {
 // ── is-own-show: hide elements meant only for own profile if guest ──
 // (already all in own-profile context so no-op here, kept for future multi-profile)
 </script>
+  <script src="shell.js"></script>
 </body>
 </html>
