@@ -808,160 +808,28 @@
     }
 
   </style>
-
-<style id="shell-override">
-/* INDEX — SHELL OVERRIDE desktop */
-@media (min-width: 901px) {
-  /* Sembunyikan sidebar & nav asli index.html */
-  body > nav:not(#shell-topbar) { display: none !important; }
-  aside#sidebarEl { display: none !important; }
-  #mobileHeader, #xbn { display: none !important; }
-  /* Topbar shell + sidebar shell take over */
-  body { padding-top: 58px !important; }
-  /* .page = flex container (aside + main) — kita override */
-  .page { margin-left: 220px !important; display: block !important; }
-  main { padding: 20px 24px 40px !important; }
+<style id="sh-page-fix">
+@media (min-width:901px){
+  /* Sembunyikan nav/aside sisa milik halaman */
+  nav:not(#sh-topbar){ display:none!important; }
+  aside:not(#sh-sidebar){ display:none!important; }
+  #xbn,#mobileHeader,#mobilePageHeader{ display:none!important; }
+  /* Offset konten */
+  body.sh-on{ padding-top:56px!important; }
+  body.sh-on .page,
+  body.sh-on main:not(#sh-sidebar){ margin-left:212px!important; }
 }
 </style>
 </head>
 <body>
 
-<!-- ══ MOBILE HEADER (shown ≤900px via CSS) ══ -->
-<div id="mobileHeader">
-  <a class="mob-brand" href="index.html" onclick="_debugTap();return false" ondblclick="location.href='index.html'">
-    <div class="dot"></div>
-    XREZZKY<span>STORE</span>
-  </a>
-  <div class="mob-search">
-    <input id="mobSearch" type="text" placeholder="Cari produk..." autocomplete="off"
-      onkeydown="if(event.key==='Enter'){document.getElementById('navSearch').value=this.value;doSearch()}"
-      oninput="document.getElementById('navSearch').value=this.value" />
-    <button onclick="document.getElementById('navSearch').value=document.getElementById('mobSearch').value;doSearch()">
-      <i class="fas fa-search"></i>
-    </button>
-  </div>
-  <!-- Mobile login button (guest only) -->
-  <button id="mobLoginBtn" onclick="openAuth('login')" style="
-    background: var(--accent); border: none; color: #fff;
-    padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600;
-    cursor: pointer; white-space: nowrap; flex-shrink: 0; display: none;
-    font-family: 'Poppins', sans-serif;
-  "><i class="fas fa-sign-in-alt"></i></button>
-</div>
+ (>900px) ══ -->
 
-<!-- ══ DESKTOP NAVBAR (>900px) ══ -->
-<nav>
-  <a class="nav-brand" href="index.html" onclick="_debugTap();return false" ondblclick="location.href='index.html'">
-    <div class="dot"></div>
-    <span class="brand-text">XREZZKY <span>STORE</span></span>
-  </a>
-
-  <div class="nav-search">
-    <input id="navSearch" type="text" placeholder="Cari produk..." autocomplete="off" />
-    <button onclick="doSearch()"><i class="fas fa-search"></i></button>
-  </div>
-
-  <!-- Quick nav links (visible when logged in) -->
-  <div class="quick-nav-bar" id="quickNavBar">
-    <a class="qnb-link" href="riwayat.html" title="Riwayat Transaksi"><i class="fas fa-receipt"></i><span class="hide-sm">Riwayat</span></a>
-    <a class="qnb-link" href="deposit.html" title="Deposit Saldo"><i class="fas fa-wallet"></i><span class="hide-sm">Deposit</span></a>
-  </div>
-
-  <div class="nav-actions">
-    <!-- GUEST -->
-    <div id="navGuest" style="display:flex; gap:6px">
-      <button class="btn btn-ghost" onclick="openAuth('login')">Masuk</button>
-      <button class="btn btn-primary" onclick="openAuth('register')">Daftar</button>
-    </div>
-
-    <!-- LOGGED IN -->
-    <div id="navUser" style="display:none; align-items:center; gap:6px">
-      <!-- User dropdown chip -->
-      <div class="user-nav" id="navUserChip" onclick="toggleDropdown()">
-        <div class="user-nav-avatar" id="navAvatar">?</div>
-        <span class="user-nav-name" id="navName">User</span>
-        <span class="nav-role-badge" id="navRoleBadge"></span>
-        <i class="fas fa-chevron-down user-nav-chevron" id="navChevron"></i>
-
-        <!-- Dropdown -->
-        <div class="nav-dropdown" id="navDropdown" onclick="event.stopPropagation()">
-
-          <!-- Header: avatar + name + balance -->
-          <div class="dd-header">
-            <div class="dd-header-top">
-              <div class="dd-av" id="ddAv">?</div>
-              <div>
-                <div class="dd-name" id="ddName">—</div>
-                <div class="dd-email" id="ddEmail">—</div>
-              </div>
-            </div>
-            <div class="dd-balance">
-              <span class="bl">Saldo</span>
-              <span class="bv" id="ddBalance">Rp 0</span>
-            </div>
-          </div>
-
-          <!-- Akun section (all users) -->
-          <div class="dd-section">
-            <div class="dd-section-label">Akun Saya</div>
-            <a class="dd-item" href="profil.html"><i class="fas fa-user-circle"></i> Profil Saya</a>
-            <a class="dd-item" href="riwayat.html"><i class="fas fa-receipt"></i> Riwayat Transaksi</a>
-            <a class="dd-item" href="deposit.html"><i class="fas fa-wallet"></i> Deposit Saldo</a>
-          </div>
-
-          <!-- SELLER section — only role=seller or admin -->
-          <div class="dd-section" id="ddSellerSection" style="display:none">
-            <div class="dd-section-label">Dashboard Seller</div>
-            <a class="dd-item" href="seller-dashboard.html"><i class="fas fa-store"></i> Seller Dashboard</a>
-            <a class="dd-item" href="seller-dashboard.html?tab=produk"><i class="fas fa-boxes-stacked"></i> Produk Saya</a>
-            <a class="dd-item" href="seller-dashboard.html?tab=orders"><i class="fas fa-inbox"></i> Pesanan Masuk <span class="dd-badge ddb-y" id="ddPendingOrders" style="display:none">0</span></a>
-          </div>
-
-          <!-- CS section — only role=cs or admin -->
-          <div class="dd-section" id="ddCsSection" style="display:none">
-            <div class="dd-section-label">Customer Service</div>
-            <a class="dd-item" href="cs-dashboard.html"><i class="fas fa-headset"></i> CS Dashboard</a>
-          </div>
-
-          <!-- ADMIN section — only role=admin -->
-          <div class="dd-section" id="ddAdminSection" style="display:none">
-            <div class="dd-section-label">Administrator</div>
-            <a class="dd-item" href="admin-panel.html"><i class="fas fa-chart-pie"></i> Admin Panel</a>
-            <a class="dd-item" href="deposit-admin.html"><i class="fas fa-qrcode"></i> Kelola Deposit <span class="dd-badge ddb-r" id="ddPendingDeposit" style="display:none">0</span></a>
-          </div>
-
-          <!-- Logout -->
-          <div class="dd-section">
-            <button class="dd-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</button>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</nav>
 
 <!-- ══ LAYOUT ══ -->
-<div class="page">
+<div class="page" id="pageRoot">
 
-  <!-- ── SIDEBAR (desktop only) ── -->
-  <aside id="sidebarEl">
-    <div class="sidebar-label">Kategori</div>
-    <button class="sidebar-item active" id="sideAllBtn" onclick="setCategory(null, this)">
-      <i class="fas fa-home"></i> Semua Produk
-    </button>
-    <div id="sidebarCategories"></div>
-
-    <div class="sidebar-sep"></div>
-    <div class="sidebar-label">Navigasi</div>
-    <button class="sidebar-item" onclick="location.href='index.html'"><i class="fas fa-store"></i> Beranda</button>
-    <button class="sidebar-item" onclick="openInfoSheet()"><i class="fas fa-bell"></i> Info & Update</button>
-    <button class="sidebar-item" onclick="goPage('deposit.html')"><i class="fas fa-wallet"></i> Deposit</button>
-    <button class="sidebar-item" onclick="goPage('riwayat.html')"><i class="fas fa-receipt"></i> Riwayat</button>
-    <button class="sidebar-item" onclick="goPage('profil.html')"><i class="fas fa-user-circle"></i> Profil</button>
-
-    <div id="sidebarRoleItems"></div>
-  </aside>
+  
 
   <!-- ── MAIN CONTENT ── -->
   <main>

@@ -163,28 +163,21 @@ nav{position:sticky;top:0;z-index:200;background:rgba(23,28,36,.95);backdrop-fil
 .toast.s{border-left-color:var(--success)}.toast.e{border-left-color:var(--danger)}.toast.w{border-left-color:var(--warn)}
 @keyframes sli{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
 </style>
-
-<style id="shell-override">
-/* SHELL OVERRIDE — desktop only (>=901px) */
-@media (min-width: 901px) {
-  body > nav:not(#shell-topbar),
-  nav:not(#shell-topbar) { display: none !important; }
-  aside:not(#shell-sidebar) { display: none !important; }
-  #xbn, #mobileHeader, #mobilePageHeader { display: none !important; }
-  body { padding-top: 58px !important; }
-  .page, #pageWrap { margin-left: 220px !important; }
-  body > main:not(#shell-sidebar),
-  body > .page-content { margin-left: 220px !important; }
+<style id="sh-page-fix">
+@media (min-width:901px){
+  /* Sembunyikan nav/aside sisa milik halaman */
+  nav:not(#sh-topbar){ display:none!important; }
+  aside:not(#sh-sidebar){ display:none!important; }
+  #xbn,#mobileHeader,#mobilePageHeader{ display:none!important; }
+  /* Offset konten */
+  body.sh-on{ padding-top:56px!important; }
+  body.sh-on .page,
+  body.sh-on main:not(#sh-sidebar){ margin-left:212px!important; }
 }
 </style>
 </head>
 <body>
-<nav>
-  <a class="nb" href="index.html"><div class="nb-dot"></div>XREZZKY<span>STORE</span></a>
-  <div class="ns"></div>
-  <button class="btn bw bsm" id="storeBtn" onclick="showStore()" style="display:none"><i class="fas fa-store"></i> Lihat Toko</button>
-  <button class="btn bg bsm" onclick="history.back()"><i class="fas fa-arrow-left"></i> Kembali</button>
-</nav>
+
 <div class="steps">
   <div class="step active" id="st1"><div class="step-dot">1</div><div class="step-lbl">Produk</div></div>
   <div class="step" id="st2"><div class="step-dot">2</div><div class="step-lbl">Bayar</div></div>

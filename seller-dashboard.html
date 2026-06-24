@@ -366,18 +366,16 @@ td { padding: 10px 14px !important; vertical-align: middle; }
   #main { padding: 26px 26px 40px !important; }
 }
 </style>
-
-<style id="shell-override">
-/* SHELL OVERRIDE — desktop only (>=901px) */
-@media (min-width: 901px) {
-  body > nav:not(#shell-topbar),
-  nav:not(#shell-topbar) { display: none !important; }
-  aside:not(#shell-sidebar) { display: none !important; }
-  #xbn, #mobileHeader, #mobilePageHeader { display: none !important; }
-  body { padding-top: 58px !important; }
-  .page, #pageWrap { margin-left: 220px !important; }
-  body > main:not(#shell-sidebar),
-  body > .page-content { margin-left: 220px !important; }
+<style id="sh-page-fix">
+@media (min-width:901px){
+  /* Sembunyikan nav/aside sisa milik halaman */
+  nav:not(#sh-topbar){ display:none!important; }
+  aside:not(#sh-sidebar){ display:none!important; }
+  #xbn,#mobileHeader,#mobilePageHeader{ display:none!important; }
+  /* Offset konten */
+  body.sh-on{ padding-top:56px!important; }
+  body.sh-on .page,
+  body.sh-on main:not(#sh-sidebar){ margin-left:212px!important; }
 }
 </style>
 </head>
