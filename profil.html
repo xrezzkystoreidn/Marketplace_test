@@ -306,64 +306,6 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-
 .xbn-btn.active .xbn-av{border-color:var(--accent)}
 </style>
 
-<style id="sh-page-fix">
-/* ══ SHELL LAYOUT FIX — Desktop ≥901px ══ */
-@media (min-width:901px){
-  /* Sembunyikan nav/aside asli halaman */
-  nav:not(#sh-topbar)     { display:none!important; }
-  aside:not(#sh-sidebar)  { display:none!important; }
-  #xbn, #mobileHeader, #mobilePageHeader { display:none!important; }
-
-  /* Body offset */
-  body.sh-on { padding-top:56px!important; }
-
-  /* ── .page wrapper (index, dll) ── */
-  body.sh-on .page,
-  body.sh-on #pageRoot {
-    margin-left:214px!important;
-    width:calc(100% - 214px)!important;
-    min-width:0!important;
-    box-sizing:border-box!important;
-    display:block!important;
-    max-width:none!important;
-  }
-
-  /* ── main langsung ── */
-  body.sh-on main:not(#sh-sidebar) {
-    margin-left:214px!important;
-    width:calc(100% - 214px)!important;
-    min-width:0!important;
-    box-sizing:border-box!important;
-    max-width:none!important;
-  }
-
-  /* ── halaman yang pakai wrapper #main, #wrapper ── */
-  body.sh-on #main,
-  body.sh-on #wrapper,
-  body.sh-on .main-wrap,
-  body.sh-on .page-content {
-    margin-left:214px!important;
-    width:calc(100% - 214px)!important;
-    box-sizing:border-box!important;
-    max-width:none!important;
-  }
-
-  /* ── Pastikan inner content tidak ada max-width ketat ── */
-  body.sh-on .page > *,
-  body.sh-on main > * {
-    max-width:none!important;
-  }
-}
-
-/* ══ Mobile ≤900px — reset semua shell effect ══ */
-@media (max-width:900px){
-  body.sh-on { padding-top:0!important; }
-  body.sh-on .page,
-  body.sh-on main,
-  body.sh-on #main,
-  body.sh-on #wrapper { margin-left:0!important; width:100%!important; }
-}
-</style>
 </head>
 <body>
 
