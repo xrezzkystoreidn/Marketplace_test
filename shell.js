@@ -68,7 +68,7 @@
 }
 /* Brand — lebar sama persis dengan sidebar */
 .sh-brand {
-  width: ${SW}px; min-width: ${SW}px; flex-shrink: 0;
+  width: 214px; min-width: 214px; flex-shrink: 0;
   display: flex; align-items: center; gap: 7px;
   font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
   color: #f5f7fa; text-decoration: none; white-space: nowrap;
@@ -185,7 +185,7 @@
 
 /* ═══ SIDEBAR ═══ */
 #sh-side {
-  position: fixed; top: 52px; left: 0; bottom: 0; width: ${SW}px; z-index: 500;
+  position: fixed; top: 52px; left: 0; bottom: 0; width: 214px; z-index: 500;
   background: #0f1319; border-right: 1px solid #1e2736;
   overflow-y: auto; overflow-x: hidden; padding: 10px 8px 24px;
   display: flex; flex-direction: column; gap: 1px;
@@ -232,8 +232,8 @@
   body.sh-on main:not(#sh-side),
   body.sh-on #main,
   body.sh-on #wrapper {
-    margin-left: ${SW}px !important;
-    width: calc(100% - ${SW}px) !important;
+    margin-left: 214px !important;
+    width: calc(100% - 214px) !important;
     max-width: none !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
@@ -506,16 +506,27 @@
     document.querySelectorAll('nav:not(#sh-bar)').forEach(function(n){n.style.display='none';});
     document.querySelectorAll('aside:not(#sh-side)').forEach(function(n){n.style.display='none';});
 
-    /* Fix any flex page container */
+    /* Jika halaman punya mobile header sendiri, hide sh-mob supaya tidak dobel */
+    var ownMobHdr = document.getElementById('mobileHdr') || document.getElementById('mobilePageHeader');
+    var shMob = document.getElementById('sh-mob');
+    if (ownMobHdr && shMob) {
+      shMob.style.display = 'none';
+    }
+
+    /* Fix any flex page container — JANGAN override display:none */
     var selectors = ['.page','#pageRoot','#mainContent','#guestWall'];
     selectors.forEach(function(sel) {
       var el = document.querySelector(sel);
       if (el) {
-        el.style.display    = el.style.display === 'none' ? 'none' : 'block';
-        el.style.maxWidth   = 'none';
-        el.style.flex       = 'none';
-        el.style.boxSizing  = 'border-box';
-        el.style.minWidth   = '0';
+        /* Hanya fix layout properties, bukan display */
+        el.style.maxWidth  = 'none';
+        el.style.flex      = 'none';
+        el.style.boxSizing = 'border-box';
+        el.style.minWidth  = '0';
+        /* Hanya set display jika bukan none (biarkan page logic yang control) */
+        if (el.style.display !== 'none') {
+          el.style.display = 'block';
+        }
       }
     });
 
