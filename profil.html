@@ -304,6 +304,45 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-
 .xbn-av{width:26px;height:26px;border-radius:50%;background:var(--surface);border:2px solid transparent;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#6b7a8d;transition:border-color .2s}
 .xbn-av img{width:100%;height:100%;object-fit:cover}
 .xbn-btn.active .xbn-av{border-color:var(--accent)}
+
+/* ── PENGATURAN TAB ── */
+.set-section { margin-bottom: 20px; }
+.set-label {
+  font-size: 10px; font-weight: 700; color: var(--txt2);
+  text-transform: uppercase; letter-spacing: .08em;
+  padding: 0 0 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
+}
+.set-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 0; border-bottom: 1px solid rgba(42,52,66,.5); gap: 12px;
+  cursor: default;
+}
+.set-row.danger-row { cursor: pointer; }
+.set-row.danger-row:hover .set-title { text-decoration: underline; }
+.set-info { flex: 1; min-width: 0; }
+.set-title { font-size: 14px; font-weight: 500; color: var(--txt); margin-bottom: 2px; }
+.set-desc { font-size: 12px; color: var(--txt2); }
+.set-select {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 10px; color: var(--txt);
+  font-family: 'Poppins', sans-serif; font-size: 13px;
+  outline: none; cursor: pointer; flex-shrink: 0;
+}
+/* Toggle switch */
+.toggle-sw { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+.toggle-sw input { opacity: 0; width: 0; height: 0; }
+.ts-track {
+  position: absolute; inset: 0; background: var(--border); border-radius: 12px;
+  cursor: pointer; transition: .2s;
+}
+.ts-track::before {
+  content: ''; position: absolute; height: 18px; width: 18px;
+  left: 3px; bottom: 3px; background: white; border-radius: 50%;
+  transition: .2s;
+}
+.toggle-sw input:checked + .ts-track { background: var(--accent); }
+.toggle-sw input:checked + .ts-track::before { transform: translateX(20px); }
+
 </style>
 
 </head>
@@ -630,6 +669,91 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-
       </div>
 
     </div><!-- right-col -->
+
+      <!-- ── TAB: PENGATURAN ── -->
+      <div class="tab-panel" id="tp-pengaturan">
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title"><i class="fas fa-cog" style="color:var(--accent);margin-right:6px"></i>Pengaturan Akun</span>
+          </div>
+          <div class="panel-body">
+
+            <!-- Notifikasi -->
+            <div class="set-section">
+              <div class="set-label">Notifikasi</div>
+              <div class="set-row">
+                <div class="set-info">
+                  <div class="set-title">Notifikasi Order</div>
+                  <div class="set-desc">Terima notifikasi saat ada pesanan masuk atau update status</div>
+                </div>
+                <label class="toggle-sw"><input type="checkbox" id="notifOrder" checked><span class="ts-track"></span></label>
+              </div>
+              <div class="set-row">
+                <div class="set-info">
+                  <div class="set-title">Notifikasi Deposit</div>
+                  <div class="set-desc">Terima notifikasi saat deposit berhasil dikonfirmasi</div>
+                </div>
+                <label class="toggle-sw"><input type="checkbox" id="notifDeposit" checked><span class="ts-track"></span></label>
+              </div>
+              <div class="set-row">
+                <div class="set-info">
+                  <div class="set-title">Notifikasi Promo</div>
+                  <div class="set-desc">Terima info promo dan penawaran spesial</div>
+                </div>
+                <label class="toggle-sw"><input type="checkbox" id="notifPromo"><span class="ts-track"></span></label>
+              </div>
+            </div>
+
+            <!-- Tampilan -->
+            <div class="set-section">
+              <div class="set-label">Tampilan</div>
+              <div class="set-row">
+                <div class="set-info">
+                  <div class="set-title">Bahasa</div>
+                  <div class="set-desc">Pilih bahasa antarmuka</div>
+                </div>
+                <select class="set-select" id="langSelect">
+                  <option value="id" selected>🇮🇩 Indonesia</option>
+                  <option value="en">🇺🇸 English</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Privasi -->
+            <div class="set-section">
+              <div class="set-label">Privasi & Keamanan</div>
+              <div class="set-row">
+                <div class="set-info">
+                  <div class="set-title">Sembunyikan Saldo</div>
+                  <div class="set-desc">Sembunyikan jumlah saldo dari tampilan publik</div>
+                </div>
+                <label class="toggle-sw"><input type="checkbox" id="hideBalance"><span class="ts-track"></span></label>
+              </div>
+              <div class="set-row">
+                <div class="set-info">
+                  <div class="set-title">Profil Publik</div>
+                  <div class="set-desc">Izinkan pengguna lain melihat profil kamu</div>
+                </div>
+                <label class="toggle-sw"><input type="checkbox" id="publicProfile" checked><span class="ts-track"></span></label>
+              </div>
+            </div>
+
+            <!-- Akun -->
+            <div class="set-section">
+              <div class="set-label">Akun</div>
+              <div class="set-row danger-row" onclick="confirmLogout()">
+                <div class="set-info">
+                  <div class="set-title" style="color:var(--danger)"><i class="fas fa-sign-out-alt" style="margin-right:6px"></i>Keluar dari Akun</div>
+                  <div class="set-desc">Keluar dari sesi ini</div>
+                </div>
+                <i class="fas fa-chevron-right" style="color:var(--txt2);font-size:12px"></i>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
   </div><!-- content-grid -->
 </div><!-- page-wrap -->
 </div><!-- mainContent -->
@@ -846,13 +970,14 @@ function buildQuickLinks() {
 function buildTabs() {
   const role = cProfile?.role || 'buyer';
   const tabs = [
-    { id:'overview',    label:'<i class="fas fa-home"></i> Overview', roles:['buyer','seller','cs','admin'] },
-    { id:'pesanan',     label:'<i class="fas fa-receipt"></i> Pesanan', roles:['buyer','seller','cs','admin'] },
-    { id:'seller',      label:'<i class="fas fa-store"></i> Seller',   roles:['seller','admin'] },
-    { id:'cs',          label:'<i class="fas fa-headset"></i> CS',     roles:['cs','admin'] },
-    { id:'admin',       label:'<i class="fas fa-shield"></i> Admin',   roles:['admin'] },
-    { id:'keamanan',    label:'<i class="fas fa-lock"></i> Keamanan',  roles:['buyer','seller','cs','admin'] },
-    { id:'editprofil',  label:'<i class="fas fa-pen"></i> Edit',       roles:['buyer','seller','cs','admin'] },
+    { id:'overview',    label:'<i class="fas fa-home"></i> Overview',      roles:['buyer','seller','cs','admin','owner'] },
+    { id:'pesanan',     label:'<i class="fas fa-receipt"></i> Pesanan',    roles:['buyer','seller','cs','admin','owner'] },
+    { id:'seller',      label:'<i class="fas fa-store"></i> Seller',       roles:['seller','admin','owner'] },
+    { id:'cs',          label:'<i class="fas fa-headset"></i> CS',         roles:['cs','admin','owner'] },
+    { id:'admin',       label:'<i class="fas fa-shield"></i> Admin',       roles:['admin','owner'] },
+    { id:'keamanan',    label:'<i class="fas fa-lock"></i> Keamanan',      roles:['buyer','seller','cs','admin','owner'] },
+    { id:'editprofil',  label:'<i class="fas fa-pen"></i> Edit Profil',    roles:['buyer','seller','cs','admin','owner'] },
+    { id:'pengaturan',  label:'<i class="fas fa-cog"></i> Pengaturan',     roles:['buyer','seller','cs','admin','owner'] },
   ];
 
   const bar = document.getElementById('tabBar');
@@ -1279,6 +1404,25 @@ function toast(msg, type='') {
 
 // ── is-own-show: hide elements meant only for own profile if guest ──
 // (already all in own-profile context so no-op here, kept for future multi-profile)
+</script>
+  <script src="shell.js">
+function confirmLogout() {
+  if (confirm('Yakin mau keluar?')) {
+    const sb = window.sb || (typeof supabase !== 'undefined' ? supabase.createClient(SUPA_URL, SUPA_KEY) : null);
+    if (sb) sb.auth.signOut().then(() => location.href = 'index.html');
+    else location.href = 'index.html';
+  }
+}
+
+  // Handle ?tab= URL parameter
+  (function() {
+    const urlTab = new URLSearchParams(location.search).get('tab');
+    if (urlTab) {
+      setTimeout(function() {
+        if (typeof switchTab === 'function') switchTab(urlTab);
+      }, 600);
+    }
+  })();
 </script>
   <script src="shell.js"></script>
 </body>

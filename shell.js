@@ -277,11 +277,11 @@
     <a class="sh-brand" href="index.html">
       <div class="sh-dot"></div>XREZZKY<em>STORE</em>
     </a>
-    <div class="sh-srch" id="shSrch">
+    <div class="sh-srch" id="shSrch" style="display:none">
       <input id="shSrchInp" type="text" placeholder="Cari produk..."
-        onkeydown="if(event.key==='Enter')location.href='index.html?q='+encodeURIComponent(this.value)"/>
+        onkeydown="if(event.key==='Enter'){if(typeof doSearch==='function'){var ns=document.getElementById('navSearch');if(ns)ns.value=this.value;doSearch();}else{location.href='index.html?q='+encodeURIComponent(this.value);}}"/>
       <button class="sh-srch-btn"
-        onclick="location.href='index.html?q='+encodeURIComponent(document.getElementById('shSrchInp').value)">
+        onclick="var v=document.getElementById('shSrchInp').value;if(typeof doSearch==='function'){var ns=document.getElementById('navSearch');if(ns)ns.value=v;doSearch();}else{location.href='index.html?q='+encodeURIComponent(v);}">
         <i class="fas fa-search"></i>
       </button>
     </div>
@@ -314,7 +314,7 @@
         <div class="d-sec">
           <div class="d-lbl">Akun Saya</div>
           <a class="d-a" href="profil.html"><i class="fas fa-user-circle"></i> Profil Saya</a>
-          <a class="d-a" href="profil.html#pengaturan"><i class="fas fa-cog"></i> Pengaturan Akun</a>
+          <a class="d-a" href="profil.html" onclick="event.preventDefault();location.href='profil.html?tab=pengaturan'"><i class="fas fa-cog"></i> Pengaturan Akun</a>
         </div>
         <div class="d-sec">
           <button class="d-a red" onclick="shLogout()"><i class="fas fa-sign-out-alt"></i> Keluar</button>
@@ -437,6 +437,8 @@
   function showUser(user, p) {
     document.getElementById('sh-guest').style.display = 'none';
     document.getElementById('sh-pw').style.display    = '';
+    // Search hanya di beranda
+    if (PAGE === 'index') document.getElementById('shSrch').style.display = '';
 
     var name = (p&&(p.username||p.full_name))||(user.email||'').split('@')[0]||'User';
     var role = (p&&p.role)||'buyer';

@@ -815,6 +815,7 @@
 
 <!-- ══ LAYOUT ══ -->
 <div class="page" id="pageRoot">
+<input type="hidden" id="navSearch" value="">
 
   
 
@@ -1364,7 +1365,17 @@ function requireAuth(page) {
 async function loadProducts() {
   let query = sb.from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
   if (activeCategory) query = query.eq('category', activeCategory);
-  if (searchQuery)    query = query.ilike('name', `%${searchQuery}%`);
+  if (searchQuery) {
+    // Search by name, keywords, OR seller store_name (cari toko)
+    // First check if it's a store search with @username
+    if (searchQuery.startsWith('@')) {
+      // Search by seller username - need to fetch sellers first
+      window._storeSearch = searchQuery.slice(1).toLowerCase();
+    } else {
+      query = query.or(`name.ilike.%${searchQuery}%,keywords.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+      window._storeSearch = null;
+    }
+  }
 
   const { data, error } = await query;
 
