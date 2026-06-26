@@ -37,7 +37,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-
 .bxs{padding:4px 9px;font-size:11px}
 
 /* ── PAGE WRAP ── */
-.page-wrap{max-width:1100px;margin:0 auto;padding:24px 20px 100px}
+.page-wrap{width:100%;padding:24px 20px 100px;box-sizing:border-box;}
 
 /* ── GUEST WALL ── */
 #guestWall{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:20px;text-align:center;padding:40px 20px}
@@ -376,7 +376,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-
 <div id="tc"></div>
 
 <!-- GUEST WALL -->
-<div id="guestWall">
+<div id="guestWall" class="page">
   <i class="fas fa-user-lock gw-icon"></i>
   <h2>Masuk untuk melihat profil</h2>
   <p>Buat akun atau masuk untuk mengakses profil, deposit saldo, dan mulai belanja di XREZZKY.</p>
@@ -387,7 +387,7 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-
 </div>
 
 <!-- MAIN CONTENT (hidden until auth) -->
-<div id="mainContent" style="display:none">
+<div id="mainContent" class="page" style="display:none">
 <div class="page-wrap">
 
   <!-- PROFILE HEADER -->
