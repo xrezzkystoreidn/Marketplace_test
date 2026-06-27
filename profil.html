@@ -276,12 +276,12 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-
 }
 @media(min-width:901px){
   #xbn{display:none!important}
-  #mobileHdr{display:none!important}
+  
   #topbar{display:flex!important}
 }
 
 /* Mobile header */
-#mobileHdr{display:none;position:sticky;top:0;z-index:300;background:var(--nav);border-bottom:1px solid var(--border);height:52px;align-items:center;padding:0 14px;gap:12px}
+
 .mhb{width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--border);color:var(--txt2);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
 .mhb:active{transform:scale(.9)}
 .mh-title{font-size:15px;font-weight:700;flex:1}
@@ -346,11 +346,6 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-
 </style>
 
 
-<style id="hide-back-btn">
-/* Hide back button — navigasi pakai bottom xbn */
-.mhb, .mph-back { display: none !important; }
-/* Jika ada mh-logo, hide juga karena sh-mob handle brand di index */
-</style>
 </head>
 <body>
 
@@ -358,9 +353,13 @@ body{font-family:'Poppins',sans-serif;background:var(--bg);color:var(--txt);min-
 
 
 <!-- MOBILE HEADER -->
-<div id="mobileHdr">
-  <button class="mhb" onclick="history.length>1?history.back():location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+<div <div id="mobileHdr">
+  <a class="smb-brand" href="index.html" style="text-decoration:none">
+    <div class="smb-dot"></div>XREZZKY<em style="font-style:normal;color:#4a7dff">STORE</em>
+  </a>
   <div class="mh-title">Profil</div>
+  <div style="width:90px"></div>
+</div>
   <div class="mh-logo">XREZZKY</div>
 </div>
 
@@ -1411,7 +1410,7 @@ function toast(msg, type='') {
 // ── is-own-show: hide elements meant only for own profile if guest ──
 // (already all in own-profile context so no-op here, kept for future multi-profile)
 </script>
-  <script src="shell.js">
+  <script>
 function confirmLogout() {
   if (confirm('Yakin mau keluar?')) {
     const sb = window.sb || (typeof supabase !== 'undefined' ? supabase.createClient(SUPA_URL, SUPA_KEY) : null);

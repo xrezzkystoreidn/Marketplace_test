@@ -116,15 +116,10 @@
     .pc-prev-label { font-size:11px; color:var(--txt2); font-weight:600; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px; }
 
     @media (max-width:600px) { .fg2 { grid-template-columns:1fr; } }
-  @media(min-width:901px){#mobilePageHeader,#mobileHdr{display:none!important;}}
+  @media(min-width:901px){#mobilePageHeader,}
 </style>
 
 
-<style id="hide-back-btn">
-/* Hide back button — navigasi pakai bottom xbn */
-.mhb, .mph-back { display: none !important; }
-/* Jika ada mh-logo, hide juga karena sh-mob handle brand di index */
-</style>
 </head>
 <body>
 
@@ -677,11 +672,13 @@ function toast(msg,type='') { const el=document.createElement('div'); el.classNa
 </style>
 
 <!-- Mobile Page Header -->
-<div id="mobilePageHeader">
-  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
-    <i class="fas fa-arrow-left"></i>
-  </button>
-  <div class="mph-title" id="mphTitle">XREZZKY</div>
+<div <div id="mobileHdr">
+  <a class="smb-brand" href="index.html" style="text-decoration:none">
+    <div class="smb-dot"></div>XREZZKY<em style="font-style:normal;color:#4a7dff">STORE</em>
+  </a>
+  <div class="mh-title">Info Admin</div>
+  <div style="width:90px"></div>
+</div>
   <div class="mph-logo">XREZZKY</div>
 </div>
 

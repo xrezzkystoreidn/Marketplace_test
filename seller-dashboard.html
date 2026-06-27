@@ -331,7 +331,7 @@
 
     /* ── INLINE EDIT HIGHLIGHT ── */
     input:focus, textarea:focus, select:focus { box-shadow: 0 0 0 3px rgba(74,125,255,.12); }
-  @media(min-width:901px){#mobilePageHeader,#mobileHdr{display:none!important;}}
+  @media(min-width:901px){#mobilePageHeader,}
 </style>
 
 <style>
@@ -369,11 +369,6 @@ td { padding: 10px 14px !important; vertical-align: middle; }
 </style>
 
 
-<style id="hide-back-btn">
-/* Hide back button — navigasi pakai bottom xbn */
-.mhb, .mph-back { display: none !important; }
-/* Jika ada mh-logo, hide juga karena sh-mob handle brand di index */
-</style>
 </head>
 <body>
 
@@ -2028,11 +2023,13 @@ function toast(msg, type='') {
 </style>
 
 <!-- Mobile Page Header -->
-<div id="mobilePageHeader">
-  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'" title="Kembali">
-    <i class="fas fa-arrow-left"></i>
-  </button>
-  <div class="mph-title" id="mphTitle">XREZZKY</div>
+<div <div id="mobileHdr">
+  <a class="smb-brand" href="index.html" style="text-decoration:none">
+    <div class="smb-dot"></div>XREZZKY<em style="font-style:normal;color:#4a7dff">STORE</em>
+  </a>
+  <div class="mh-title">Seller Dashboard</div>
+  <div style="width:90px"></div>
+</div>
   <div class="mph-logo">XREZZKY</div>
 </div>
 

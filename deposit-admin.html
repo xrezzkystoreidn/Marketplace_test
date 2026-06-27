@@ -228,7 +228,7 @@
       #main { margin-left: 0; }
       .proof-detail-grid { grid-template-columns: 1fr; }
     }
-  @media(min-width:901px){#mobilePageHeader,#mobileHdr{display:none!important;}}
+  @media(min-width:901px){#mobilePageHeader,}
 </style>
 
 <style>
@@ -242,20 +242,17 @@
 </style>
 
 
-<style id="hide-back-btn">
-/* Hide back button — navigasi pakai bottom xbn */
-.mhb, .mph-back { display: none !important; }
-/* Jika ada mh-logo, hide juga karena sh-mob handle brand di index */
-</style>
 </head>
 <body>
 
 <!-- ── Mobile Page Header ── -->
-<div id="mobilePageHeader">
-  <button class="mph-back" onclick="history.length>1?history.back():location.href='index.html'">
-    <i class="fas fa-arrow-left"></i>
-  </button>
-  <div class="mph-title" id="mphTitle">Kelola Deposit</div>
+<div <div id="mobileHdr">
+  <a class="smb-brand" href="index.html" style="text-decoration:none">
+    <div class="smb-dot"></div>XREZZKY<em style="font-style:normal;color:#4a7dff">STORE</em>
+  </a>
+  <div class="mh-title">Kelola Deposit</div>
+  <div style="width:90px"></div>
+</div>
   <div style="display:flex;gap:8px;align-items:center">
     <button class="btn bw bxs" onclick="refreshAll()"><i class="fas fa-rotate-right"></i></button>
     <span style="font-size:10px;font-weight:700;background:rgba(245,158,11,.2);color:var(--warn);padding:3px 8px;border-radius:4px" id="pendingCountTop">0 pending</span>

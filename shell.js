@@ -32,10 +32,13 @@
   font-family: 'Poppins', sans-serif; box-sizing: border-box;
 }
 @media (max-width: 900px) {
+  /* Shell mobile brand — hanya di halaman tanpa mobileHdr */
   #sh-mob { display: flex !important; }
   /* Sembunyikan shell desktop di mobile */
   #sh-bar, #sh-side { display: none !important; }
   body.sh-on { padding-top: 0 !important; }
+  /* Pastikan mobile header tiap halaman muncul */
+  #mobileHdr, #mobilePageHeader { display: flex !important; }
   body.sh-on .page,
   body.sh-on #pageRoot,
   body.sh-on #mainContent,
@@ -55,6 +58,28 @@
 }
 .smb-dot { width: 7px; height: 7px; border-radius: 50%; background: #4a7dff; flex-shrink: 0; }
 .smb-brand em { font-style: normal; color: #4a7dff; }
+
+/* Mobile header styling — konsisten semua halaman */
+#mobileHdr, #mobilePageHeader {
+  height: 48px; background: #0f1319; border-bottom: 1px solid #1e2736;
+  display: flex !important; align-items: center; padding: 0 14px; gap: 10px;
+  font-family: 'Poppins', sans-serif; box-sizing: border-box;
+  position: sticky; top: 0; z-index: 600;
+}
+.mh-title {
+  flex: 1; text-align: center; font-size: 14px; font-weight: 600;
+  color: #f5f7fa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.mh-logo {
+  font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 800;
+  color: #4a7dff; letter-spacing: .04em;
+}
+.mhb, .mph-back {
+  background: none; border: none; color: #9ba6b2;
+  cursor: pointer; font-size: 16px; padding: 4px 6px;
+  display: none !important; /* hidden — pakai xbn untuk navigasi */
+  align-items: center; border-radius: 6px;
+}
 
 /* ═══════════════════════════════════════
    DESKTOP TOPBAR
