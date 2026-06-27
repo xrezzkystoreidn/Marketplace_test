@@ -244,13 +244,13 @@
   `;
   document.head.appendChild(st);
 
-  /* ══ MOBILE BRAND BAR (brand only, no avatar) ══ */
-  var mob = document.createElement('div');
-  mob.id = 'sh-mob';
-  mob.innerHTML = `
-    <a class="smb-brand" href="index.html">
-      <div class="smb-dot"></div>XREZZKY<em>STORE</em>
-    </a>`;
+  /* ══ MOBILE BRAND BAR — hanya di index.html (tidak punya mobileHdr) ══ */
+  var mob = null;
+  if (PAGE === 'index' || PAGE === 'checkout') {
+    mob = document.createElement('div');
+    mob.id = 'sh-mob';
+    mob.innerHTML = '<a class="smb-brand" href="index.html"><div class="smb-dot"></div>XREZZKY<em>STORE</em></a>';
+  }
 
   /* ══ DESKTOP TOPBAR ══ */
   var bar = document.createElement('div');
@@ -313,7 +313,7 @@
   /* Insert ke body */
   document.body.insertBefore(side, document.body.firstChild);
   document.body.insertBefore(bar,  document.body.firstChild);
-  document.body.insertBefore(mob,  document.body.firstChild);
+  if (mob) document.body.insertBefore(mob, document.body.firstChild);
   document.body.classList.add('sh-on');
 
   /* ══ DROPDOWN TOGGLE ══ */
@@ -455,6 +455,11 @@
       document.getElementById('sh-sp').style.display   = 'none';
     }
 
+    /* Re-apply desktop push after auth (mainContent might just be shown) */
+    if (window.innerWidth >= 901) {
+      setTimeout(fixLayout, 50);
+    }
+
     var name = (p&&(p.username||p.full_name))||(user.email||'').split('@')[0]||'User';
     var role = (p&&p.role)||'buyer';
     var av   = p&&p.avatar_url;
@@ -506,11 +511,25 @@
     document.querySelectorAll('nav:not(#sh-bar)').forEach(function(n){n.style.display='none';});
     document.querySelectorAll('aside:not(#sh-side)').forEach(function(n){n.style.display='none';});
 
-    /* Jika halaman punya mobile header sendiri, hide sh-mob supaya tidak dobel */
-    var ownMobHdr = document.getElementById('mobileHdr') || document.getElementById('mobilePageHeader');
-    var shMob = document.getElementById('sh-mob');
-    if (ownMobHdr && shMob) {
-      shMob.style.display = 'none';
+    /* Desktop: push semua wrapper langsung via inline style */
+    if (window.innerWidth >= 901) {
+      var pushTargets = [
+        document.querySelector('.page'),
+        document.getElementById('pageRoot'),
+        document.getElementById('mainContent'),
+        document.getElementById('guestWall'),
+        document.querySelector('main')
+      ];
+      pushTargets.forEach(function(el) {
+        if (!el || el.id === 'sh-side' || el.id === 'sh-bar') return;
+        el.style.marginLeft  = '214px';
+        el.style.width       = 'calc(100% - 214px)';
+        el.style.maxWidth    = 'none';
+        el.style.minWidth    = '0';
+        el.style.boxSizing   = 'border-box';
+        el.style.flex        = 'none';
+        if (el.tagName === 'DIV') el.style.display = el.style.display === 'none' ? 'none' : 'block';
+      });
     }
 
     /* Fix any flex page container — JANGAN override display:none */
@@ -535,6 +554,31 @@
       mn.style.flex='none'; mn.style.maxWidth='none'; mn.style.minWidth='0';
       mn.style.width='100%'; mn.style.boxSizing='border-box';
     }
+  }
+
+
+  /* Watch mainContent — profil.html shows it after auth */
+  (function() {
+    var mc = document.getElementById('mainContent');
+    var gw = document.getElementById('guestWall');
+    if (!mc && !gw) return;
+    var target = mc || gw;
+    var obs = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.type === 'attributes' && m.attributeName === 'style') {
+          if (window.innerWidth >= 901) fixLayout();
+        }
+      });
+    });
+    obs.observe(target, { attributes: true });
+  })();
+
+  /* Show search immediately on index (guest + logged in) */
+  if (PAGE === 'index') {
+    var srchEl = document.getElementById('sh-srch');
+    var spEl   = document.getElementById('sh-sp');
+    if (srchEl) srchEl.style.display = '';
+    if (spEl)   spEl.style.display   = 'none';
   }
 
   /* ══ RUN ══ */
