@@ -27,23 +27,23 @@
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-    /* ═══ MOBILE TOP HEADER ═══ */
-    #mobilePageHeader {
+    /* ═══ MOBILE HEADER ═══ */
+    #mobileHdr {
       display: none;
-      position: sticky; top: 0; z-index: 200;
-      background: rgba(23,28,36,.97); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      height: 52px; padding: 0 14px;
+      position: sticky; top: 0; z-index: 600;
+      background: #0f1319;
+      border-bottom: 1px solid #1e2736;
+      height: 48px; padding: 0 14px;
       align-items: center; gap: 10px;
+      width: 100%; box-sizing: border-box;
     }
-    .mph-back {
-      width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border);
-      background: var(--surface); color: var(--txt2); font-size: 13px;
-      display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+    .smb-brand {
+      display: flex; align-items: center; gap: 7px;
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
+      color: #f5f7fa; text-decoration: none; white-space: nowrap; flex-shrink: 0;
     }
-    .mph-back:hover { color: var(--txt); border-color: var(--accent); }
-    .mph-title { flex: 1; font-size: 14px; font-weight: 600; text-align: center; }
-    .mph-logo { font-family: 'Syne',sans-serif; font-size: 12px; font-weight: 800; color: var(--accent); flex-shrink: 0; }
+    .smb-dot { width: 7px; height: 7px; border-radius: 50%; background: #4a7dff; flex-shrink: 0; }
+    .mh-title { flex: 1; font-size: 14px; font-weight: 600; text-align: center; color: var(--txt); }
 
     /* ═══ DESKTOP NAV ═══ */
     nav {
@@ -357,7 +357,7 @@
 
     /* ── Toast: full width on mobile ── */
     @media (max-width: 600px) {
-      #tc { right: 12px; left: 12px; }
+      #tc { right: 12px; left: 12px; bottom: 76px; }
       .toast { min-width: unset; max-width: 100%; }
     }
 
@@ -380,7 +380,9 @@
       .sum-card { padding: 20px 22px; }
       .sc-v { font-size: 22px; }
     }
-  @media(min-width:901px){#mobilePageHeader,}
+  /* shell.js handles desktop hide of mobileHdr */
+  @media(min-width:901px){ #mobileHdr { display:none !important; } }
+  @media(max-width:900px){ #mobileHdr { display:flex !important; } }
 </style>
 
 
@@ -389,14 +391,12 @@
 <body>
 
 <!-- ── Mobile Page Header ── -->
-<div <div id="mobileHdr">
-  <a class="smb-brand" href="index.html" style="text-decoration:none">
+<div id="mobileHdr">
+  <a class="smb-brand" href="index.html" style="text-decoration:none;display:flex;align-items:center;gap:7px">
     <div class="smb-dot"></div>XREZZKY<em style="font-style:normal;color:#4a7dff">STORE</em>
   </a>
   <div class="mh-title">Riwayat Transaksi</div>
   <div style="width:90px"></div>
-</div>
-  <div class="mph-logo">XREZZKY</div>
 </div>
 
 
@@ -1084,8 +1084,6 @@ function toast(msg, type='') { const el=document.createElement('div'); el.classN
 }
 </style>
 
-  <div class="mph-logo">XREZZKY</div>
-</div>
 
 <!-- Bottom Nav -->
 <div id="xbn">
