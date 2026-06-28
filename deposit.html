@@ -18,6 +18,13 @@
     body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--txt); min-height: 100vh; }
     ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* Mobile header brand */
+    .smb-brand{display:flex;align-items:center;gap:7px;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:#f5f7fa;text-decoration:none;white-space:nowrap}
+    .smb-dot{width:7px;height:7px;border-radius:50%;background:#4a7dff;flex-shrink:0}
+    #mobileHdr{height:48px;background:#0f1319;border-bottom:1px solid #1e2736;display:none;align-items:center;padding:0 14px;gap:10px;font-family:'Poppins',sans-serif;box-sizing:border-box;position:sticky;top:0;z-index:600;width:100%}
+    .mh-title{flex:1;text-align:center;font-size:14px;font-weight:600;color:#f5f7fa;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    
     nav {
       position: sticky; top: 0; z-index: 100;
       background: rgba(23,28,36,.95); backdrop-filter: blur(12px);
@@ -32,6 +39,7 @@
     .bg { background: transparent; color: var(--txt2); border: 1px solid var(--border); } .bg:hover { color: var(--txt); border-color: var(--txt2); }
     .bsm { padding: 5px 11px; font-size: 12px; }
     .page { max-width: 520px; margin: 0 auto; padding: 24px 16px 40px; }
+    @media(max-width:900px){ .page { padding-bottom: 90px !important; max-width: 100%; } }
     .steps-row { display: flex; gap: 0; background: var(--nav); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 22px; }
     .step-pill { flex: 1; padding: 10px 8px; text-align: center; font-size: 12px; font-weight: 600; color: var(--txt2); transition: all .2s; }
     .step-pill span { display: block; font-size: 10px; opacity: .7; margin-top: 2px; font-weight: 400; }
@@ -152,7 +160,9 @@
     .anim { animation: fadeSlide .35s ease both; }
     .anim2 { animation: fadeSlide .35s .08s ease both; }
     .anim3 { animation: fadeSlide .35s .16s ease both; }
-  @media(min-width:901px){#mobilePageHeader,}
+  /* Mobile header hidden on desktop — handled by shell.js */
+  @media(min-width:901px){ #mobileHdr { display:none !important; } }
+  @media(max-width:900px){ #mobileHdr { display:flex !important; } }
 </style>
 
 
@@ -161,14 +171,12 @@
 <body>
 
 <!-- ── Mobile Page Header ── -->
-<div <div id="mobileHdr">
-  <a class="smb-brand" href="index.html" style="text-decoration:none">
+<div id="mobileHdr">
+  <a class="smb-brand" href="index.html" style="text-decoration:none;display:flex;align-items:center;gap:7px">
     <div class="smb-dot"></div>XREZZKY<em style="font-style:normal;color:#4a7dff">STORE</em>
   </a>
   <div class="mh-title">Deposit Saldo</div>
   <div style="width:90px"></div>
-</div>
-  <div class="mph-logo">XREZZKY</div>
 </div>
 
 
