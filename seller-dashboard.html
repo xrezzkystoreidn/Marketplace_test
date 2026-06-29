@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>XREZZKY — Seller Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -295,6 +295,7 @@
 
     /* ── TOAST ── */
     #tc { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+    @media(max-width:900px){ #tc { bottom:76px; right:10px; left:10px; } }
     .toast { background: var(--nav); border: 1px solid var(--border); border-left: 3px solid var(--accent); color: var(--txt); font-size: 13px; padding: 10px 16px; border-radius: var(--radius-sm); min-width: 260px; animation: sli .3s ease; }
     .toast.s { border-left-color: var(--success); }
     .toast.e { border-left-color: var(--danger); }
@@ -318,7 +319,7 @@
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) { .sales-row { grid-template-columns: 1fr; } .profile-layout { grid-template-columns: 1fr; } }
-    @media (max-width: 768px) { #sidebar { display: none; } #main { margin-left: 0; padding: 16px; } .tb-logo { width: auto; } .fg2 { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { #sidebar { display: none; } #main { margin-left: 0; padding: 16px; padding-bottom: 90px; } .tb-logo { width: auto; } .fg2 { grid-template-columns: 1fr; } }
     @media (max-width: 480px) { .prod-grid { grid-template-columns: 1fr 1fr; } }
 
     /* ── ANIM STAGGER ── */
@@ -331,7 +332,15 @@
 
     /* ── INLINE EDIT HIGHLIGHT ── */
     input:focus, textarea:focus, select:focus { box-shadow: 0 0 0 3px rgba(74,125,255,.12); }
-  @media(min-width:901px){#mobilePageHeader,}
+  /* shell.js handles desktop hide */
+  @media(min-width:901px){ #mobileHdr { display:none !important; } }
+  @media(max-width:900px){ #mobileHdr { display:flex !important; } }
+
+  /* Mobile header brand CSS */
+  .smb-brand { display:flex; align-items:center; gap:7px; font-family:'Syne',sans-serif; font-size:14px; font-weight:800; color:#f5f7fa; text-decoration:none; white-space:nowrap; flex-shrink:0; }
+  .smb-dot   { width:7px; height:7px; border-radius:50%; background:#4a7dff; flex-shrink:0; }
+  #mobileHdr { display:none; position:sticky; top:0; z-index:600; height:48px; background:#0f1319; border-bottom:1px solid #1e2736; align-items:center; padding:0 14px; gap:10px; width:100%; box-sizing:border-box; }
+  .mh-title  { flex:1; font-size:14px; font-weight:600; text-align:center; color:#f5f7fa; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 </style>
 
 <style>
@@ -372,8 +381,13 @@ td { padding: 10px 14px !important; vertical-align: middle; }
 </head>
 <body>
 
-<!-- ── Mobile Page Header ── -->
-  <div class="mph-logo">XREZZKY</div>
+<!-- ── Mobile Header ── -->
+<div id="mobileHdr">
+  <a class="smb-brand" href="index.html" style="text-decoration:none;display:flex;align-items:center;gap:7px">
+    <div class="smb-dot"></div>XREZZKY<em style="font-style:normal;color:#4a7dff">STORE</em>
+  </a>
+  <div class="mh-title">Seller Dashboard</div>
+  <div style="width:90px"></div>
 </div>
 
 
@@ -2023,14 +2037,12 @@ function toast(msg, type='') {
 </style>
 
 <!-- Mobile Page Header -->
-<div <div id="mobileHdr">
-  <a class="smb-brand" href="index.html" style="text-decoration:none">
+<div id="mobileHdr">
+  <a class="smb-brand" href="index.html" style="text-decoration:none;display:flex;align-items:center;gap:7px">
     <div class="smb-dot"></div>XREZZKY<em style="font-style:normal;color:#4a7dff">STORE</em>
   </a>
   <div class="mh-title">Seller Dashboard</div>
   <div style="width:90px"></div>
-</div>
-  <div class="mph-logo">XREZZKY</div>
 </div>
 
 <!-- Bottom Nav -->

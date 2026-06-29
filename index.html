@@ -56,6 +56,10 @@
       position: fixed; bottom: 20px; right: 20px; z-index: 9999;
       display: flex; flex-direction: column; gap: 8px;
     }
+    @media (max-width: 900px) {
+      #toast-container { bottom: 76px; right: 12px; left: 12px; }
+      .toast { min-width: unset; }
+    }
     .toast {
       background: var(--nav); border: 1px solid var(--border);
       border-left: 3px solid var(--accent);
@@ -799,13 +803,54 @@
       nav           { display: flex !important; }
       aside         { display: flex !important; }
       /* Desktop wide */
-      .product-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+      .product-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
     }
 
     @media (min-width: 1400px) {
       .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
       main { padding: 20px 24px; }
     }
+
+    /* ── MOBILE SEARCH BAR (luar .page) ── */
+    #mobileSearchBar {
+      background: #0f1319;
+      border-bottom: 1px solid #1e2736;
+      padding: 8px 12px;
+      position: sticky; top: 48px; z-index: 550;
+      display: none; /* shown by media query */
+    }
+    .msb-inner {
+      display: flex; align-items: center;
+      background: #1a2233; border: 1px solid #1e2736;
+      border-radius: 10px; overflow: hidden;
+      padding-left: 12px;
+    }
+    .msb-icon { color: #9ba6b2; font-size: 13px; flex-shrink: 0; }
+    .msb-input {
+      flex: 1; background: none; border: none; outline: none;
+      color: #f5f7fa; font-family: 'Poppins', sans-serif;
+      font-size: 13px; padding: 10px 8px; min-width: 0;
+    }
+    .msb-input::placeholder { color: #9ba6b2; }
+    .msb-btn {
+      background: #4a7dff; border: none; color: #fff;
+      padding: 10px 14px; cursor: pointer; font-size: 13px;
+      flex-shrink: 0; transition: background .18s;
+    }
+    .msb-btn:hover { background: #5d8fff; }
+    @media (max-width: 900px) {
+      #mobileSearchBar { display: block !important; }
+    }
+    @media (min-width: 901px) {
+      #mobileSearchBar { display: none !important; }
+    }
+
+    /* ── DESKTOP: content push by shell (214px) ── */
+    /* nav/aside dari index.html disembunyikan oleh shell.js */
+    /* Shell CSS handles margin-left:214px untuk .page dan main */
+
+    /* ── Pastikan main tidak overflow ── */
+    main { overflow-x: hidden; }
 
   </style>
 
@@ -814,54 +859,20 @@
 
 
 <!-- ══ LAYOUT ══ -->
-<div class="page" id="pageRoot">
-<!-- Mobile Search Bar — hanya ≤900px -->
-<div id="mobileSearchBar" style="display:none">
-  <div class="msb-wrap">
-    <div class="msb-inner">
-      <i class="fas fa-search msb-icon"></i>
-      <input id="navSearch" type="text" class="msb-input"
-        placeholder="Cari produk atau toko (@username)..."
-        onkeydown="if(event.key==='Enter')doSearch()"/>
-      <button class="msb-btn" onclick="doSearch()"><i class="fas fa-search"></i></button>
-    </div>
+<!-- Mobile Search Bar — sticky bawah sh-mob, luar .page -->
+<div id="mobileSearchBar">
+  <div class="msb-inner">
+    <i class="fas fa-search msb-icon"></i>
+    <input id="navSearch" type="text" class="msb-input"
+      placeholder="Cari produk atau toko (@username)..."
+      onkeydown="if(event.key==='Enter')doSearch()"/>
+    <button class="msb-btn" onclick="doSearch()"><i class="fas fa-search"></i></button>
   </div>
 </div>
 
-<style>
-#mobileSearchBar {
-  background: #0f1319;
-  border-bottom: 1px solid #1e2736;
-  padding: 8px 14px;
-  position: sticky; top: 48px; z-index: 550;
-}
-.msb-wrap { width: 100%; }
-.msb-inner {
-  display: flex; align-items: center; gap: 0;
-  background: #1a2233; border: 1px solid #1e2736;
-  border-radius: 10px; overflow: hidden;
-  padding: 0 0 0 12px;
-}
-.msb-icon { color: #9ba6b2; font-size: 13px; flex-shrink: 0; }
-.msb-input {
-  flex: 1; background: none; border: none; outline: none;
-  color: #f5f7fa; font-family: 'Poppins', sans-serif;
-  font-size: 13px; padding: 10px 8px;
-}
-.msb-input::placeholder { color: #9ba6b2; }
-.msb-btn {
-  background: #4a7dff; border: none; color: #fff;
-  padding: 10px 14px; cursor: pointer; font-size: 13px;
-  flex-shrink: 0;
-}
-.msb-btn:hover { background: #5d8fff; }
-@media (min-width: 901px) {
-  #mobileSearchBar { display: none !important; }
-}
-@media (max-width: 900px) {
-  #mobileSearchBar { display: block !important; }
-}
-</style>
+<div class="page" id="pageRoot">
+
+
 
 
   
