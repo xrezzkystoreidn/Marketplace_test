@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   XREZZKY STORE — shell.js  FINAL
+   XREZZKY STORE — shell.js  FINAL (FIXED)
    Persistent topbar + sidebar untuk semua halaman.
    - Desktop (≥901px): topbar fixed + sidebar fixed + content push
    - Mobile  (≤900px): sh-bar & sh-side hidden, mobileHdr tiap
@@ -7,6 +7,14 @@
 ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
+
+  /* ── INJEKSI VIEWPORT META (FIX TAMPILAN KECIL DI MOBILE) ── */
+  if (!document.querySelector('meta[name="viewport"]')) {
+    var meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+    document.head.appendChild(meta);
+  }
 
   /* ── Konstanta ── */
   var SUPA_URL = 'https://pvkhsjiftfzjpgkoiawq.supabase.co';
@@ -176,7 +184,7 @@
   '  body.sh-on #xbn                { display: none !important; }\n' +
   '  body.sh-on #topbar:not(#sh-bar){ display: none !important; }\n' +
   '  body.sh-on #sidebar:not(#sh-side){ display: none !important; }\n' +
-  /* Push content — SEMUA kemungkinan wrapper */
+  /* Push content — SEMUA kemungkinan wrapper (TANPA memaksa display block di sini) */
   '  body.sh-on .page, body.sh-on #pageRoot,\n' +
   '  body.sh-on #mainContent, body.sh-on #guestWall,\n' +
   '  body.sh-on main:not(#sh-side), body.sh-on #main, body.sh-on #wrapper {\n' +
@@ -185,8 +193,6 @@
   '    max-width: none !important; min-width: 0 !important;\n' +
   '    box-sizing: border-box !important; flex: none !important;\n' +
   '  }\n' +
-  /* .page selalu block agar tidak ada flex layout yang rusak */
-  '  body.sh-on .page { display: block !important; }\n' +
   '}\n';
 
   var st = document.createElement('style');
@@ -498,8 +504,9 @@
     targets.forEach(function (el) {
       if (!el) return;
       if (el.id === 'sh-bar' || el.id === 'sh-side') return;
-      /* Jangan override display:none — biarkan JS halaman yang kontrol */
-      if (el.style.display === 'none') return;
+      
+      // Menerapkan pergeseran inline, tanpa mengganggu properti 'display' agar halaman 
+      // tetap bisa show/hide secara normal via JS/CSS.
       el.style.marginLeft  = SW + 'px';
       el.style.width       = 'calc(100% - ' + SW + 'px)';
       el.style.maxWidth    = 'none';
@@ -507,10 +514,6 @@
       el.style.boxSizing   = 'border-box';
       el.style.flex        = 'none';
     });
-
-    /* .page selalu block */
-    var pg = document.querySelector('.page');
-    if (pg && pg.style.display !== 'none') pg.style.display = 'block';
   }
 
   /* ── MutationObserver: watch mainContent profil.html ── */
