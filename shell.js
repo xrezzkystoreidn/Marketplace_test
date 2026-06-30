@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   XREZZKY STORE — shell.js  FINAL (FIXED)
+   XREZZKY STORE — shell.js  FINAL
    Persistent topbar + sidebar untuk semua halaman.
    - Desktop (≥901px): topbar fixed + sidebar fixed + content push
    - Mobile  (≤900px): sh-bar & sh-side hidden, mobileHdr tiap
@@ -7,14 +7,6 @@
 ═══════════════════════════════════════════════════════════════ */
 (function () {
   'use strict';
-
-  /* ── INJEKSI VIEWPORT META (FIX TAMPILAN KECIL DI MOBILE) ── */
-  if (!document.querySelector('meta[name="viewport"]')) {
-    var meta = document.createElement('meta');
-    meta.name = 'viewport';
-    meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
-    document.head.appendChild(meta);
-  }
 
   /* ── Konstanta ── */
   var SUPA_URL = 'https://pvkhsjiftfzjpgkoiawq.supabase.co';
@@ -184,7 +176,7 @@
   '  body.sh-on #xbn                { display: none !important; }\n' +
   '  body.sh-on #topbar:not(#sh-bar){ display: none !important; }\n' +
   '  body.sh-on #sidebar:not(#sh-side){ display: none !important; }\n' +
-  /* Push content — SEMUA kemungkinan wrapper (TANPA memaksa display block di sini) */
+  /* Push content — SEMUA kemungkinan wrapper */
   '  body.sh-on .page, body.sh-on #pageRoot,\n' +
   '  body.sh-on #mainContent, body.sh-on #guestWall,\n' +
   '  body.sh-on main:not(#sh-side), body.sh-on #main, body.sh-on #wrapper {\n' +
@@ -193,6 +185,8 @@
   '    max-width: none !important; min-width: 0 !important;\n' +
   '    box-sizing: border-box !important; flex: none !important;\n' +
   '  }\n' +
+  /* .page selalu block agar tidak ada flex layout yang rusak */
+  '  body.sh-on .page { display: block !important; }\n' +
   '}\n';
 
   var st = document.createElement('style');
@@ -247,7 +241,7 @@
         '<div class="d-sec">' +
           '<div class="d-lbl">Akun Saya</div>' +
           '<a class="d-a" href="profil.html"><i class="fas fa-user-circle"></i> Profil Saya</a>' +
-          '<a class="d-a" href="profil.html?tab=editprofil"><i class="fas fa-cog"></i> Pengaturan Akun</a>' +
+          '<a class="d-a" href="profil.html?tab=pengaturan"><i class="fas fa-cog"></i> Pengaturan Akun</a>' +
         '</div>' +
         '<div class="d-sec"><button class="d-a red" onclick="shLogout()"><i class="fas fa-sign-out-alt"></i> Keluar</button></div>' +
       '</div>' +
@@ -490,30 +484,50 @@
     if (ownTopbar  && ownTopbar.id  !== 'sh-bar')  ownTopbar.style.display  = 'none';
     if (ownSidebar && ownSidebar.id !== 'sh-side') ownSidebar.style.display = 'none';
 
-    /* Push wrapper content ke kanan sidebar */
-    var targets = [
-      document.querySelector('.page'),
+    /*
+      PENTING: hanya push SATU wrapper TERLUAR per halaman.
+      Banyak halaman punya struktur <div class="page"><main>...</main></div>
+      — kalau dua-duanya di-push, jadi double margin & konten ke tengah/sempit.
+      Cari kandidat secara berurutan, pakai yang PERTAMA ketemu saja.
+    */
+    var candidates = [
+      document.getElementById('mainContent'),   /* profil.html */
+      document.getElementById('guestWall'),      /* profil.html (guest) */
+      document.querySelector('.page'),           /* index, checkout, dll — wrapper utama */
       document.getElementById('pageRoot'),
-      document.getElementById('mainContent'),
-      document.getElementById('guestWall'),
-      document.getElementById('main'),
-      document.getElementById('wrapper'),
-      document.querySelector('main')
+      document.getElementById('main'),           /* seller/admin/cs/info — id #main */
+      document.getElementById('wrapper')
     ];
 
-    targets.forEach(function (el) {
-      if (!el) return;
-      if (el.id === 'sh-bar' || el.id === 'sh-side') return;
-      
-      // Menerapkan pergeseran inline, tanpa mengganggu properti 'display' agar halaman 
-      // tetap bisa show/hide secara normal via JS/CSS.
-      el.style.marginLeft  = SW + 'px';
-      el.style.width       = 'calc(100% - ' + SW + 'px)';
-      el.style.maxWidth    = 'none';
-      el.style.minWidth    = '0';
-      el.style.boxSizing   = 'border-box';
-      el.style.flex        = 'none';
-    });
+    var target = null;
+    for (var i = 0; i < candidates.length; i++) {
+      var el = candidates[i];
+      if (el && el.id !== 'sh-bar' && el.id !== 'sh-side' && el.style.display !== 'none') {
+        target = el;
+        break;
+      }
+    }
+
+    if (target) {
+      target.style.marginLeft  = SW + 'px';
+      target.style.width       = 'calc(100% - ' + SW + 'px)';
+      target.style.maxWidth    = 'none';
+      target.style.minWidth    = '0';
+      target.style.boxSizing   = 'border-box';
+      target.style.flex        = 'none';
+      if (target.style.display !== 'none') target.style.display = 'block';
+    }
+
+    /* main DI DALAM target tidak boleh di-push lagi — reset agar full width relatif ke parent */
+    var innerMain = target ? target.querySelector('main') : document.querySelector('main');
+    if (innerMain && innerMain !== target) {
+      innerMain.style.marginLeft = '0';
+      innerMain.style.width      = '100%';
+      innerMain.style.maxWidth   = 'none';
+      innerMain.style.minWidth   = '0';
+      innerMain.style.boxSizing  = 'border-box';
+      innerMain.style.flex       = 'none';
+    }
   }
 
   /* ── MutationObserver: watch mainContent profil.html ── */
