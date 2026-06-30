@@ -40,7 +40,8 @@
   '  body.sh-on { padding-top: 0 !important; }\n' +
   '  body.sh-on .page, body.sh-on #pageRoot, body.sh-on #mainContent,\n' +
   '  body.sh-on #guestWall, body.sh-on main, body.sh-on #main,\n' +
-  '  body.sh-on #wrapper { margin-left: 0 !important; width: 100% !important; max-width: 100% !important; }\n' +
+  '  body.sh-on #wrapper, body.sh-on > div.main\n' +
+  '  { margin-left: 0 !important; margin-right: 0 !important; width: 100% !important; max-width: 100% !important; }\n' +
   '}\n' +
 
   /* ══ sh-mob — brand bar mobile (hanya halaman tanpa mobileHdr) ══ */
@@ -176,18 +177,32 @@
   '  body.sh-on #xbn                { display: none !important; }\n' +
   '  body.sh-on #topbar:not(#sh-bar){ display: none !important; }\n' +
   '  body.sh-on #sidebar:not(#sh-side){ display: none !important; }\n' +
-  /* Push content — SEMUA kemungkinan wrapper */
+  /* Push content — SEMUA kemungkinan wrapper TERLUAR */
   '  body.sh-on .page, body.sh-on #pageRoot,\n' +
   '  body.sh-on #mainContent, body.sh-on #guestWall,\n' +
-  '  body.sh-on main:not(#sh-side), body.sh-on #main, body.sh-on #wrapper {\n' +
+  '  body.sh-on main:not(#sh-side), body.sh-on #main, body.sh-on #wrapper,\n' +
+  '  body.sh-on > div.main {\n' +
   '    margin-left: ' + SW + 'px !important;\n' +
   '    width: calc(100% - ' + SW + 'px) !important;\n' +
   '    max-width: none !important; min-width: 0 !important;\n' +
   '    box-sizing: border-box !important; flex: none !important;\n' +
   '  }\n' +
+  /* info-admin.html: .main aslinya container ter-center (margin:auto + max-width).
+     Itu BUKAN layout sidebar — override supaya nempel tepat di sebelah sidebar shell. */
+  '  body.sh-on > div.main { margin-right: 0 !important; }\n' +
+  /* PENTING: kalau #main bersarang di dalam #wrapper (atau wrapper lain
+     yang sudah kena push di atas), JANGAN push #main lagi — itu bikin
+     margin dobel (lihat Bug 3: "container di dalam container"). Reset
+     descendant #main ke 0 supaya cuma wrapper terluar yang ke-push. */
+  '  body.sh-on #wrapper #main, body.sh-on .page main:not(#sh-side),\n' +
+  '  body.sh-on #pageRoot #main, body.sh-on #mainContent #main {\n' +
+  '    margin-left: 0 !important;\n' +
+  '    width: 100% !important;\n' +
+  '  }\n' +
   /* .page selalu block agar tidak ada flex layout yang rusak */
   '  body.sh-on .page { display: block !important; }\n' +
   '}\n';
+
 
   var st = document.createElement('style');
   st.id = 'shell-css';
@@ -496,7 +511,8 @@
       document.querySelector('.page'),           /* index, checkout, dll — wrapper utama */
       document.getElementById('pageRoot'),
       document.getElementById('main'),           /* seller/admin/cs/info — id #main */
-      document.getElementById('wrapper')
+      document.getElementById('wrapper'),
+      document.querySelector('body > div.main')  /* info-admin.html — class="main", bukan id */
     ];
 
     var target = null;
@@ -518,15 +534,26 @@
       if (target.style.display !== 'none') target.style.display = 'block';
     }
 
-    /* main DI DALAM target tidak boleh di-push lagi — reset agar full width relatif ke parent */
-    var innerMain = target ? target.querySelector('main') : document.querySelector('main');
-    if (innerMain && innerMain !== target) {
-      innerMain.style.marginLeft = '0';
-      innerMain.style.width      = '100%';
-      innerMain.style.maxWidth   = 'none';
-      innerMain.style.minWidth   = '0';
-      innerMain.style.boxSizing  = 'border-box';
-      innerMain.style.flex       = 'none';
+    /*
+      Reset SEMUA wrapper bersarang DI DALAM target supaya tidak ikut
+      ke-push lagi (cegah double margin — Bug 3: "container di dalam
+      container"). Ini termasuk <main> tag MAUPUN elemen ber-id #main/
+      #wrapper/#pageRoot yang kebetulan jadi descendant dari target.
+    */
+    if (target) {
+      var nestedSelectors = ['main', '#main', '#wrapper', '#pageRoot', '#mainContent'];
+      nestedSelectors.forEach(function (sel) {
+        var nested = target.querySelectorAll(sel);
+        nested.forEach(function (innerEl) {
+          if (innerEl === target) return;
+          innerEl.style.marginLeft = '0';
+          innerEl.style.width      = '100%';
+          innerEl.style.maxWidth   = 'none';
+          innerEl.style.minWidth   = '0';
+          innerEl.style.boxSizing  = 'border-box';
+          innerEl.style.flex       = 'none';
+        });
+      });
     }
   }
 
